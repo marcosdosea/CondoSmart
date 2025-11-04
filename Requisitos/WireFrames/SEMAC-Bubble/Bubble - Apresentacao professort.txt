@@ -1,0 +1,134 @@
+Treinamento Bubble (4h) — Aplicação: Gestão de Estacionamento
+🔹 0:00 – 0:15 | Apresentação da ferramenta Bubble (15 min)
+Objetivos:
+
+Introduzir o conceito de plataformas low-code/no-code.
+
+Mostrar a interface do Bubble (Editor: Design, Workflow, Data, Styles, Settings).
+
+Explicar o modelo mental: páginas, elementos, banco de dados e workflows.
+
+Exemplo rápido: criar uma página simples com um botão que mostra um alerta.
+
+Resultado:
+Participantes entendem o ambiente e a filosofia da ferramenta.
+
+🔹 0:15 – 0:45 | Planejamento e modelagem do banco de dados (30 min)
+Objetivos:
+
+Explicar a importância da modelagem antes de construir.
+
+Criar as tabelas necessárias no Bubble.
+
+Entidades sugeridas:
+
+Veículo
+
+Placa (text)
+
+DataHoraEntrada (date/time)
+
+DataHoraSaida (date/time)
+
+ValorCobrado (number)
+
+(Opcional) Configuração
+
+ValorHora (number) = 2.00
+
+Atividade:
+Criar o banco de dados no Bubble e inserir alguns registros de teste.
+
+🔹 0:45 – 1:30 | Construção da tela de entrada e saída de veículos (45 min)
+Objetivos:
+
+Criar formulário para registrar entrada (campo Placa + botão “Registrar Entrada”).
+
+Criar tabela/lista com veículos atualmente no estacionamento.
+
+Criar botão “Registrar Saída” com cálculo automático do valor.
+
+Lógica do cálculo:
+
+ValorCobrado=Horas entre Saıˊda e Entrada×2.00
+
+Atividades:
+
+Criar workflows:
+
+Ao clicar em “Registrar Entrada”: criar novo registro “Veículo” com hora atual.
+
+Ao clicar em “Registrar Saída”: atualizar registro com hora de saída e calcular valor.
+
+Resultado:
+O sistema já registra e atualiza entradas/saídas.
+
+
+
+🔹 1:30 – 2:30 | Interface e usabilidade (1h)
+Objetivos:
+
+Melhorar visual (grupos, cabeçalhos, botões, mensagens de sucesso).
+
+Adicionar filtros e ordenação na lista de veículos.
+
+Mostrar veículos “em aberto” (sem saída).
+
+Mostrar histórico completo (com saída e valor pago).
+
+Atividades:
+
+Trabalhar com condições dinâmicas no Bubble.
+
+Utilizar repeating groups e filtros.
+
+Demonstrar boas práticas de design responsivo.
+
+Resultado:
+Aplicação funcional e visualmente organizada.
+
+
+
+🔹 2:30 – 3:30 | Relatório de recebimentos por período (1h)
+Objetivos:
+
+Criar tela de relatórios: campos “Data/Hora Inicial” e “Data/Hora Final”.
+
+Listar veículos com saída nesse intervalo.
+
+Calcular total arrecadado.
+
+Atividades:
+
+Usar “Do a search for” com filtros de data.
+
+Exibir soma com função :sum.
+
+Formatar número em moeda (R$).
+
+Resultado:
+Tela de relatório funcionando com cálculo total e lista detalhada.
+
+🔹 3:30 – 3:55 | Publicação e testes (25 min)
+Objetivos:
+
+Mostrar como testar workflows.
+
+Explicar diferenças entre ambiente Development e Live.
+
+Demonstrar como publicar e compartilhar o app.
+
+Atividades:
+
+Criar e testar um fluxo completo (entrada → saída → relatório).
+
+Validar cálculos e filtros.
+
+🔹 3:55 – 4:00 | Encerramento (5 min)
+Objetivos:
+
+Revisar o que foi aprendido.
+
+Apontar próximos passos (integrações, login de usuários, relatórios exportáveis).
+
+Espaço para dúvidas rápidas.
