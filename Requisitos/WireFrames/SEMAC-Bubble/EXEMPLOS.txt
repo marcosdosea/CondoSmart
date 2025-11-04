@@ -1,1 +1,0 @@
-https://semac---exemplo-01-alerta.bubbleapps.io/version-test?debug_mode=true
