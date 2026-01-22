@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cardo\\source\\repos\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj": {}
+    "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cardo\\source\\repos\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj": {
+    "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cardo\\source\\repos\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj",
+        "projectUniqueName": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj",
         "projectName": "CondosmartWeb",
-        "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj",
+        "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\CondosmartWeb\\CondosmartWeb.csproj",
         "packagesPath": "C:\\Users\\cardo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\CondosmartWeb\\obj\\",
+        "outputPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\CondosmartWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -31,11 +31,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj": {
-                "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj"
+              "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj"
               },
-              "C:\\Users\\cardo\\source\\repos\\Condosmart\\Service\\Service.csproj": {
-                "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Service\\Service.csproj"
+              "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Service\\Service.csproj": {
+                "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Service\\Service.csproj"
               }
             }
           }
@@ -55,6 +55,22 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -78,14 +94,14 @@
         }
       }
     },
-    "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj": {
+    "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj",
+        "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj",
         "packagesPath": "C:\\Users\\cardo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\obj\\",
+        "outputPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -122,6 +138,22 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -142,14 +174,14 @@
         }
       }
     },
-    "C:\\Users\\cardo\\source\\repos\\Condosmart\\Service\\Service.csproj": {
+    "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Service\\Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Service\\Service.csproj",
+        "projectUniqueName": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Service\\Service.csproj",
         "projectName": "Service",
-        "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Service\\Service.csproj",
+        "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Service\\Service.csproj",
         "packagesPath": "C:\\Users\\cardo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Service\\obj\\",
+        "outputPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Service\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -169,8 +201,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj": {
-                "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Core\\Core.csproj"
+              "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\cardo\\source\\repos\\Condosmart\\Codigo\\Condosmart\\Core\\Core.csproj"
               }
             }
           }
@@ -191,11 +223,25 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.23, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.3, )"
             }
           },
           "imports": [
