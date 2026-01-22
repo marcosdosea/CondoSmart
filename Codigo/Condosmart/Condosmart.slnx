@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="CondosmartWeb/CondosmartWeb.csproj" />
+  <Project Path="Core/Core.csproj" Id="cfff0db3-9661-4481-a9e6-8f0d05783497" />
+  <Project Path="Service/Service.csproj" />
+</Solution>
