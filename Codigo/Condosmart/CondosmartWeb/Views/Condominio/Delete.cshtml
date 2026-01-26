@@ -1,0 +1,36 @@
+﻿@model CondosmartWeb.Models.CondominioViewModel
+
+@{
+    ViewData["Title"] = "Excluir Condomínio";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Tem certeza que deseja excluir este condomínio?</h3>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Nome)</dt>
+        <dd class="col-sm-9">@Model.Nome</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cnpj)</dt>
+        <dd class="col-sm-9">@Model.Cnpj</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cidade)</dt>
+        <dd class="col-sm-9">@Model.Cidade</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Uf)</dt>
+        <dd class="col-sm-9">@Model.Uf</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Unidades)</dt>
+        <dd class="col-sm-9">@Model.Unidades</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
