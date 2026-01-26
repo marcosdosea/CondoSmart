@@ -1,3 +1,11 @@
+using Core;
+using Core.Data;
+using Core.Service;
+using Service;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure; // Adicione este using
+
 namespace Condosmart
 {
     public class Program
@@ -8,6 +16,21 @@ namespace Condosmart
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Conexão com o banco de dados não foi configurada corretamente.");
+            }
+            builder.Services.AddDbContext<CondosmartContext>(
+                options => options.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString)
+                ));
+
+            builder.Services.AddScoped<ICondominioService, CondominioService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 

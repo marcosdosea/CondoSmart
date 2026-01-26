@@ -1,0 +1,56 @@
+﻿@model CondosmartWeb.Models.CondominioViewModel
+
+@{
+    ViewData["Title"] = "Detalhes do Condomínio";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Id)</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Nome)</dt>
+        <dd class="col-sm-9">@Model.Nome</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cnpj)</dt>
+        <dd class="col-sm-9">@Model.Cnpj</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Rua)</dt>
+        <dd class="col-sm-9">@Model.Rua</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Numero)</dt>
+        <dd class="col-sm-9">@Model.Numero</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Bairro)</dt>
+        <dd class="col-sm-9">@Model.Bairro</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cidade)</dt>
+        <dd class="col-sm-9">@Model.Cidade</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Uf)</dt>
+        <dd class="col-sm-9">@Model.Uf</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Cep)</dt>
+        <dd class="col-sm-9">@Model.Cep</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Email)</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Telefone)</dt>
+        <dd class="col-sm-9">@Model.Telefone</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Complemento)</dt>
+        <dd class="col-sm-9">@Model.Complemento</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Unidades)</dt>
+        <dd class="col-sm-9">@Model.Unidades</dd>
+    </dl>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

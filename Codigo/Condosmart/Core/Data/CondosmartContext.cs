@@ -17,7 +17,7 @@ public partial class CondosmartContext : DbContext
     {
     }
 
-    public virtual DbSet<AreaDeLazer> AreaDeLazers { get; set; }
+    public virtual DbSet<AreaDeLazer> AreaDeLazer { get; set; }
 
     public virtual DbSet<Ata> Atas { get; set; }
 
