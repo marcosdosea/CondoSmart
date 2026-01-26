@@ -1,70 +1,102 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Condosmart</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Condosmart.styles.css" asp-append-version="true" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Condosmart</title>
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Condosmart</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Home"
-                               asp-action="Index">
-                                Home
-                            </a>
-                        </li>
+	<div class="cs-shell">
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Condominio"
-                               asp-action="Index">
-                                Condomínios
-                            </a>
-                        </li>
+		<!-- Overlay (mobile) -->
+		<div id="csOverlay" class="cs-overlay" onclick="toggleSidebar(false)"></div>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Home"
-                               asp-action="Privacy">
-                                Privacy
-                            </a>
-                        </li>
-                    </ul>
+		<!-- Sidebar -->
+		<aside id="csSidebar" class="cs-sidebar">
+			<div class="cs-brand">
+				<div class="cs-brand-badge">C</div>
+				<div>
+					<div>CONDOMÍNIO</div>
+					<small class="text-muted">CondoSmart</small>
+				</div>
+			</div>
 
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+			<div class="cs-search">
+				<input class="form-control" placeholder="Procurar..." />
+			</div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Condosmart - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+			<nav class="cs-nav d-grid gap-2">
+
+				<a asp-controller="Home" asp-action="Index"
+				   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+					🏠 Home
+				</a>
+
+				<a asp-controller="Condominio" asp-action="Index"
+				   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Condominio" ? "active" : "")">
+					🏢 Condomínios
+				</a>
+
+			</nav>
+		</aside>
+
+		<!-- Main -->
+		<div class="cs-main">
+
+			<!-- Topbar -->
+			<header class="cs-topbar">
+				<div class="d-flex align-items-center gap-2">
+					<!-- botão mobile -->
+					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
+						☰
+					</button>
+
+					<div class="title">@ViewData["Title"]</div>
+				</div>
+
+				<div class="cs-top-actions">
+					<button class="cs-icon-btn" title="Notificações">🔔</button>
+					<button class="cs-icon-btn" title="Configurações">⚙️</button>
+				</div>
+			</header>
+
+			<main class="container py-4">
+				@RenderBody()
+			</main>
+
+			<footer class="text-muted py-3">
+				<div class="container">
+					&copy; 2026 - Condosmart
+				</div>
+			</footer>
+		</div>
+	</div>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+
+	<script>
+		function toggleSidebar(open) {
+			const sidebar = document.getElementById('csSidebar');
+			const overlay = document.getElementById('csOverlay');
+
+			if (!sidebar || !overlay) return;
+
+			if (open) {
+				sidebar.classList.add('open');
+				overlay.classList.add('show');
+			} else {
+				sidebar.classList.remove('open');
+				overlay.classList.remove('show');
+			}
+		}
+	</script>
+
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
