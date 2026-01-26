@@ -1,22 +1,242 @@
-html {
-  font-size: 14px;
+/* =========================
+   CONDOSMART DESIGN SYSTEM
+   ========================= */
+
+:root {
+    /* Brand */
+    --cs-primary: #17bebb; /* turquesa */
+    --cs-primary-600: #11a8a6;
+    --cs-primary-700: #0e8f8d;
+    /* Neutral */
+    --cs-bg: #f6fbfb;
+    --cs-surface: #ffffff;
+    --cs-border: #d9eeee;
+    --cs-text: #1e2a2a;
+    --cs-muted: #5e6f6f;
+    /* Status */
+    --cs-danger: #e63946;
+    --cs-warning: #f4a261;
+    --cs-success: #2a9d8f;
+    /* Layout */
+    --cs-radius: 14px;
+    --cs-shadow: 0 6px 18px rgba(0,0,0,.08);
+    --cs-sidebar-w: 280px;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* Page background */
 body {
-  margin-bottom: 60px;
+    background: var(--cs-bg);
+    color: var(--cs-text);
+}
+
+/* Links */
+a {
+    text-decoration: none;
+}
+
+/* Buttons (override bootstrap a bit) */
+.btn-cs-primary {
+    background: var(--cs-primary);
+    border-color: var(--cs-primary);
+    color: #fff;
+}
+
+    .btn-cs-primary:hover {
+        background: var(--cs-primary-600);
+        border-color: var(--cs-primary-600);
+        color: #fff;
+    }
+
+.btn-cs-outline {
+    border: 1px solid var(--cs-border);
+    background: #fff;
+}
+
+    .btn-cs-outline:hover {
+        border-color: var(--cs-primary);
+    }
+
+/* Card */
+.cs-card {
+    background: var(--cs-surface);
+    border: 1px solid var(--cs-border);
+    border-radius: var(--cs-radius);
+    box-shadow: var(--cs-shadow);
+}
+
+.cs-card-header {
+    border-bottom: 1px solid var(--cs-border);
+    padding: 14px 16px;
+    font-weight: 700;
+}
+
+.cs-card-body {
+    padding: 16px;
+}
+
+/* Layout wrapper */
+.cs-shell {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* Sidebar */
+.cs-sidebar {
+    width: var(--cs-sidebar-w);
+    background: #fff;
+    border-right: 1px solid var(--cs-border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 14px;
+}
+
+.cs-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.cs-brand-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--cs-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+}
+
+.cs-search {
+    margin: 14px 0 10px;
+}
+
+    .cs-search input {
+        border-radius: 12px;
+        border: 1px solid var(--cs-border);
+        padding: 10px 12px;
+    }
+
+.cs-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: var(--cs-text);
+    border: 1px solid transparent;
+}
+
+    .cs-nav a:hover {
+        background: rgba(23,190,187,.10);
+        border-color: rgba(23,190,187,.20);
+    }
+
+    .cs-nav a.active {
+        background: rgba(23,190,187,.15);
+        border-color: rgba(23,190,187,.35);
+        font-weight: 700;
+    }
+
+/* Main */
+.cs-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Topbar */
+.cs-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--cs-border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    .cs-topbar .title {
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+.cs-top-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cs-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--cs-border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .cs-icon-btn:hover {
+        border-color: rgba(23,190,187,.55);
+    }
+
+/* KPI cards */
+.cs-kpi {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cs-kpi-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    border: 6px solid rgba(23,190,187,.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
+
+.cs-kpi-value {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.cs-kpi-label {
+    color: var(--cs-muted);
+    font-size: 13px;
+}
+
+/* Responsive: sidebar vira offcanvas-like */
+@media (max-width: 992px) {
+    .cs-sidebar {
+        position: fixed;
+        left: -110%;
+        transition: left .25s ease;
+        z-index: 1040;
+        box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+
+        .cs-sidebar.open {
+            left: 0;
+        }
+
+    .cs-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.25);
+        z-index: 1039;
+    }
+
+        .cs-overlay.show {
+            display: block;
+        }
 }

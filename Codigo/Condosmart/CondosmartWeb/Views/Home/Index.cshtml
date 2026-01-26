@@ -1,8 +1,88 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="cs-card cs-card-body">
+            <div class="cs-kpi">
+                <div class="cs-kpi-circle">$</div>
+                <div>
+                    <div class="cs-kpi-value">31 MIL</div>
+                    <div class="cs-kpi-label">Total recebido no mês</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="cs-card cs-card-body">
+            <div class="cs-kpi">
+                <div class="cs-kpi-circle">%</div>
+                <div>
+                    <div class="cs-kpi-value">3%</div>
+                    <div class="cs-kpi-label">Taxa de inadimplência</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="cs-card cs-card-body">
+            <div class="cs-kpi">
+                <div class="cs-kpi-circle">🏠</div>
+                <div>
+                    <div class="cs-kpi-value">403</div>
+                    <div class="cs-kpi-label">Entradas registradas hoje</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="cs-card cs-card-body">
+            <div class="cs-kpi">
+                <div class="cs-kpi-circle">⚠️</div>
+                <div>
+                    <div class="cs-kpi-value">16</div>
+                    <div class="cs-kpi-label">Pendências administrativas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-1">
+    <div class="col-12 col-lg-4">
+        <div class="cs-card">
+            <div class="cs-card-header">OCUPAÇÃO</div>
+            <div class="cs-card-body">
+                <h1 class="fw-bold mb-0">80 <small class="text-muted fs-6">de 91 casas</small></h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="cs-card">
+            <div class="cs-card-header">CHAMADOS EM ABERTO</div>
+            <div class="cs-card-body">
+                <h1 class="fw-bold mb-0">11 <small class="text-muted fs-6">essa semana</small></h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="cs-card">
+            <div class="cs-card-header">ESPAÇOS RESERVADOS</div>
+            <div class="cs-card-body">
+                <h1 class="fw-bold mb-0">6 <small class="text-muted fs-6">de 10 locais</small></h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cs-card mt-3">
+    <div class="cs-card-body" style="background: var(--cs-primary); color:#fff; border-radius: var(--cs-radius);">
+        <strong>3 chamados urgentes pendentes</strong> ⚠️
+    </div>
 </div>

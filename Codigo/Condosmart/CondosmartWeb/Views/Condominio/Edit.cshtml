@@ -1,93 +1,96 @@
 ﻿@model CondosmartWeb.Models.CondominioViewModel
-
 @{
     ViewData["Title"] = "Editar Condomínio";
 }
 
-<h1>@ViewData["Title"]</h1>
-<hr />
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>✏️ Editar Condomínio</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit" method="post">
+    <div class="cs-card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <input type="hidden" asp-for="Id" />
 
-            <div class="mb-3">
-                <label asp-for="Nome" class="form-label"></label>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Nome" class="form-label fw-semibold"></label>
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Cnpj" class="form-label"></label>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Cnpj" class="form-label fw-semibold"></label>
                 <input asp-for="Cnpj" class="form-control" />
                 <span asp-validation-for="Cnpj" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Rua" class="form-label"></label>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Rua" class="form-label fw-semibold"></label>
                 <input asp-for="Rua" class="form-control" />
                 <span asp-validation-for="Rua" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Numero" class="form-label"></label>
+            <div class="col-6 col-lg-2">
+                <label asp-for="Numero" class="form-label fw-semibold"></label>
                 <input asp-for="Numero" class="form-control" />
                 <span asp-validation-for="Numero" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Bairro" class="form-label"></label>
+            <div class="col-6 col-lg-4">
+                <label asp-for="Bairro" class="form-label fw-semibold"></label>
                 <input asp-for="Bairro" class="form-control" />
                 <span asp-validation-for="Bairro" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Cidade" class="form-label"></label>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Cidade" class="form-label fw-semibold"></label>
                 <input asp-for="Cidade" class="form-control" />
                 <span asp-validation-for="Cidade" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Uf" class="form-label"></label>
-                <input asp-for="Uf" class="form-control" />
+            <div class="col-6 col-lg-2">
+                <label asp-for="Uf" class="form-label fw-semibold"></label>
+                <input asp-for="Uf" class="form-control" maxlength="2" />
                 <span asp-validation-for="Uf" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Cep" class="form-label"></label>
+            <div class="col-6 col-lg-4">
+                <label asp-for="Cep" class="form-label fw-semibold"></label>
                 <input asp-for="Cep" class="form-control" />
                 <span asp-validation-for="Cep" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Telefone" class="form-label"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Complemento" class="form-label"></label>
+            <div class="col-12">
+                <label asp-for="Complemento" class="form-label fw-semibold"></label>
                 <input asp-for="Complemento" class="form-control" />
                 <span asp-validation-for="Complemento" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Unidades" class="form-label"></label>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <label asp-for="Telefone" class="form-label fw-semibold"></label>
+                <input asp-for="Telefone" class="form-control" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-2">
+                <label asp-for="Unidades" class="form-label fw-semibold"></label>
                 <input asp-for="Unidades" class="form-control" />
                 <span asp-validation-for="Unidades" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-warning">Salvar</button>
-            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            <div class="col-12 d-flex gap-2 justify-content-end mt-2">
+                <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
+                <button type="submit" class="btn btn-cs-primary">Salvar Alterações</button>
+            </div>
         </form>
     </div>
 </div>
