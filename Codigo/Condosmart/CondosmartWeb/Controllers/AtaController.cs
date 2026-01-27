@@ -29,7 +29,7 @@ namespace CondosmartWeb.Controllers
             return View(vms);
         }
 
-        public IActionResult Detail(int id)
+        public IActionResult Details(int id)
         {
             var entity = _service.GetById(id);
             if (entity == null) return NotFound();

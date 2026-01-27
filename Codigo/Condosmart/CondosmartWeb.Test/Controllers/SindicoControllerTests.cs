@@ -62,7 +62,7 @@ namespace CondosmartWeb.Controllers.Tests
         public void DetailsTest_Valido()
         {
             // Act
-            var result = controller.Detail(1);
+            var result = controller.Details(1);
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
