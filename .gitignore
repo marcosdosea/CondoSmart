@@ -1,5 +1,21 @@
+# Visual Studio
 .vs/
-bin/
-obj/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+*.cache
+*.log
+*.vsidx
+*.v2
+
+# Build
+**/bin/
+**/obj/
+
+# Rider / VSCode
+.idea/
+.vscode/
+
+# ASP.NET static web assets
+*.staticwebassets.*
