@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core.Models;
 
-public partial class Visitantes
+public partial class Visitantes // <--- TEM QUE SER "Visitantes" (Plural)
 {
     public int Id { get; set; }
 
