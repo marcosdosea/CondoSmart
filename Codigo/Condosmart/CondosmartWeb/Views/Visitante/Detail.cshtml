@@ -1,14 +1,14 @@
-@model CondosmartWeb.Models.VisitanteViewModel
+﻿@model CondosmartWeb.Models.VisitanteViewModel
 @{
     ViewData["Title"] = "Detalhes do Visitante";
 }
 
 <div class="cs-card">
     <div class="cs-card-header d-flex justify-content-between align-items-center">
-        <span>?? Detalhes</span>
+        <span>🔎 Detalhes</span>
         <div class="d-flex gap-2">
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">?? Editar</a>
-            <a asp-action="Index" class="btn btn-cs-outline btn-sm">? Voltar</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">✏️ Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
             </div>
 
             <div class="col-12 col-lg-4">
-                <div class="text-muted small">Sa�da</div>
+                <div class="text-muted small">Saída</div>
                 <div class="fw-semibold">
                     @if(Model.DataHoraSaida.HasValue)
                     {
@@ -49,7 +49,7 @@
             </div>
 
             <div class="col-12">
-                <div class="text-muted small">Observa��o</div>
+                <div class="text-muted small">Observação</div>
                 <div class="fw-semibold">
                     @(string.IsNullOrEmpty(Model.Observacao) ? "-" : Model.Observacao)
                 </div>
