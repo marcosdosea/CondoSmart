@@ -3,16 +3,52 @@
   "WorkspaceRootPath": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{02B79BC5-153E-2FD9-CAE3-8149E0D9044F}|Service\\Service.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\service\\sindicoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{02B79BC5-153E-2FD9-CAE3-8149E0D9044F}|Service\\Service.csproj|solutionrelative:service\\sindicoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\views\\sindico\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\views\\sindico\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{02B79BC5-153E-2FD9-CAE3-8149E0D9044F}|Service\\Service.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\service\\condominioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{02B79BC5-153E-2FD9-CAE3-8149E0D9044F}|Service\\Service.csproj|solutionrelative:service\\condominioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\views\\sindico\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\views\\sindico\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CFFF0DB3-9661-4481-A9E6-8F0D05783497}|Core\\Core.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\core\\service\\isindicoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CFFF0DB3-9661-4481-A9E6-8F0D05783497}|Core\\Core.csproj|solutionrelative:core\\service\\isindicoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\views\\sindico\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\views\\sindico\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\views\\sindico\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\views\\sindico\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\views\\sindico\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\views\\sindico\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\views\\condominio\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\views\\condominio\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CFFF0DB3-9661-4481-A9E6-8F0D05783497}|Core\\Core.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\core\\dto\\sindicodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CFFF0DB3-9661-4481-A9E6-8F0D05783497}|Core\\Core.csproj|solutionrelative:core\\dto\\sindicodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CFFF0DB3-9661-4481-A9E6-8F0D05783497}|Core\\Core.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\core\\dto\\.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{CFFF0DB3-9661-4481-A9E6-8F0D05783497}|Core\\Core.csproj|solutionrelative:core\\dto\\.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\controllers\\sindicocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\controllers\\sindicocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\controllers\\condominiocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\controllers\\condominiocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\models\\sindicoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\models\\sindicoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|c:\\users\\joaok\\source\\repos\\condosmart\\codigo\\condosmart\\condosmartweb\\mappers\\sindicoprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2549868E-55E6-B1BE-C4A4-8AE6C60486B0}|CondosmartWeb\\CondosmartWeb.csproj|solutionrelative:condosmartweb\\mappers\\sindicoprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +58,151 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Create.cshtml",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Views\\Sindico\\Create.cshtml",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Create.cshtml",
+              "RelativeToolTip": "CondosmartWeb\\Views\\Sindico\\Create.cshtml",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAvwAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-27T00:35:46.774Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Delete.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Delete.cshtml",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Views\\Sindico\\Delete.cshtml",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Delete.cshtml",
+              "RelativeToolTip": "CondosmartWeb\\Views\\Sindico\\Delete.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-27T00:35:46.18Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Detail.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Detail.cshtml",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Views\\Sindico\\Detail.cshtml",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Detail.cshtml",
+              "RelativeToolTip": "CondosmartWeb\\Views\\Sindico\\Detail.cshtml",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-27T00:35:44.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Edit.cshtml",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Views\\Sindico\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Edit.cshtml",
+              "RelativeToolTip": "CondosmartWeb\\Views\\Sindico\\Edit.cshtml",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAvwAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-27T00:35:44.906Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Index.cshtml",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Views\\Sindico\\Index.cshtml",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Sindico\\Index.cshtml",
+              "RelativeToolTip": "CondosmartWeb\\Views\\Sindico\\Index.cshtml",
+              "ViewState": "AgIAACQAAAAAAAAAAAAQwAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-27T00:35:43.214Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Condominio\\Create.cshtml",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Views\\Condominio\\Create.cshtml",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Views\\Condominio\\Create.cshtml",
+              "RelativeToolTip": "CondosmartWeb\\Views\\Condominio\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-27T00:35:35.929Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SindicoDTO.cs",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Core\\DTO\\SindicoDTO.cs",
+              "RelativeDocumentMoniker": "Core\\DTO\\SindicoDTO.cs",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Core\\DTO\\SindicoDTO.cs",
+              "RelativeToolTip": "Core\\DTO\\SindicoDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-27T00:28:13.533Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": ".txt",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Core\\DTO\\.txt",
+              "RelativeDocumentMoniker": "Core\\DTO\\.txt",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Core\\DTO\\.txt",
+              "RelativeToolTip": "Core\\DTO\\.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-01-27T00:27:22.873Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SindicoController.cs",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Controllers\\SindicoController.cs",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Controllers\\SindicoController.cs",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Controllers\\SindicoController.cs",
+              "RelativeToolTip": "CondosmartWeb\\Controllers\\SindicoController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-27T00:23:55.928Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "SindicoProfile.cs",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Mappers\\SindicoProfile.cs",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Mappers\\SindicoProfile.cs",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Mappers\\SindicoProfile.cs",
+              "RelativeToolTip": "CondosmartWeb\\Mappers\\SindicoProfile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-27T00:21:36.688Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SindicoViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Models\\SindicoViewModel.cs",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Models\\SindicoViewModel.cs",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Models\\SindicoViewModel.cs",
+              "RelativeToolTip": "CondosmartWeb\\Models\\SindicoViewModel.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAuwBMAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-27T00:15:13.008Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -38,41 +217,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CondominioService.cs",
-              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Service\\CondominioService.cs",
-              "RelativeDocumentMoniker": "Service\\CondominioService.cs",
-              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Service\\CondominioService.cs",
-              "RelativeToolTip": "Service\\CondominioService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 9,
+              "Title": "CondominioController.cs",
+              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Controllers\\CondominioController.cs",
+              "RelativeDocumentMoniker": "CondosmartWeb\\Controllers\\CondominioController.cs",
+              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\CondosmartWeb\\Controllers\\CondominioController.cs",
+              "RelativeToolTip": "CondosmartWeb\\Controllers\\CondominioController.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-27T00:10:42.248Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "SindicoService.cs",
-              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Service\\SindicoService.cs",
-              "RelativeDocumentMoniker": "Service\\SindicoService.cs",
-              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Service\\SindicoService.cs",
-              "RelativeToolTip": "Service\\SindicoService.cs",
-              "ViewState": "AgIAADMAAAAAAAAAAAAkwEAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-27T00:10:21.845Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ISindicoService.cs",
-              "DocumentMoniker": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Core\\Service\\ISindicoService.cs",
-              "RelativeDocumentMoniker": "Core\\Service\\ISindicoService.cs",
-              "ToolTip": "C:\\Users\\joaok\\source\\repos\\condoSmart\\Codigo\\Condosmart\\Core\\Service\\ISindicoService.cs",
-              "RelativeToolTip": "Core\\Service\\ISindicoService.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-27T00:07:50.612Z",
+              "WhenOpened": "2026-01-27T00:14:50.057Z",
               "EditorCaption": ""
             }
           ]

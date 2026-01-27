@@ -40,6 +40,10 @@
 				   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Condominio" ? "active" : "")">
 					🏢 Condomínios
 				</a>
+				<a asp-controller="Sindico" asp-action="Index"
+				   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Sindico" ? "active" : "")">
+					🧑‍💼 Sindico
+				</a>
 
 			</nav>
 		</aside>
