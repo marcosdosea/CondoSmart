@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "tarefa-CondosmartWeb",
+      "appliesTo": "Codigo/Condosmart/CondosmartWeb/",
+      "type": "launch"
+    }
+  ]
+}
