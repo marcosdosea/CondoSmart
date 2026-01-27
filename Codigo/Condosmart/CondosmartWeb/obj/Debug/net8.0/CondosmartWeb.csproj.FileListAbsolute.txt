@@ -517,7 +517,6 @@ C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug
 C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\swae.build.ex.cache
-C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\Condosma.DE2A1091.Up2Date
 C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\CondosmartWeb.dll
 C:\Users\joaok\source\repos\condoSmart\Codigo\Condosmart\CondosmartWeb\obj\Debug\net8.0\refint\CondosmartWeb.dll
