@@ -55,7 +55,7 @@ namespace CondosmartWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<VisitanteViewModel>));
             var lista = (List<VisitanteViewModel>)viewResult.ViewData.Model;
 
-            Assert.AreEqual(3, lista.Count);
+            Assert.HasCount(3, lista);
         }
 
         [TestMethod]

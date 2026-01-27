@@ -27,6 +27,7 @@ namespace CondosmartWeb.Controllers
         public IActionResult Detail(int id)
         {
             var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
             return View(_mapper.Map<SindicoViewModel>(entity));
         }
 
