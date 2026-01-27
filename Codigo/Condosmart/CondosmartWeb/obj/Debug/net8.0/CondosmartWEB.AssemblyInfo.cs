@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CondosmartWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+904bd7c4f64d6987a74e19624aad2207971a22db")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b19c569a9d096b3d90aba620827d8855c3104405")]
 [assembly: System.Reflection.AssemblyProductAttribute("CondosmartWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CondosmartWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
