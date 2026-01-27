@@ -1,66 +1,109 @@
-﻿using Core.Data;
+﻿using Core;
+using Core.Data;
 using Core.Models;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
+    /// <summary>
+    /// Implementa serviços para manter dados do condomínio
+    /// </summary>
     public class CondominioService : ICondominioService
     {
-        private readonly CondosmartContext _context;
+        private readonly CondosmartContext context;
 
         public CondominioService(CondosmartContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
+        /// <summary>
+        /// Criar um novo condomínio na base de dados
+        /// </summary>
+        /// <param name="condominio">dados do condomínio</param>
+        /// <returns>id do condomínio</returns>
+        /// <exception cref="ArgumentException"></exception>
         public int Create(Condominio condominio)
         {
-            _context.Condominios.Add(condominio);
-            _context.SaveChanges();
+            ValidarCondominio(condominio);
+
+            context.Add(condominio);
+            context.SaveChanges();
             return condominio.Id;
         }
 
+        /// <summary>
+        /// Editar dados do condomínio na base de dados
+        /// </summary>
+        /// <param name="condominio">dados do condomínio</param>
+        /// <exception cref="ArgumentException"></exception>
         public void Edit(Condominio condominio)
         {
-            var existing = _context.Condominios.Find(condominio.Id);
-            if (existing == null) throw new KeyNotFoundException("Condomínio não encontrado.");
+            ValidarCondominio(condominio);
 
-            existing.Nome = condominio.Nome;
-            existing.Cnpj = condominio.Cnpj;
-            existing.Rua = condominio.Rua;
-            existing.Numero = condominio.Numero;
-            existing.Bairro = condominio.Bairro;
-            existing.Cidade = condominio.Cidade;
-            existing.Uf = condominio.Uf;
-            existing.Cep = condominio.Cep;
-            existing.Email = condominio.Email;
-            existing.Telefone = condominio.Telefone;
-            existing.Complemento = condominio.Complemento;
-            existing.Unidades = condominio.Unidades;
-
-            _context.SaveChanges();
+            context.Update(condominio);
+            context.SaveChanges();
         }
 
+        /// <summary>
+        /// Remover o condomínio da base de dados
+        /// </summary>
+        /// <param name="id">id do condomínio</param>
         public void Delete(int id)
         {
-            var existing = _context.Condominios.Find(id);
-            if (existing == null) throw new KeyNotFoundException("Condomínio não encontrado.");
-
-            _context.Condominios.Remove(existing);
-            _context.SaveChanges();
+            var condominio = context.Condominios.Find(id);
+            if (condominio != null)
+            {
+                context.Remove(condominio);
+                context.SaveChanges();
+            }
         }
 
-        public Condominio GetById(int id)
+        /// <summary>
+        /// Buscar um condomínio na base de dados
+        /// </summary>
+        /// <param name="id">id do condomínio</param>
+        /// <returns>dados do condomínio</returns>
+        public Condominio? GetById(int id)
         {
-            var c = _context.Condominios.AsNoTracking().FirstOrDefault(x => x.Id == id);
-            if (c == null) throw new KeyNotFoundException("Condomínio não encontrado.");
-            return c;
+            return context.Condominios.Find(id);
         }
 
+        /// <summary>
+        /// Buscar todos os condomínios cadastrados
+        /// </summary>
+        /// <returns>lista de condomínios</returns>
         public List<Condominio> GetAll()
         {
-            return _context.Condominios.AsNoTracking().ToList();
+            return context.Condominios.AsNoTracking().ToList();
+        }
+
+        /// <summary>
+        /// Valida regras básicas do condomínio (modelo parecido com o do professor)
+        /// </summary>
+        /// <param name="condominio"></param>
+        /// <exception cref="ArgumentException"></exception>
+        private static void ValidarCondominio(Condominio condominio)
+        {
+            if (condominio == null)
+                throw new ArgumentException("Condomínio inválido.");
+
+            if (string.IsNullOrWhiteSpace(condominio.Nome))
+                throw new ArgumentException("O nome do condomínio é obrigatório.");
+
+            // CNPJ no banco está char(14) pelo scaffold, então esperamos 14 dígitos
+            if (!string.IsNullOrWhiteSpace(condominio.Cnpj) && condominio.Cnpj.Length != 14)
+                throw new ArgumentException("O CNPJ deve conter 14 caracteres (somente números).");
+
+            if (!string.IsNullOrWhiteSpace(condominio.Uf) && condominio.Uf.Length != 2)
+                throw new ArgumentException("UF deve ter 2 caracteres.");
+
+            if (!string.IsNullOrWhiteSpace(condominio.Cep) && condominio.Cep.Length != 8)
+                throw new ArgumentException("CEP deve ter 8 caracteres (somente números).");
+
+            if (condominio.Unidades < 0)
+                throw new ArgumentException("Quantidade de unidades não pode ser negativa.");
         }
     }
 }

@@ -8,28 +8,27 @@ namespace CondosmartWeb.Controllers
 {
     public class VisitanteController : Controller
     {
-        private readonly IVisitanteService _visitanteService;
+        private readonly IVisitanteService _service;
         private readonly IMapper _mapper;
 
-        public VisitanteController(IVisitanteService visitanteService, IMapper mapper)
+        public VisitanteController(IVisitanteService service, IMapper mapper)
         {
-            _visitanteService = visitanteService;
+            _service = service;
             _mapper = mapper;
         }
 
         public ActionResult Index()
         {
-            var lista = _visitanteService.GetAll();
+            var lista = _service.GetAll();
             var listaVm = _mapper.Map<List<VisitanteViewModel>>(lista);
             return View(listaVm);
         }
 
         public ActionResult Detail(int id)
         {
-            var item = _visitanteService.GetById(id);
-            if (item == null) return NotFound();
-            var itemVm = _mapper.Map<VisitanteViewModel>(item);
-            return View(itemVm);
+            var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
+            return View(_mapper.Map<VisitanteViewModel>(entity));
         }
 
         public ActionResult Create()
@@ -44,7 +43,7 @@ namespace CondosmartWeb.Controllers
             if (ModelState.IsValid)
             {
                 var visitante = _mapper.Map<Visitantes>(visitanteVm);
-                _visitanteService.Create(visitante);
+                _service.Create(visitante);
                 return RedirectToAction(nameof(Index));
             }
             return View(visitanteVm);
@@ -52,7 +51,7 @@ namespace CondosmartWeb.Controllers
 
         public ActionResult Edit(int id)
         {
-            var item = _visitanteService.GetById(id);
+            var item = _service.GetById(id);
             if (item == null) return NotFound();
             var itemVm = _mapper.Map<VisitanteViewModel>(item);
             return View(itemVm);
@@ -67,7 +66,7 @@ namespace CondosmartWeb.Controllers
             if (ModelState.IsValid)
             {
                 var visitante = _mapper.Map<Visitantes>(visitanteVm);
-                _visitanteService.Edit(visitante);
+                _service.Edit(visitante);
                 return RedirectToAction(nameof(Index));
             }
             return View(visitanteVm);
@@ -75,7 +74,7 @@ namespace CondosmartWeb.Controllers
 
         public ActionResult Delete(int id)
         {
-            var item = _visitanteService.GetById(id);
+            var item = _service.GetById(id);
             if (item == null) return NotFound();
             var itemVm = _mapper.Map<VisitanteViewModel>(item);
             return View(itemVm);
@@ -85,7 +84,7 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            _visitanteService.Delete(id);
+            _service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

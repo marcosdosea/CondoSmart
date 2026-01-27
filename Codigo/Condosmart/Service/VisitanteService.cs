@@ -2,61 +2,105 @@
 using Core.Models;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Service
 {
+    /// <summary>
+    /// Implementa serviços para manter dados do visitante
+    /// </summary>
     public class VisitanteService : IVisitanteService
     {
-        private readonly CondosmartContext _context;
+        private readonly CondosmartContext context;
 
         public VisitanteService(CondosmartContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
+        /// <summary>
+        /// Criar um novo visitante na base de dados
+        /// </summary>
+        /// <param name="visitante">dados do visitante</param>
+        /// <returns>id do visitante</returns>
+        /// <exception cref="ArgumentException"></exception>
         public int Create(Visitantes visitante)
         {
-            _context.Visitantes.Add(visitante);
-            _context.SaveChanges();
+            ValidarVisitante(visitante);
+
+            context.Add(visitante);
+            context.SaveChanges();
             return visitante.Id;
         }
 
+        /// <summary>
+        /// Editar dados do visitante na base de dados
+        /// </summary>
+        /// <param name="visitante">dados do visitante</param>
+        /// <exception cref="ArgumentException"></exception>
         public void Edit(Visitantes visitante)
         {
-            var existing = _context.Visitantes.Find(visitante.Id);
-            if (existing == null) throw new KeyNotFoundException("Visitante não encontrado.");
+            ValidarVisitante(visitante);
 
-            existing.Nome = visitante.Nome;
-            existing.Cpf = visitante.Cpf;
-            existing.Telefone = visitante.Telefone;
-            existing.Observacao = visitante.Observacao;
-            existing.DataHoraEntrada = visitante.DataHoraEntrada;
-            existing.DataHoraSaida = visitante.DataHoraSaida;
-
-            _context.SaveChanges();
+            context.Update(visitante);
+            context.SaveChanges();
         }
 
+        /// <summary>
+        /// Remover o visitante da base de dados
+        /// </summary>
+        /// <param name="id">id do visitante</param>
         public void Delete(int id)
         {
-            var existing = _context.Visitantes.Find(id);
-            if (existing == null) throw new KeyNotFoundException("Visitante não encontrado.");
-
-            _context.Visitantes.Remove(existing);
-            _context.SaveChanges();
+            var visitante = context.Visitantes.Find(id);
+            if (visitante != null)
+            {
+                context.Remove(visitante);
+                context.SaveChanges();
+            }
         }
 
-        public Visitantes GetById(int id)
+        /// <summary>
+        /// Buscar um visitante na base de dados
+        /// </summary>
+        /// <param name="id">id do visitante</param>
+        /// <returns>dados do visitante</returns>
+        public Visitantes? GetById(int id)
         {
-            var v = _context.Visitantes.AsNoTracking().FirstOrDefault(x => x.Id == id);
-            if (v == null) throw new KeyNotFoundException("Visitante não encontrado.");
-            return v;
+            return context.Visitantes.Find(id);
         }
 
+        /// <summary>
+        /// Buscar todos os visitantes cadastrados
+        /// </summary>
+        /// <returns>lista de visitantes</returns>
         public List<Visitantes> GetAll()
         {
-            return _context.Visitantes.AsNoTracking().ToList();
+            return context.Visitantes.AsNoTracking().ToList();
+        }
+
+        /// <summary>
+        /// Valida regras básicas do visitante
+        /// </summary>
+        /// <param name="visitante"></param>
+        /// <exception cref="ArgumentException"></exception>
+        private static void ValidarVisitante(Visitantes visitante)
+        {
+            if (visitante == null)
+                throw new ArgumentException("Visitante inválido.");
+
+            if (string.IsNullOrWhiteSpace(visitante.Nome))
+                throw new ArgumentException("O nome do visitante é obrigatório.");
+
+            // CPF geralmente é char(11) no banco
+            if (!string.IsNullOrWhiteSpace(visitante.Cpf) && visitante.Cpf.Length != 11)
+                throw new ArgumentException("O CPF deve conter 11 caracteres (somente números).");
+
+            // Regras simples de horário (opcional, mas ajuda)
+            if (visitante.DataHoraSaida.HasValue && visitante.DataHoraEntrada.HasValue &&
+                visitante.DataHoraSaida.Value < visitante.DataHoraEntrada.Value)
+            {
+                throw new ArgumentException("A data/hora de saída não pode ser menor que a entrada.");
+            }
         }
     }
 }
