@@ -1,0 +1,46 @@
+﻿@model CondosmartWeb.Models.AtaViewModel
+@{
+    ViewData["Title"] = "Detalhes da Ata";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>🔎 Detalhes</span>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">✏️ Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+        </div>
+    </div>
+
+    <div class="cs-card-body">
+        <div class="row g-3">
+            <div class="col-12 col-lg-8">
+                <div class="text-muted small">Título</div>
+                <div class="fw-semibold">@Model.Titulo</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">Data da Reunião</div>
+                <div class="fw-semibold">@Model.DataReuniao.ToString("dd/MM/yyyy")</div>
+            </div>
+
+            <div class="col-12">
+                <div class="text-muted small">Temas</div>
+                <div class="fw-semibold">@Model.Temas</div>
+            </div>
+
+            <div class="col-12">
+                <div class="text-muted small">Conteúdo</div>
+                <div class="fw-semibold" style="white-space: pre-wrap;">@Model.Conteudo</div>
+            </div>
+
+            @if (Model.CreatedAt.HasValue)
+            {
+                <div class="col-12">
+                    <div class="text-muted small">Criado em</div>
+                    <div class="fw-semibold">@Model.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
