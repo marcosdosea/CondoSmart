@@ -1,23 +1,22 @@
-﻿@model IEnumerable<CondosmartWeb.Models.VisitanteViewModel>
-
+﻿@model IEnumerable<CondosmartWeb.Models.AtaViewModel>
 @{
-    ViewData["Title"] = "Visitantes";
+    ViewData["Title"] = "Atas";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h2 class="fw-bold mb-0">👤 Visitantes</h2>
-        <small class="text-muted">Gerencie o controle de acesso</small>
+        <h2 class="fw-bold mb-0">📋 Atas</h2>
+        <small class="text-muted">Gerencie as atas de reunião cadastradas</small>
     </div>
 
     <a asp-action="Create" class="btn btn-cs-primary">
-        ➕ Novo Visitante
+        ➕ Nova Ata
     </a>
 </div>
 
 <div class="cs-card">
     <div class="cs-card-header d-flex justify-content-between align-items-center">
-        <span>Lista de Acesso</span>
+        <span>Lista</span>
         <span class="text-muted small">Total: @Model.Count()</span>
     </div>
 
@@ -25,7 +24,7 @@
         @if (!Model.Any())
         {
             <div class="alert alert-info text-center mb-0">
-                Nenhum visitante cadastrado.
+                Nenhuma ata cadastrada.
             </div>
         }
         else
@@ -34,10 +33,9 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Nome</th>
-                            <th>CPF</th>
-                            <th>Telefone</th>
-                            <th>Entrada</th>
+                            <th>Título</th>
+                            <th>Temas</th>
+                            <th>Data da Reunião</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -45,10 +43,9 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td class="fw-semibold">@item.Nome</td>
-                                <td>@item.Cpf</td>
-                                <td>@item.Telefone</td>
-                                <td>@item.DataHoraEntrada</td>
+                                <td class="fw-semibold">@item.Titulo</td>
+                                <td>@item.Temas</td>
+                                <td>@item.DataReuniao.ToString("dd/MM/yyyy")</td>
                                 <td class="text-center">
                                     <a asp-action="Details" asp-route-id="@item.Id"
                                        class="btn btn-sm btn-cs-outline me-1" title="Detalhes">🔎</a>
