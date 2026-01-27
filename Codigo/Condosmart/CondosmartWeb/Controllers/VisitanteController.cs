@@ -24,7 +24,7 @@ namespace CondosmartWeb.Controllers
             return View(listaVm);
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Detail(int id)
         {
             var item = _visitanteService.GetById(id);
             if (item == null) return NotFound();
