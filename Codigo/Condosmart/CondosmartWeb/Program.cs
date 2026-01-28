@@ -20,7 +20,7 @@ namespace Condosmart
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("Conex„o com o banco de dados n„o foi configurada corretamente.");
+                throw new InvalidOperationException("Conex√£o com o banco de dados n√£o foi configurada corretamente.");
             }
             builder.Services.AddDbContext<CondosmartContext>(
                 options => options.UseMySql(

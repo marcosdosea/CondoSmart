@@ -1,0 +1,68 @@
+﻿@model CondosmartWeb.Models.ChamadoViewModel
+@{
+    ViewData["Title"] = "Novo Chamado";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>➕ Cadastro de Chamado</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
+
+    <div class="cs-card-body">
+        <form asp-action="Create" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-12 col-lg-8">
+                <label asp-for="Descricao" class="form-label fw-semibold"></label>
+                <textarea asp-for="Descricao" class="form-control" rows="3" placeholder="Descreva o problema ou solicitação"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <label asp-for="DataChamado" class="form-label fw-semibold"></label>
+                <input asp-for="DataChamado" type="datetime-local" class="form-control" />
+                <span asp-validation-for="DataChamado" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
+                <input asp-for="CondominioId" class="form-control" type="number" placeholder="ID do Condomínio" />
+                <small class="text-muted">Digite o ID numérico do condomínio</small>
+                <span asp-validation-for="CondominioId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Status" class="form-label fw-semibold"></label>
+                <select asp-for="Status" class="form-select">
+                    <option value="aberto" selected>Aberto</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="resolvido">Resolvido</option>
+                    <option value="cancelado">Cancelado</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="MoradorId" class="form-label fw-semibold"></label>
+                <input asp-for="MoradorId" class="form-control" type="number" placeholder="ID do Morador (Opcional)" />
+                <span asp-validation-for="MoradorId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="SindicoId" class="form-label fw-semibold"></label>
+                <input asp-for="SindicoId" class="form-control" type="number" placeholder="ID do Síndico (Opcional)" />
+                <span asp-validation-for="SindicoId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex gap-2 justify-content-end mt-2">
+                <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
+                <button type="submit" class="btn btn-cs-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
