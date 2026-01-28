@@ -8,83 +8,92 @@ namespace CondosmartWeb.Controllers
 {
     public class VisitanteController : Controller
     {
-        private readonly IVisitanteService _service;
+        private readonly IVisitanteService _visitanteService;
         private readonly IMapper _mapper;
 
-        public VisitanteController(IVisitanteService service, IMapper mapper)
+        public VisitanteController(IVisitanteService visitanteService, IMapper mapper)
         {
-            _service = service;
+            _visitanteService = visitanteService;
             _mapper = mapper;
         }
 
+        // GET: Visitante
         public ActionResult Index()
         {
-            var lista = _service.GetAll();
-            var listaVm = _mapper.Map<List<VisitanteViewModel>>(lista);
-            return View(listaVm);
+            var visitantes = _visitanteService.GetAll();
+            var listaDeVisitantes = _mapper.Map<List<VisitanteViewModel>>(visitantes);
+            return View(listaDeVisitantes);
         }
 
+        // GET: Visitante/Details/5
         public ActionResult Details(int id)
         {
-            var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
-            return View(_mapper.Map<VisitanteViewModel>(entity));
+            var visitante = _visitanteService.Get(id);
+            var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
+            return View(visitanteVM);
         }
 
+        // GET: Visitante/Create
         public ActionResult Create()
         {
             return View();
         }
 
+        // POST: Visitante/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(VisitanteViewModel visitanteVm)
+        public ActionResult Create(VisitanteViewModel visitanteViewModel)
         {
             if (ModelState.IsValid)
             {
-                var visitante = _mapper.Map<Visitantes>(visitanteVm);
-                _service.Create(visitante);
+                var visitante = _mapper.Map<Visitantes>(visitanteViewModel);
+                _visitanteService.Create(visitante);
                 return RedirectToAction(nameof(Index));
             }
-            return View(visitanteVm);
+            return View(visitanteViewModel);
         }
 
+        // GET: Visitante/Edit/5
         public ActionResult Edit(int id)
         {
-            var item = _service.GetById(id);
-            if (item == null) return NotFound();
-            var itemVm = _mapper.Map<VisitanteViewModel>(item);
-            return View(itemVm);
+            var visitante = _visitanteService.Get(id);
+            var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
+            return View(visitanteVM);
         }
 
+        // POST: Visitante/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, VisitanteViewModel visitanteVm)
+        public ActionResult Edit(int id, VisitanteViewModel visitanteViewModel)
         {
-            if (id != visitanteVm.Id) return NotFound();
+            if (id != visitanteViewModel.Id)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
-                var visitante = _mapper.Map<Visitantes>(visitanteVm);
-                _service.Edit(visitante);
+                var visitante = _mapper.Map<Visitantes>(visitanteViewModel);
+                _visitanteService.Edit(visitante);
                 return RedirectToAction(nameof(Index));
             }
-            return View(visitanteVm);
+            return View(visitanteViewModel);
         }
 
+        // GET: Visitante/Delete/5
         public ActionResult Delete(int id)
         {
-            var item = _service.GetById(id);
-            if (item == null) return NotFound();
-            var itemVm = _mapper.Map<VisitanteViewModel>(item);
-            return View(itemVm);
+            var visitante = _visitanteService.Get(id);
+            var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
+            return View(visitanteVM);
         }
 
-        [HttpPost, ActionName("Delete")]
+        // POST: Visitante/Delete/5
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id, VisitanteViewModel collection)
         {
-            _service.Delete(id);
+            _visitanteService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

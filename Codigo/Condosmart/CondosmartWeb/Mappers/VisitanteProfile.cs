@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CondosmartWeb.Models;
 using Core.Models;
+using CondosmartWeb.Models;
 
 namespace CondosmartWeb.Mappers
 {
@@ -8,7 +8,7 @@ namespace CondosmartWeb.Mappers
     {
         public VisitanteProfile()
         {
-            CreateMap<VisitanteViewModel, Visitantes>().ReverseMap();
+            CreateMap<Visitantes, VisitanteViewModel>().ReverseMap();
         }
     }
 }
