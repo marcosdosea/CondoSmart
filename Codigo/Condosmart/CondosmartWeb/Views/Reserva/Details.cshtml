@@ -1,0 +1,75 @@
+﻿@model CondosmartWeb.Models.ReservaViewModel
+
+@{
+    ViewData["Title"] = "Detalhes da Reserva";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>🔎 Detalhes</span>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">✏️ Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+        </div>
+    </div>
+
+    <div class="cs-card-body">
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Área</div>
+                <div class="fw-semibold">@Model.AreaId</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Condomínio</div>
+                <div class="fw-semibold">@Model.CondominioId</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Morador</div>
+                <div class="fw-semibold">@Model.MoradorId</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Visitante</div>
+                <div class="fw-semibold">@Model.VisitanteId</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Síndico</div>
+                <div class="fw-semibold">@Model.SindicoId</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Status</div>
+                <div class="fw-semibold">
+                    @{
+                        var statusClass = Model.Status switch
+                        {
+                            "Confirmada" => "badge bg-success",
+                            "Pendente" => "badge bg-warning",
+                            "Cancelada" => "badge bg-danger",
+                            _ => "badge bg-secondary"
+                        };
+                    }
+                    <span class="@statusClass">@Model.Status</span>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Data Início</div>
+                <div class="fw-semibold">@Model.DataInicio.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Data Fim</div>
+                <div class="fw-semibold">@Model.DataFim.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+
+            <div class="col-12">
+                <div class="text-muted small">Data de Criação</div>
+                <div class="fw-semibold">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+        </div>
+    </div>
+</div>

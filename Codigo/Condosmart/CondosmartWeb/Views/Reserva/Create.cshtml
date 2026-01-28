@@ -1,0 +1,75 @@
+﻿@model CondosmartWeb.Models.ReservaViewModel
+
+@{
+    ViewData["Title"] = "Nova Reserva";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>➕ Cadastro de Reserva</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
+
+    <div class="cs-card-body">
+        <form asp-action="Create" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="AreaId" class="form-label fw-semibold"></label>
+                <input asp-for="AreaId" class="form-control" />
+                <span asp-validation-for="AreaId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
+                <input asp-for="CondominioId" class="form-control" />
+                <span asp-validation-for="CondominioId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="MoradorId" class="form-label fw-semibold"></label>
+                <input asp-for="MoradorId" class="form-control" />
+                <span asp-validation-for="MoradorId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="VisitanteId" class="form-label fw-semibold"></label>
+                <input asp-for="VisitanteId" class="form-control" />
+                <span asp-validation-for="VisitanteId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="SindicoId" class="form-label fw-semibold"></label>
+                <input asp-for="SindicoId" class="form-control" />
+                <span asp-validation-for="SindicoId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="DataInicio" class="form-label fw-semibold"></label>
+                <input asp-for="DataInicio" class="form-control" />
+                <span asp-validation-for="DataInicio" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="DataFim" class="form-label fw-semibold"></label>
+                <input asp-for="DataFim" class="form-control" />
+                <span asp-validation-for="DataFim" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Status" class="form-label fw-semibold"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex gap-2 justify-content-end mt-2">
+                <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
+                <button type="submit" class="btn btn-cs-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
