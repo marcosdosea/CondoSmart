@@ -39,12 +39,12 @@ namespace Service
             }
         }
 
-        public Visitantes? Get(int id)
+        public Visitantes? GetById(int id)
         {
             return _context.Visitantes.Find(id);
         }
 
-        public IEnumerable<Visitantes> GetAll()
+        public List<Visitantes> GetAll()
         {
             return _context.Visitantes.AsNoTracking().ToList();
         }

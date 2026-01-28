@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
 	<meta charset="utf-8" />
@@ -18,7 +18,7 @@
 			<div class="cs-brand">
 				<div class="cs-brand-badge">C</div>
 				<div>
-					<div>CONDOMÍNIO</div>
+					<div>CONDOM�NIO</div>
 					<small class="text-muted">CondoSmart</small>
 				</div>
 			</div>
@@ -29,26 +29,31 @@
 
 			<nav class="cs-nav d-grid gap-2">
 				<a asp-controller="Home" asp-action="Index">
-					🏠 Home
+					&#127968; Home
 				</a>
 
 				<a asp-controller="Condominio" asp-action="Index">
-					🏢 Condomínios
+					&#127970; Condom�nios
+				</a>
+
+				<a asp-controller="UnidadesResidenciais" asp-action="Index">
+					&#127961; Unidades Residenciais
 				</a>
 
 				<a asp-controller="Sindico" asp-action="Index">
-					🧑‍💼 Sindico
+					&#129333; S�ndico
 				</a>
 
 				<a asp-controller="Ata" asp-action="Index">
-					📋 Atas
+					&#128203; Atas
 				</a>
 
 				<a asp-controller="Visitante" asp-action="Index">
-					👤 Visitantes
+					&#128100; Visitantes
 				</a>
+
 				<a asp-controller="Reserva" asp-action="Index">
-					📅 Reservas
+					&#128197; Reservas
 				</a>
 
 			</nav>
@@ -59,69 +64,14 @@
 			<header class="cs-topbar">
 				<div class="d-flex align-items-center gap-2">
 					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
-						☰
+						?
 					</button>
 					<div class="title">@ViewData["Title"]</div>
 				</div>
 
-				<nav class="cs-nav d-grid gap-2">
-					<a asp-controller="Home" asp-action="Index">
-						🏠 Home
-					</a>
-
-					<a asp-controller="Condominio" asp-action="Index">
-						🏢 Condomínios
-					</a>
-
-					<a asp-controller="UnidadesResidenciais" asp-action="Index">
-						🏘️ Unidades Residenciais
-					</a>
-
-					<a asp-controller="Sindico" asp-action="Index">
-						🧑‍💼 Síndico
-					</a>
-
-					<a asp-controller="Ata" asp-action="Index">
-						📋 Atas
-					</a>
-
-					<a asp-controller="Visitante" asp-action="Index">
-						👤 Visitantes
-					</a>
-
-				</nav>
-			</aside>
-
-			<div class="cs-main">
-
-				<header class="cs-topbar">
-					<div class="d-flex align-items-center gap-2">
-						<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
-							☰
-						</button>
-						<div class="title">@ViewData["Title"]</div>
-					</div>
-
-					<div class="cs-top-actions">
-						<button class="cs-icon-btn" title="Notificações">🔔</button>
-						<button class="cs-icon-btn" title="Configurações">⚙️</button>
-					</div>
-				</header>
-
-				<main class="container py-4">
-					@RenderBody()
-				</main>
-
-				<footer class="text-muted py-3">
-					<div class="container">
-						&copy; 2026 - Condosmart
-					</div>
-				</footer>
-			</div>
-		</div>
 				<div class="cs-top-actions">
-					<button class="cs-icon-btn" title="Notificações">🔔</button>
-					<button class="cs-icon-btn" title="Configurações">⚙️</button>
+					<button class="cs-icon-btn" title="Notifica��es">??</button>
+					<button class="cs-icon-btn" title="Configura��es">??</button>
 				</div>
 			</header>
 

@@ -7,7 +7,7 @@ namespace Core.Service
         int Create(UnidadesResidenciais unidadesResidenciais);
         void Edit(UnidadesResidenciais unidadesResidenciais);
         void Delete(int id);
-        UnidadesResidenciais GetById(int id);
+        UnidadesResidenciais? GetById(int id);
         List<UnidadesResidenciais> GetAll();
     }
 }

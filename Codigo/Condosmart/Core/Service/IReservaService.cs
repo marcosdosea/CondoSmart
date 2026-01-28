@@ -7,7 +7,7 @@ namespace Core.Service
         int Create(Reserva reserva);
         void Edit(Reserva reserva);
         void Delete(int id);
-        Reserva GetById(int id);
+        Reserva? GetById(int id);
         List<Reserva> GetAll();
     }
 }
