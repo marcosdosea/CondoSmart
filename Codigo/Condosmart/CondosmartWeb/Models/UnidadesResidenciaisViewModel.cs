@@ -7,42 +7,61 @@ namespace CondosmartWeb.Models
         [Display(Name = "Código")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O número da unidade é obrigatório")]
-        [StringLength(10, ErrorMessage = "O número da unidade não pode exceder 10 caracteres.")]
-        [Display(Name = "Unidade")]
-        public string Numero { get; set; } = null!;
+        [Required(ErrorMessage = "O identificador é obrigatório")]
+        [StringLength(50, ErrorMessage = "O identificador não pode exceder 50 caracteres.")]
+        [Display(Name = "Identificador")]
+        public string Identificador { get; set; } = null!;
 
-        [Required(ErrorMessage = "O bloco é obrigatório")]
-        [StringLength(10, ErrorMessage = "O bloco não pode exceder 10 caracteres.")]
-        [Display(Name = "Bloco")]
-        public string Bloco { get; set; } = null!;
+        [StringLength(100)]
+        [Display(Name = "Rua")]
+        public string? Rua { get; set; }
 
-        [Required(ErrorMessage = "O tipo da unidade é obrigatório")]
-        [StringLength(30)]
-        [Display(Name = "Tipo da Unidade")]
-        public string Tipo { get; set; } = null!;
+        [StringLength(10)]
+        [Display(Name = "Número")]
+        public string? Numero { get; set; }
 
-        [Required(ErrorMessage = "A metragem é obrigatória")]
-        [Range(1, 10000, ErrorMessage = "A metragem deve ser maior que 0.")]
-        [Display(Name = "Metragem (m²)")]
-        public decimal Metragem { get; set; }
+        [StringLength(100)]
+        [Display(Name = "Bairro")]
+        public string? Bairro { get; set; }
 
-        [Required(ErrorMessage = "O número de quartos é obrigatório")]
-        [Range(0, 20)]
-        [Display(Name = "Quartos")]
-        public int Quartos { get; set; }
+        [StringLength(100)]
+        [Display(Name = "Complemento")]
+        public string? Complemento { get; set; }
 
-        [Required(ErrorMessage = "O número de banheiros é obrigatório")]
-        [Range(0, 20)]
-        [Display(Name = "Banheiros")]
-        public int Banheiros { get; set; }
+        [StringLength(8, MinimumLength = 8)]
+        [Display(Name = "CEP")]
+        public string? Cep { get; set; }
 
-        [Display(Name = "Vagas de Garagem")]
-        [Range(0, 20)]
-        public int VagasGaragem { get; set; }
+        [StringLength(100)]
+        [Display(Name = "Cidade")]
+        public string? Cidade { get; set; }
 
-        [Required(ErrorMessage = "Informe o condomínio")]
+        [StringLength(2, MinimumLength = 2)]
+        [Display(Name = "UF")]
+        public string? Uf { get; set; }
+
+        [StringLength(15)]
+        [Display(Name = "Telefone Residencial")]
+        public string? TelefoneResidencial { get; set; }
+
+        [StringLength(15)]
+        [Display(Name = "Telefone Celular")]
+        public string? TelefoneCelular { get; set; }
+
+        [Display(Name = "Morador")]
+        public int? MoradorId { get; set; }
+
+        [Required(ErrorMessage = "O condomínio é obrigatório")]
         [Display(Name = "Condomínio")]
         public int CondominioId { get; set; }
+
+        [Display(Name = "Síndico")]
+        public int? SindicoId { get; set; }
+
+        // Propriedades de navegação para exibição
+        public string? CondominioNome { get; set; }
+        public string? MoradorNome { get; set; }
+        public string? SindicoNome { get; set; }
     }
 }
+
