@@ -30,8 +30,7 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.GetAll())
                 .Returns(GetTestVisitantes());
 
-            // CORREÇÃO 1: Mudamos de GetById para Get (igual ao Service)
-            mockService.Setup(s => s.Get(1))
+            mockService.Setup(s => s.GetById(1))
                 .Returns(GetTargetVisitante());
 
             mockService.Setup(s => s.Edit(It.IsAny<Visitantes>()))
@@ -59,8 +58,7 @@ namespace CondosmartWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<VisitanteViewModel>));
             var lista = (List<VisitanteViewModel>)viewResult.ViewData.Model;
 
-            // Ajuste para Assert padrão do MSTest
-            Assert.AreEqual(3, lista.Count);
+            Assert.HasCount(3, lista);
         }
 
         [TestMethod]
@@ -170,11 +168,8 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void DeleteTest_Post_Valid()
         {
-            // CORREÇÃO 2 e 3: O controller agora usa 'Delete' (não DeleteConfirmed)
-            // e recebe 2 parâmetros (id, viewModel) no POST. Passamos null no segundo pois não é usado na lógica de exclusão.
-
             // Act
-            var result = controller.Delete(1, null);
+            var result = controller.Delete(1, new VisitanteViewModel());
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));

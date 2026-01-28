@@ -28,7 +28,7 @@ namespace CondosmartWeb.Controllers
         // GET: Visitante/Details/5
         public ActionResult Details(int id)
         {
-            var visitante = _visitanteService.Get(id);
+            var visitante = _visitanteService.GetById(id);
             var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
             return View(visitanteVM);
         }
@@ -56,7 +56,7 @@ namespace CondosmartWeb.Controllers
         // GET: Visitante/Edit/5
         public ActionResult Edit(int id)
         {
-            var visitante = _visitanteService.Get(id);
+            var visitante = _visitanteService.GetById(id);
             var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
             return View(visitanteVM);
         }
@@ -83,7 +83,7 @@ namespace CondosmartWeb.Controllers
         // GET: Visitante/Delete/5
         public ActionResult Delete(int id)
         {
-            var visitante = _visitanteService.Get(id);
+            var visitante = _visitanteService.GetById(id);
             var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
             return View(visitanteVM);
         }
