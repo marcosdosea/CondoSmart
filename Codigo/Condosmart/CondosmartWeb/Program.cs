@@ -1,10 +1,11 @@
 using Core;
 using Core.Data;
+using Core.Models;
 using Core.Service;
-using Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure; // Adicione este using
+using Service;
 
 namespace Condosmart
 {
@@ -33,6 +34,8 @@ namespace Condosmart
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
             builder.Services.AddScoped<IAtaService, AtaService>();
             builder.Services.AddScoped<IReservaService, ReservaService>();
+            builder.Services.AddScoped<IUnidadesResidenciaisService, UnidadesResidenciaisService>();
+
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

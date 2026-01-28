@@ -1,0 +1,70 @@
+@model CondosmartWeb.Models.UnidadeResidencialViewModel
+@{
+    ViewData["Title"] = "Detalhes da Unidade Residencial";
+}
+
+<div class="cs-card">
+<div class="cs-card-header d-flex justify-content-between align-items-center">
+    <span>&#128270; Detalhes</span>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">&#9999; Editar</a>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">&#8617; Voltar</a>
+    </div>
+</div>
+
+    <div class="cs-card-body">
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Identificador</div>
+                <div class="fw-semibold">@Model.Identificador</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Condomínio</div>
+                <div class="fw-semibold">@Model.CondominioNome</div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.MoradorNome))
+            {
+                <div class="col-12">
+                    <div class="text-muted small">Morador</div>
+                    <div class="fw-semibold">@Model.MoradorNome</div>
+                </div>
+            }
+
+            <div class="col-12">
+                <div class="text-muted small">Endereço</div>
+                <div class="fw-semibold">
+                    @if (!string.IsNullOrEmpty(Model.Rua))
+                    {
+                        <text>@Model.Rua, @Model.Numero - @Model.Bairro, @Model.Cidade/@Model.Uf - CEP: @Model.Cep</text>
+                    }
+                    else
+                    {
+                        <text>Não informado</text>
+                    }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Complemento))
+                {
+                    <div class="text-muted">Complemento: @Model.Complemento</div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.TelefoneResidencial))
+            {
+                <div class="col-12 col-lg-6">
+                    <div class="text-muted small">Telefone Residencial</div>
+                    <div class="fw-semibold">@Model.TelefoneResidencial</div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.TelefoneCelular))
+            {
+                <div class="col-12 col-lg-6">
+                    <div class="text-muted small">Telefone Celular</div>
+                    <div class="fw-semibold">@Model.TelefoneCelular</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

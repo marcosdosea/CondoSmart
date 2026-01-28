@@ -1,0 +1,94 @@
+@model CondosmartWeb.Models.UnidadeResidencialViewModel
+@{
+    ViewData["Title"] = "Nova Unidade Residencial";
+}
+
+<div class="cs-card">
+<div class="cs-card-header d-flex justify-content-between align-items-center">
+    <span>&#10133; Cadastro de Unidade Residencial</span>
+    <a asp-action="Index" class="btn btn-cs-outline btn-sm">&#8617; Voltar</a>
+</div>
+
+    <div class="cs-card-body">
+        <form asp-action="Create" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Identificador" class="form-label fw-semibold"></label>
+                <input asp-for="Identificador" class="form-control" placeholder="Ex: Bloco A - Apto 101" />
+                <span asp-validation-for="Identificador" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
+                <select asp-for="CondominioId" class="form-select" asp-items="ViewBag.Condominios">
+                    <option value="">Selecione um condomínio</option>
+                </select>
+                <span asp-validation-for="CondominioId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <label asp-for="Rua" class="form-label fw-semibold"></label>
+                <input asp-for="Rua" class="form-control" />
+                <span asp-validation-for="Rua" class="text-danger"></span>
+            </div>
+
+            <div class="col-6 col-lg-4">
+                <label asp-for="Numero" class="form-label fw-semibold"></label>
+                <input asp-for="Numero" class="form-control" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Bairro" class="form-label fw-semibold"></label>
+                <input asp-for="Bairro" class="form-control" />
+                <span asp-validation-for="Bairro" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Complemento" class="form-label fw-semibold"></label>
+                <input asp-for="Complemento" class="form-control" placeholder="Ex: Próximo ao mercado" />
+                <span asp-validation-for="Complemento" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Cidade" class="form-label fw-semibold"></label>
+                <input asp-for="Cidade" class="form-control" />
+                <span asp-validation-for="Cidade" class="text-danger"></span>
+            </div>
+
+            <div class="col-6 col-lg-2">
+                <label asp-for="Uf" class="form-label fw-semibold"></label>
+                <input asp-for="Uf" class="form-control" maxlength="2" />
+                <span asp-validation-for="Uf" class="text-danger"></span>
+            </div>
+
+            <div class="col-6 col-lg-4">
+                <label asp-for="Cep" class="form-label fw-semibold"></label>
+                <input asp-for="Cep" class="form-control" maxlength="8" />
+                <span asp-validation-for="Cep" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="TelefoneResidencial" class="form-label fw-semibold"></label>
+                <input asp-for="TelefoneResidencial" class="form-control" />
+                <span asp-validation-for="TelefoneResidencial" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="TelefoneCelular" class="form-label fw-semibold"></label>
+                <input asp-for="TelefoneCelular" class="form-control" />
+                <span asp-validation-for="TelefoneCelular" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex gap-2 justify-content-end mt-2">
+                <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
+                <button type="submit" class="btn btn-cs-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

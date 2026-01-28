@@ -1,0 +1,77 @@
+﻿@model IEnumerable<CondosmartWeb.Models.UnidadeResidencialViewModel>
+@{
+    ViewData["Title"] = "Unidades Residenciais";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">&#127968; Unidades Residenciais</h2>
+        <small class="text-muted">Gerencie as unidades residenciais cadastradas</small>
+    </div>
+
+    <a asp-action="Create" class="btn btn-cs-primary">
+        &#10133; Nova Unidade
+    </a>
+</div>
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>Lista</span>
+        <span class="text-muted small">Total: @Model.Count()</span>
+    </div>
+
+    <div class="cs-card-body">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center mb-0">
+                Nenhuma unidade residencial cadastrada.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Identificador</th>
+                            <th>Endereço</th>
+                            <th>Condomínio</th>
+                            <th>Morador</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@item.Identificador</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Rua))
+                                    {
+                                        <text>@item.Rua, @item.Numero - @item.Bairro</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Não informado</text>
+                                    }
+                                </td>
+                                <td>@item.CondominioNome</td>
+                                <td>@(item.MoradorNome ?? "Sem morador")</td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">&#128270;</a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-cs-outline me-1" title="Editar">&#9999;</a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-danger" title="Excluir">&#128465;</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
