@@ -1,0 +1,59 @@
+﻿@model CondosmartWeb.Models.VisitanteViewModel
+@{
+    ViewData["Title"] = "Detalhes do Visitante";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>🔎 Detalhes</span>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">✏️ Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+        </div>
+    </div>
+
+    <div class="cs-card-body">
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Nome</div>
+                <div class="fw-semibold">@Model.Nome</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">CPF</div>
+                <div class="fw-semibold">@Model.Cpf</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">Telefone</div>
+                <div class="fw-semibold">@Model.Telefone</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">Entrada</div>
+                <div class="fw-semibold">@Model.DataHoraEntrada</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">Saída</div>
+                <div class="fw-semibold">
+                    @if(Model.DataHoraSaida.HasValue)
+                    {
+                        @Model.DataHoraSaida
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Em andamento</span>
+                    }
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="text-muted small">Observação</div>
+                <div class="fw-semibold">
+                    @(string.IsNullOrEmpty(Model.Observacao) ? "-" : Model.Observacao)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

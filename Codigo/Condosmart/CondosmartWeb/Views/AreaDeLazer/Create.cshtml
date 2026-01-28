@@ -1,0 +1,105 @@
+﻿@model Core.DTO.AreaDeLazerDTO
+
+@{
+    ViewData["Title"] = "Nova Área";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Mantém o fundo verde */
+    body { background-color: #9FE3DE !important; }
+
+    /* Estilo dos Labels (Negrito e tamanho maior) */
+    .custom-label {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #222;
+        margin-bottom: 5px;
+        margin-top: 15px;
+        display: block;
+    }
+
+    /* Estilo dos Inputs (Quadrados com borda leve) */
+    .custom-input {
+        border: 1px solid #AAA;
+        border-radius: 4px;
+        padding: 8px;
+        width: 100%;
+        background-color: white;
+    }
+
+    /* Botão Voltar (Igual ao Index) */
+    .btn-voltar-topo {
+        background-color: white;
+        color: #555;
+        border-radius: 20px;
+        padding: 5px 20px;
+        border: none;
+        font-weight: bold;
+        float: right;
+        text-decoration: none;
+    }
+
+    /* Botão Salvar (Verde) */
+    .btn-salvar-verde {
+        background-color: #5CB85C; /* Verde Bootstrap 'Success' ajustado */
+        color: white;
+        padding: 10px 50px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        float: right;
+        margin-top: 40px;
+        transition: background-color 0.3s;
+    }
+    .btn-salvar-verde:hover {
+        background-color: #4cae4c;
+        color: white;
+    }
+</style>
+
+<div class="container pt-4">
+    <div class="clearfix mb-2">
+        <a asp-action="Index" class="btn-voltar-topo">← Voltar</a>
+    </div>
+
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                
+                <label class="custom-label">Nome da Área</label>
+                <input asp-for="Nome" class="custom-input" placeholder="Ex: Salão de Festas" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+
+                <label class="custom-label">Condomínio</label>
+                <select asp-for="CondominioId" class="custom-input form-select" asp-items="ViewBag.CondominioId">
+                    <option value="">Selecione...</option>
+                </select>
+                <span asp-validation-for="CondominioId" class="text-danger"></span>
+
+            </div>
+
+            <div class="col-md-6">
+                
+                <label class="custom-label">Descrição / Regras</label>
+                <textarea asp-for="Descricao" class="custom-input" rows="4"></textarea>
+
+                <div class="mt-4 d-flex align-items-center">
+                    <input type="checkbox" asp-for="Disponibilidade" checked style="width: 20px; height: 20px; margin-right: 10px;" />
+                    <label class="custom-label" style="margin: 0;">Disponível para uso imediato?</label>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="clearfix">
+            <button type="submit" class="btn-salvar-verde">Salvar</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

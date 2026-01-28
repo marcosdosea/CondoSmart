@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Core.Models.AreaDeLazer>
+
+@{
+    ViewData["Title"] = "Áreas de Lazer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Força o fundo verde-água em toda a tela */
+    body {
+        background-color: #9FE3DE !important; 
+    }
+    .main-content {
+        background-color: #9FE3DE !important;
+    }
+    
+    /* Botão Voltar (Branco arredondado no topo) */
+    .btn-voltar-topo {
+        background-color: white;
+        color: #555;
+        border-radius: 20px;
+        padding: 5px 20px;
+        border: none;
+        font-weight: bold;
+        float: right;
+        text-decoration: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Botão Criar (Cinza claro quadrado) */
+    .btn-criar-custom {
+        background-color: #EFEFEF;
+        border: 1px solid #CCC;
+        color: black;
+        border-radius: 3px;
+        padding: 5px 15px;
+        font-weight: 500;
+        text-decoration: none;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* Tabela (Cabeçalho Bege) */
+    .table-custom thead th {
+        background-color: #EEECD4 !important; /* Bege exato do print */
+        border-bottom: 1px solid #ccc;
+        color: #333;
+        font-weight: bold;
+    }
+    .table-custom tbody tr {
+        background-color: white;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    /* Ícones de ação */
+    .action-icons a {
+        text-decoration: none;
+        margin-left: 8px;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight: bold; color: #333;">Áreas de Lazer</h2>
+        <a asp-controller="Home" asp-action="Index" class="btn-voltar-topo">← Voltar</a>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <a asp-action="Create" class="btn-criar-custom">Criar Área</a>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end gap-2">
+            <select class="form-select form-select-sm" style="width: 120px; border-radius: 0; border: 1px solid #ccc;">
+                <option>Área</option>
+            </select>
+            <div class="input-group input-group-sm" style="width: 250px;">
+                <input type="text" class="form-control" placeholder="Procurar" style="border-radius: 0; border: 1px solid #ccc;">
+                <button class="btn btn-light border" type="button" style="background-color: white; border-radius: 0;">
+                    🔍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom">
+            <thead>
+                <tr>
+                    <th style="width: 30%;">Nome</th>
+                    <th style="width: 40%;">Descrição</th>
+                    <th style="width: 15%;">Status</th>
+                    <th style="width: 15%; text-align: right; padding-right: 20px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="align-middle ps-3">@item.Nome</td>
+                        <td class="align-middle">@item.Descricao</td>
+                        <td class="align-middle">
+                            @if(item.Disponibilidade == true) { <span class="badge bg-success">Ativa</span> }
+                            else { <span class="badge bg-danger">Inativa</span> }
+                        </td>
+                        <td class="align-middle text-end pe-4 action-icons">
+                            <a asp-action="Edit" asp-route-id="@item.Id" title="Editar">✏️</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" title="Ver" style="color: #0d6efd;">👁️</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" title="Excluir" style="color: red;">❌</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

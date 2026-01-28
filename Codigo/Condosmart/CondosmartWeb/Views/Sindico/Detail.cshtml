@@ -1,0 +1,66 @@
+﻿@model CondosmartWeb.Models.SindicoViewModel
+@{
+    ViewData["Title"] = "Detalhes do Síndico";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>🔎 Detalhes</span>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-outline btn-sm">✏️ Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+        </div>
+    </div>
+
+    <div class="cs-card-body">
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Nome</div>
+                <div class="fw-semibold">@Model.Nome</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">CPF</div>
+                <div class="fw-semibold">@Model.Cpf</div>
+            </div>
+
+            <div class="col-12">
+                <div class="text-muted small">Endereço</div>
+                <div class="fw-semibold">
+                    @using System.Text
+                    @{
+                        var endereco = new StringBuilder();
+                        if (!string.IsNullOrWhiteSpace(Model.Rua))
+                        {
+                            endereco.Append(Model.Rua);
+                            if (!string.IsNullOrWhiteSpace(Model.Numero)) endereco.Append($", {Model.Numero}");
+                            if (!string.IsNullOrWhiteSpace(Model.Bairro)) endereco.Append($" - {Model.Bairro}");
+                            if (!string.IsNullOrWhiteSpace(Model.Cidade)) endereco.Append($", {Model.Cidade}");
+                            if (!string.IsNullOrWhiteSpace(Model.Uf)) endereco.Append($"/{Model.Uf}");
+                            if (!string.IsNullOrWhiteSpace(Model.Cep)) endereco.Append($" - CEP: {Model.Cep}");
+                        }
+                        else
+                        {
+                            endereco.Append("Não informado");
+                        }
+                    }
+                    @endereco.ToString()
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Complemento))
+                {
+                    <div class="text-muted">Complemento: @Model.Complemento</div>
+                }
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">E-mail</div>
+                <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Email) ? "Não informado" : Model.Email)</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Telefone</div>
+                <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Telefone) ? "Não informado" : Model.Telefone)</div>
+            </div>
+        </div>
+    </div>
+</div>
