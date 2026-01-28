@@ -7,7 +7,7 @@ namespace Core.Service
         int Create(Chamado chamado);
         void Edit(Chamado chamado);
         void Delete(int id);
-        Chamado GetById(int id);
+        Chamado? GetById(int id);
         List<Chamado> GetAll();
     }
 }

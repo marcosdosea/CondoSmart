@@ -21,6 +21,7 @@ namespace CondosmartWeb.Controllers.Tests
         public void Initialize()
         {
             var mockService = new Mock<IChamadosService>();
+            var mockCondominioService = new Mock<ICondominioService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new ChamadoProfile())
@@ -41,7 +42,11 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new ChamadoController(mockService.Object, mapper);
+            // Mock para validar se o condomínio existe
+            mockCondominioService.Setup(s => s.GetById(It.IsAny<int>()))
+                .Returns((int id) => id == 1 ? new Condominio { Id = 1, Nome = "Condomínio Teste" } : null);
+
+            controller = new ChamadoController(mockService.Object, mockCondominioService.Object, mapper);
         }
 
         [TestMethod]
@@ -70,7 +75,7 @@ namespace CondosmartWeb.Controllers.Tests
             var model = (ChamadoViewModel)viewResult.ViewData.Model;
 
             Assert.AreEqual("Vazamento na cozinha", model.Descricao);
-            Assert.AreEqual("Alta", model.Prioridade);
+            Assert.AreEqual("aberto", model.Status);
         }
 
         [TestMethod]
@@ -115,13 +120,14 @@ namespace CondosmartWeb.Controllers.Tests
             var model = (ChamadoViewModel)viewResult.ViewData.Model;
 
             Assert.AreEqual("Vazamento na cozinha", model.Descricao);
-            Assert.AreEqual("Cozinha 101", model.Local);
+            Assert.AreEqual("aberto", model.Status);
         }
 
         [TestMethod]
         public void Edit_Post_Valid_RedirectsToIndex()
         {
-            var result = controller.Edit(GetTargetChamadoModel());
+            var chamadoModel = GetTargetChamadoModel();
+            var result = controller.Edit(chamadoModel.Id, chamadoModel);
 
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
@@ -162,10 +168,10 @@ namespace CondosmartWeb.Controllers.Tests
             {
                 Id = 1,
                 Descricao = "Vazamento na cozinha",
-                Descricao = "Vazamento no encanamento da pia",
-                Prioridade = "Alta",
-                Local = "Cozinha 101",
+                Status = "aberto",
                 MoradorId = 5,
+                CondominioId = 1,
+                DataChamado = DateTime.Now,
                 CreatedAt = DateTime.UtcNow
             };
         }
@@ -176,10 +182,10 @@ namespace CondosmartWeb.Controllers.Tests
             {
                 Id = 1,
                 Descricao = "Vazamento na cozinha",
-                Descricao = "Vazamento no encanamento da pia",
-                Prioridade = "Alta",
-                Local = "Cozinha 101",
-                MoradorId = 5
+                Status = "aberto",
+                MoradorId = 5,
+                CondominioId = 1,
+                DataChamado = DateTime.Now
             };
         }
 
@@ -189,10 +195,10 @@ namespace CondosmartWeb.Controllers.Tests
             {
                 Id = 99,
                 Descricao = "Luz queimada corredor",
-                Descricao = "Lâmpada queimada no corredor principal",
-                Prioridade = "Média",
-                Local = "Corredor térreo",
-                MoradorId = 2
+                Status = "aberto",
+                MoradorId = 2,
+                CondominioId = 1,
+                DataChamado = DateTime.Now
             };
         }
 
@@ -204,30 +210,30 @@ namespace CondosmartWeb.Controllers.Tests
                 {
                     Id = 1,
                     Descricao = "Vazamento na cozinha",
-                    Descricao = "Vazamento no encanamento da pia",
-                    Prioridade = "Alta",
-                    Local = "Cozinha 101",
+                    Status = "aberto",
                     MoradorId = 5,
+                    CondominioId = 1,
+                    DataChamado = DateTime.Now,
                     CreatedAt = DateTime.UtcNow
                 },
                 new Chamado
                 {
                     Id = 2,
                     Descricao = "Porta do salão emperrada",
-                    Descricao = "Porta não fecha",
-                    Prioridade = "Baixa",
-                    Local = "Salão de festas",
+                    Status = "em_andamento",
                     MoradorId = 3,
+                    CondominioId = 1,
+                    DataChamado = DateTime.Now,
                     CreatedAt = DateTime.UtcNow
                 },
                 new Chamado
                 {
                     Id = 3,
                     Descricao = "Luz queimada corredor",
-                    Descricao = "Lâmpada queimada no corredor principal",
-                    Prioridade = "Média",
-                    Local = "Corredor térreo",
+                    Status = "resolvido",
                     MoradorId = 2,
+                    CondominioId = 1,
+                    DataChamado = DateTime.Now,
                     CreatedAt = DateTime.UtcNow
                 }
             };

@@ -1,68 +1,70 @@
 ﻿@model CondosmartWeb.Models.ChamadoViewModel
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Chamado";
 }
 
-<h1>Edit</h1>
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>✏️ Editar Chamado</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
 
-<h4>ChamadoViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="cs-card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-12 col-lg-8">
+                <label asp-for="Descricao" class="form-label fw-semibold"></label>
+                <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DataChamado" class="control-label"></label>
-                <input asp-for="DataChamado" class="form-control" />
+
+            <div class="col-12 col-lg-4">
+                <label asp-for="DataChamado" class="form-label fw-semibold"></label>
+                <input asp-for="DataChamado" type="datetime-local" class="form-control" />
                 <span asp-validation-for="DataChamado" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="MoradorId" class="control-label"></label>
-                <input asp-for="MoradorId" class="form-control" />
-                <span asp-validation-for="MoradorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SindicoId" class="control-label"></label>
-                <input asp-for="SindicoId" class="form-control" />
-                <span asp-validation-for="SindicoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CondominioId" class="control-label"></label>
-                <input asp-for="CondominioId" class="form-control" />
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
+                <input asp-for="CondominioId" class="form-control" type="number" readonly />
+                <small class="text-muted">ID do condomínio (não pode ser alterado)</small>
                 <span asp-validation-for="CondominioId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Status" class="form-label fw-semibold"></label>
+                <select asp-for="Status" class="form-select">
+                    <option value="aberto">Aberto</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="resolvido">Resolvido</option>
+                    <option value="cancelado">Cancelado</option>
+                </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="MoradorId" class="form-label fw-semibold"></label>
+                <input asp-for="MoradorId" class="form-control" type="number" placeholder="Opcional" />
+                <span asp-validation-for="MoradorId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="SindicoId" class="form-label fw-semibold"></label>
+                <input asp-for="SindicoId" class="form-control" type="number" placeholder="Opcional" />
+                <span asp-validation-for="SindicoId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex gap-2 justify-content-end mt-2">
+                <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
+                <button type="submit" class="btn btn-cs-primary">Salvar Alterações</button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

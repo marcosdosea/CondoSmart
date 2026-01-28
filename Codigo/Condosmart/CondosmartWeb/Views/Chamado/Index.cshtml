@@ -1,77 +1,82 @@
 ﻿@model IEnumerable<CondosmartWeb.Models.ChamadoViewModel>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Chamados";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">🔧 Chamados</h2>
+        <small class="text-muted">Gerencie os chamados cadastrados</small>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataChamado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MoradorId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SindicoId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CondominioId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataChamado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MoradorId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SindicoId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CondominioId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <a asp-action="Create" class="btn btn-cs-primary">
+        ➕ Novo Chamado
+    </a>
+</div>
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>Lista</span>
+        <span class="text-muted small">Total: @Model.Count()</span>
+    </div>
+
+    <div class="cs-card-body">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center mb-0">
+                Nenhum chamado cadastrado.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Condomínio</th>
+                            <th>Morador</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@item.Descricao</td>
+                                <td>@item.DataChamado.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @{
+                                        var statusClass = item.Status switch
+                                        {
+                                            "aberto" => "badge bg-danger",
+                                            "em_andamento" => "badge bg-warning",
+                                            "resolvido" => "badge bg-success",
+                                            "cancelado" => "badge bg-secondary",
+                                            _ => "badge bg-light"
+                                        };
+                                    }
+                                    <span class="@statusClass">@item.Status</span>
+                                </td>
+                                <td>@item.CondominioId</td>
+                                <td>@item.MoradorId</td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">🔎</a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-cs-outline me-1" title="Editar">✏️</a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-danger" title="Excluir">🗑️</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

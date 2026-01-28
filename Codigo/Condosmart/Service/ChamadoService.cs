@@ -29,9 +29,16 @@ namespace Service
 		{
 			ValidarChamado(chamado);
 
-			context.Add(chamado);
-			context.SaveChanges();
-			return chamado.Id;
+			try
+			{
+				context.Add(chamado);
+				context.SaveChanges();
+				return chamado.Id;
+			}
+			catch (DbUpdateException ex)
+			{
+				throw new ArgumentException("Erro ao salvar chamado. Verifique se o condomínio existe.", ex);
+			}
 		}
 
 		/// <summary>
@@ -42,8 +49,15 @@ namespace Service
 		{
 			ValidarChamado(chamado);
 
-			context.Update(chamado);
-			context.SaveChanges();
+			try
+			{
+				context.Update(chamado);
+				context.SaveChanges();
+			}
+			catch (DbUpdateException ex)
+			{
+				throw new ArgumentException("Erro ao atualizar chamado. Verifique se o condomínio existe.", ex);
+			}
 		}
 
 		/// <summary>
@@ -97,7 +111,7 @@ namespace Service
 			// Validar status com os valores possíveis definidos no banco
 			var valoresValidos = new[] { "aberto", "em_andamento", "resolvido", "cancelado" };
 			if (string.IsNullOrWhiteSpace(chamado.Status) || !valoresValidos.Contains(chamado.Status))
-				throw new ArgumentException("Status do chamado inválido.");
+				throw new ArgumentException("Status do chamado inválido. Use: aberto, em_andamento, resolvido ou cancelado.");
 		}
 	}
 }

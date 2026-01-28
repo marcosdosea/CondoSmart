@@ -8,7 +8,7 @@ namespace Core.Service
         int Create(Visitantes visitante);
         void Edit(Visitantes visitante);
         void Delete(int id);
-        Visitantes GetById(int id);
+        Visitantes? GetById(int id);
         List<Visitantes> GetAll();
     }
 }

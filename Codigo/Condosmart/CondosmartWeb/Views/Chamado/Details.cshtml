@@ -1,66 +1,77 @@
 ﻿@model CondosmartWeb.Models.ChamadoViewModel
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Chamado";
 }
 
-<h1>Details</h1>
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>🔎 Detalhes do Chamado</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
 
-<div>
-    <h4>ChamadoViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataChamado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataChamado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoradorId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoradorId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SindicoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SindicoId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CondominioId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CondominioId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    <div class="cs-card-body">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <h5 class="fw-semibold mb-3">Informações do Chamado</h5>
+
+                <div class="mb-3">
+                    <label class="text-muted small">Descrição</label>
+                    <p class="mb-2">@Model.Descricao</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Data do Chamado</label>
+                        <p class="mb-3">@Model.DataChamado.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Status</label>
+                        <p class="mb-3">
+                            @{
+                                var statusClass = Model.Status switch
+                                {
+                                    "aberto" => "badge bg-danger",
+                                    "em_andamento" => "badge bg-warning",
+                                    "resolvido" => "badge bg-success",
+                                    "cancelado" => "badge bg-secondary",
+                                    _ => "badge bg-light"
+                                };
+                            }
+                            <span class="@statusClass">@Model.Status</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Condomínio ID</label>
+                        <p class="mb-3">@Model.CondominioId</p>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Morador ID</label>
+                        <p class="mb-3">@Model.MoradorId</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Síndico ID</label>
+                        <p class="mb-3">@Model.SindicoId</p>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Criado em</label>
+                        <p class="mb-3">@(Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end mt-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-primary">Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline">Voltar</a>
+        </div>
+    </div>
 </div>
