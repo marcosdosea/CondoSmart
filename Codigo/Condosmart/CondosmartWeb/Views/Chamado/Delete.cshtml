@@ -1,21 +1,68 @@
 ﻿@model CondosmartWeb.Models.ChamadoViewModel
 
 @{
-    ViewData["Title"] = "Excluir Chamado";
+    ViewData["Title"] = "Delete";
 }
 
-<h1>Excluir</h1>
-<h3>Tem certeza que deseja deletar este chamado?</h3>
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
 <div>
+    <h4>ChamadoViewModel</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Descricao)</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.Descricao)</dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Descricao)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Descricao)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DataChamado)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataChamado)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MoradorId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MoradorId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SindicoId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SindicoId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CondominioId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CondominioId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
     </dl>
     
-    <form asp-action="DeleteConfirmed">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Confirmar Exclusão" class="btn btn-danger" />
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <form asp-action="Delete">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
     </form>
 </div>

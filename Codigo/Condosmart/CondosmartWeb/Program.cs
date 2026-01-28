@@ -32,6 +32,7 @@ namespace Condosmart
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
             builder.Services.AddScoped<IAtaService, AtaService>();
+            builder.Services.AddScoped<IChamadosService, ChamadoService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
