@@ -5,84 +5,58 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    /// <summary>
-    /// Implementa serviços para manter dados do visitante
-    /// </summary>
     public class VisitanteService : IVisitanteService
     {
-        private readonly CondosmartContext context;
+        private readonly CondosmartContext _context;
 
         public VisitanteService(CondosmartContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
-        /// <summary>
-        /// Criar um novo visitante na base de dados
-        /// </summary>
-        /// <param name="visitante">dados do visitante</param>
-        /// <returns>id do visitante</returns>
-        /// <exception cref="ArgumentException"></exception>
         public int Create(Visitantes visitante)
         {
             ValidarVisitante(visitante);
-
-            context.Add(visitante);
-            context.SaveChanges();
+            _context.Add(visitante);
+            _context.SaveChanges();
             return visitante.Id;
         }
 
-        /// <summary>
-        /// Editar dados do visitante na base de dados
-        /// </summary>
-        /// <param name="visitante">dados do visitante</param>
-        /// <exception cref="ArgumentException"></exception>
         public void Edit(Visitantes visitante)
         {
             ValidarVisitante(visitante);
-
-            context.Update(visitante);
-            context.SaveChanges();
+            _context.Update(visitante);
+            _context.SaveChanges();
         }
 
-        /// <summary>
-        /// Remover o visitante da base de dados
-        /// </summary>
-        /// <param name="id">id do visitante</param>
         public void Delete(int id)
         {
-            var visitante = context.Visitantes.Find(id);
+            var visitante = _context.Visitantes.Find(id);
             if (visitante != null)
             {
-                context.Remove(visitante);
-                context.SaveChanges();
+                _context.Remove(visitante);
+                _context.SaveChanges();
             }
         }
 
-        /// <summary>
-        /// Buscar um visitante na base de dados
-        /// </summary>
-        /// <param name="id">id do visitante</param>
-        /// <returns>dados do visitante</returns>
-        public Visitantes? GetById(int id)
+        public Visitantes? Get(int id)
         {
-            return context.Visitantes.Find(id);
+            return _context.Visitantes.Find(id);
         }
 
-        /// <summary>
-        /// Buscar todos os visitantes cadastrados
-        /// </summary>
-        /// <returns>lista de visitantes</returns>
-        public List<Visitantes> GetAll()
+        public IEnumerable<Visitantes> GetAll()
         {
-            return context.Visitantes.AsNoTracking().ToList();
+            return _context.Visitantes.AsNoTracking().ToList();
         }
 
-        /// <summary>
-        /// Valida regras básicas do visitante
-        /// </summary>
-        /// <param name="visitante"></param>
-        /// <exception cref="ArgumentException"></exception>
+        public IEnumerable<Visitantes> GetByNome(string nome)
+        {
+            return _context.Visitantes
+                .AsNoTracking()
+                .Where(v => v.Nome.StartsWith(nome))
+                .ToList();
+        }
+
         private static void ValidarVisitante(Visitantes visitante)
         {
             if (visitante == null)
@@ -91,11 +65,13 @@ namespace Service
             if (string.IsNullOrWhiteSpace(visitante.Nome))
                 throw new ArgumentException("O nome do visitante é obrigatório.");
 
-            // CPF geralmente é char(11) no banco
-            if (!string.IsNullOrWhiteSpace(visitante.Cpf) && visitante.Cpf.Length != 11)
-                throw new ArgumentException("O CPF deve conter 11 caracteres (somente números).");
+            if (!string.IsNullOrWhiteSpace(visitante.Cpf))
+            {
+                var cpfLimpo = visitante.Cpf.Replace(".", "").Replace("-", "").Trim();
+                if (cpfLimpo.Length != 11)
+                    throw new ArgumentException("O CPF deve conter 11 caracteres.");
+            }
 
-            // Regras simples de horário (opcional, mas ajuda)
             if (visitante.DataHoraSaida.HasValue && visitante.DataHoraEntrada.HasValue &&
                 visitante.DataHoraSaida.Value < visitante.DataHoraEntrada.Value)
             {
