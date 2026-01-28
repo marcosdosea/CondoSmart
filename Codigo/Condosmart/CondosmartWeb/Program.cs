@@ -21,7 +21,7 @@ namespace Condosmart
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("Conex�o com o banco de dados n�o foi configurada corretamente.");
+                throw new InvalidOperationException("Conexão com o banco de dados não foi configurada corretamente.");
             }
             builder.Services.AddDbContext<CondosmartContext>(
                 options => options.UseMySql(
@@ -33,7 +33,9 @@ namespace Condosmart
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
             builder.Services.AddScoped<IAtaService, AtaService>();
+            builder.Services.AddScoped<IReservaService, ReservaService>();
             builder.Services.AddScoped<IUnidadesResidenciaisService, UnidadesResidenciaisService>();
+
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

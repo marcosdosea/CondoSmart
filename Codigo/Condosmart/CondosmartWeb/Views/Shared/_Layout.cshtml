@@ -1,30 +1,67 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-br">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>@ViewData["Title"] - Condosmart</title>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Condosmart</title>
 
-		<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	</head>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
 
-	<body>
-		<div class="cs-shell">
+<body>
+	<div class="cs-shell">
 
-			<div id="csOverlay" class="cs-overlay" onclick="toggleSidebar(false)"></div>
+		<div id="csOverlay" class="cs-overlay" onclick="toggleSidebar(false)"></div>
 
-			<aside id="csSidebar" class="cs-sidebar">
-				<div class="cs-brand">
-					<div class="cs-brand-badge">C</div>
-					<div>
-						<div>CONDOMÍNIO</div>
-						<small class="text-muted">CondoSmart</small>
-					</div>
+		<aside id="csSidebar" class="cs-sidebar">
+			<div class="cs-brand">
+				<div class="cs-brand-badge">C</div>
+				<div>
+					<div>CONDOMÍNIO</div>
+					<small class="text-muted">CondoSmart</small>
 				</div>
+			</div>
 
-				<div class="cs-search">
-					<input class="form-control" placeholder="Procurar..." />
+			<div class="cs-search">
+				<input class="form-control" placeholder="Procurar..." />
+			</div>
+
+			<nav class="cs-nav d-grid gap-2">
+				<a asp-controller="Home" asp-action="Index">
+					🏠 Home
+				</a>
+
+				<a asp-controller="Condominio" asp-action="Index">
+					🏢 Condomínios
+				</a>
+
+				<a asp-controller="Sindico" asp-action="Index">
+					🧑‍💼 Sindico
+				</a>
+
+				<a asp-controller="Ata" asp-action="Index">
+					📋 Atas
+				</a>
+
+				<a asp-controller="Visitante" asp-action="Index">
+					👤 Visitantes
+				</a>
+				<a asp-controller="Reserva" asp-action="Index">
+					📅 Reservas
+				</a>
+
+			</nav>
+		</aside>
+
+		<div class="cs-main">
+
+			<header class="cs-topbar">
+				<div class="d-flex align-items-center gap-2">
+					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
+						☰
+					</button>
+					<div class="title">@ViewData["Title"]</div>
 				</div>
 
 				<nav class="cs-nav d-grid gap-2">
@@ -82,27 +119,44 @@
 				</footer>
 			</div>
 		</div>
+				<div class="cs-top-actions">
+					<button class="cs-icon-btn" title="Notificações">🔔</button>
+					<button class="cs-icon-btn" title="Configurações">⚙️</button>
+				</div>
+			</header>
 
-		<script src="~/lib/jquery/dist/jquery.min.js"></script>
-		<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-		<script src="~/js/site.js" asp-append-version="true"></script>
+			<main class="container py-4">
+				@RenderBody()
+			</main>
 
-		<script>
-			function toggleSidebar(open) {
-			const sidebar = document.getElementById('csSidebar');
-			const overlay = document.getElementById('csOverlay');
-			if (!sidebar || !overlay) return;
+			<footer class="text-muted py-3">
+				<div class="container">
+					&copy; 2026 - Condosmart
+				</div>
+			</footer>
+		</div>
+	</div>
 
-			if (open) {
-			sidebar.classList.add('open');
-			overlay.classList.add('show');
-			} else {
-			sidebar.classList.remove('open');
-			overlay.classList.remove('show');
-			}
-			}
-		</script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
 
-		@await RenderSectionAsync("Scripts", required: false)
-	</body>
+	<script>
+		function toggleSidebar(open) {
+		const sidebar = document.getElementById('csSidebar');
+		const overlay = document.getElementById('csOverlay');
+		if (!sidebar || !overlay) return;
+
+		if (open) {
+		sidebar.classList.add('open');
+		overlay.classList.add('show');
+		} else {
+		sidebar.classList.remove('open');
+		overlay.classList.remove('show');
+		}
+		}
+	</script>
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
 </html>

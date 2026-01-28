@@ -1,0 +1,77 @@
+﻿@model CondosmartWeb.Models.ChamadoViewModel
+@{
+    ViewData["Title"] = "Detalhes do Chamado";
+}
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>🔎 Detalhes do Chamado</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
+
+    <div class="cs-card-body">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <h5 class="fw-semibold mb-3">Informações do Chamado</h5>
+
+                <div class="mb-3">
+                    <label class="text-muted small">Descrição</label>
+                    <p class="mb-2">@Model.Descricao</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Data do Chamado</label>
+                        <p class="mb-3">@Model.DataChamado.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Status</label>
+                        <p class="mb-3">
+                            @{
+                                var statusClass = Model.Status switch
+                                {
+                                    "aberto" => "badge bg-danger",
+                                    "em_andamento" => "badge bg-warning",
+                                    "resolvido" => "badge bg-success",
+                                    "cancelado" => "badge bg-secondary",
+                                    _ => "badge bg-light"
+                                };
+                            }
+                            <span class="@statusClass">@Model.Status</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Condomínio ID</label>
+                        <p class="mb-3">@Model.CondominioId</p>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Morador ID</label>
+                        <p class="mb-3">@Model.MoradorId</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Síndico ID</label>
+                        <p class="mb-3">@Model.SindicoId</p>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <label class="text-muted small">Criado em</label>
+                        <p class="mb-3">@(Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end mt-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-cs-primary">Editar</a>
+            <a asp-action="Index" class="btn btn-cs-outline">Voltar</a>
+        </div>
+    </div>
+</div>

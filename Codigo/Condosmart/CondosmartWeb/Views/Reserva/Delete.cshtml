@@ -1,0 +1,58 @@
+﻿@model CondosmartWeb.Models.ReservaViewModel
+
+@{
+    ViewData["Title"] = "Excluir Reserva";
+}
+
+<div class="cs-card border border-danger">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span class="text-danger">🗑️ Confirmar Exclusão</span>
+        <a asp-action="Index" class="btn btn-cs-outline btn-sm">↩ Voltar</a>
+    </div>
+
+    <div class="cs-card-body">
+        <div class="alert alert-warning">
+            Atenção! Esta ação <strong>não pode ser desfeita</strong>.
+        </div>
+
+        <p class="mb-2">Você tem certeza que deseja excluir esta reserva?</p>
+
+        <div class="cs-card p-3 mb-3">
+            <div class="row g-2">
+                <div class="col-12 col-lg-6">
+                    <div class="text-muted small">Área</div>
+                    <div class="fw-bold">@Model.AreaId</div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="text-muted small">Data Início</div>
+                    <div class="fw-bold">@Model.DataInicio.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="text-muted small">Data Fim</div>
+                    <div class="fw-bold">@Model.DataFim.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="text-muted small">Status</div>
+                    <div class="fw-bold">
+                        @{
+                            var statusClass = Model.Status switch
+                            {
+                                "Confirmada" => "badge bg-success",
+                                "Pendente" => "badge bg-warning",
+                                "Cancelada" => "badge bg-danger",
+                                _ => "badge bg-secondary"
+                            };
+                        }
+                        <span class="@statusClass">@Model.Status</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="DeleteConfirmed" method="post" class="d-flex gap-2 justify-content-end">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
+    </div>
+</div>

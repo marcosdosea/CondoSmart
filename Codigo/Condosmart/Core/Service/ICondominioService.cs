@@ -7,7 +7,7 @@ namespace Core.Service
         int Create(Condominio condominio);
         void Edit(Condominio condominio);
         void Delete(int id);
-        Condominio GetById(int id);
+        Condominio? GetById(int id);
         List<Condominio> GetAll();
     }
 }
