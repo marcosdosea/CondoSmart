@@ -2,11 +2,14 @@ using Core.Data;
 using Core.Models;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Service
 {
     /// <summary>
-    /// Implementa serviços para manter dados de áreas de lazer
+    /// Implementa serviços para manter dados de Áreas de Lazer
     /// </summary>
     public class AreaDeLazerService : IAreaDeLazerService
     {
@@ -33,7 +36,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Editar dados da área de lazer na base de dados
+        /// Editar dados da área de lazer
         /// </summary>
         /// <param name="areaDeLazer">dados da área de lazer</param>
         /// <exception cref="ArgumentException"></exception>
@@ -46,7 +49,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Remover a área de lazer da base de dados
+        /// Remover a área de lazer
         /// </summary>
         /// <param name="id">id da área de lazer</param>
         public void Delete(int id)
@@ -60,10 +63,10 @@ namespace Service
         }
 
         /// <summary>
-        /// Buscar uma área de lazer na base de dados
+        /// Buscar uma área de lazer pelo id
         /// </summary>
         /// <param name="id">id da área de lazer</param>
-        /// <returns>dados da área de lazer</returns>
+        /// <returns>área de lazer encontrada ou null</returns>
         public AreaDeLazer? GetById(int id)
         {
             return context.AreaDeLazer.Find(id);
@@ -89,10 +92,10 @@ namespace Service
                 throw new ArgumentException("Área de lazer inválida.");
 
             if (string.IsNullOrWhiteSpace(areaDeLazer.Nome))
-                throw new ArgumentException("Nome da área de lazer é obrigatório.");
+                throw new ArgumentException("O nome da área de lazer é obrigatório.");
 
             if (areaDeLazer.CondominioId <= 0)
-                throw new ArgumentException("Condomínio é obrigatório.");
+                throw new ArgumentException("Condomínio inválido.");
         }
     }
 }

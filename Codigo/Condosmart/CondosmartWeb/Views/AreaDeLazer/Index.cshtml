@@ -1,16 +1,16 @@
-﻿@model IEnumerable<CondosmartWeb.Models.VisitanteViewModel>
+﻿@model IEnumerable<CondosmartWeb.Models.AreaDeLazerViewModel>
 @{
-    ViewData["Title"] = "Visitantes";
+    ViewData["Title"] = "Áreas de Lazer";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h2 class="fw-bold mb-0">👤 Visitantes</h2>
-        <small class="text-muted">Gerencie os visitantes cadastrados</small>
+        <h2 class="fw-bold mb-0">🏊 Áreas de Lazer</h2>
+        <small class="text-muted">Gerencie as áreas de lazer do condomínio</small>
     </div>
 
     <a asp-action="Create" class="btn btn-cs-primary">
-        ➕ Novo Visitante
+        ➕ Nova Área de Lazer
     </a>
 </div>
 
@@ -24,7 +24,7 @@
         @if (!Model.Any())
         {
             <div class="alert alert-info text-center mb-0">
-                Nenhum visitante cadastrado.
+                Nenhuma área de lazer cadastrada.
             </div>
         }
         else
@@ -34,9 +34,9 @@
                     <thead class="table-light">
                         <tr>
                             <th>Nome</th>
-                            <th>CPF</th>
-                            <th>Data/Hora Entrada</th>
-                            <th>Data/Hora Saída</th>
+                            <th>Descrição</th>
+                            <th>Disponibilidade</th>
+                            <th>Condomínio</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -45,27 +45,18 @@
                         {
                             <tr>
                                 <td class="fw-semibold">@item.Nome</td>
-                                <td>@item.Cpf</td>
+                                <td>@item.Descricao</td>
                                 <td>
-                                    @if (item.DataHoraEntrada.HasValue)
+                                    @if (item.Disponibilidade.HasValue && item.Disponibilidade.Value)
                                     {
-                                        @item.DataHoraEntrada.Value.ToString("dd/MM/yyyy HH:mm")
+                                        <span class="badge bg-success">Disponível</span>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">—</span>
+                                        <span class="badge bg-secondary">Indisponível</span>
                                     }
                                 </td>
-                                <td>
-                                    @if (item.DataHoraSaida.HasValue)
-                                    {
-                                        @item.DataHoraSaida.Value.ToString("dd/MM/yyyy HH:mm")
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                </td>
+                                <td>@item.CondominioId</td>
                                 <td class="text-center">
                                     <a asp-action="Details" asp-route-id="@item.Id"
                                        class="btn btn-sm btn-cs-outline me-1" title="Detalhes">🔎</a>

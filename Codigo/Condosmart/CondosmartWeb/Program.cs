@@ -35,6 +35,7 @@ namespace Condosmart
             builder.Services.AddScoped<IAtaService, AtaService>();
             builder.Services.AddScoped<IReservaService, ReservaService>();
             builder.Services.AddScoped<IUnidadesResidenciaisService, UnidadesResidenciaisService>();
+            builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
 
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
