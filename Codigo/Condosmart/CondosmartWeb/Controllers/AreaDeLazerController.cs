@@ -1,4 +1,5 @@
-﻿using Core.DTO;
+﻿using AutoMapper;
+using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +11,20 @@ namespace CondosmartWeb.Controllers
     {
         private readonly IAreaDeLazerService _areaService;
         private readonly ICondominioService _condominioService;
+        private readonly IMapper _mapper;
 
-        public AreaDeLazerController(IAreaDeLazerService areaService, ICondominioService condominioService)
+        public AreaDeLazerController(IAreaDeLazerService areaService, ICondominioService condominioService, IMapper mapper)
         {
             _areaService = areaService;
             _condominioService = condominioService;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
             var lista = _areaService.GetAll();
-            return View(lista);
+            var vms = _mapper.Map<List<AreaDeLazerViewModel>>(lista);
+            return View(vms);
         }
 
         public IActionResult Create()
@@ -31,31 +35,26 @@ namespace CondosmartWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(AreaDeLazerDTO areaDto)
+        public IActionResult Create(AreaDeLazerViewModel vm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var novaArea = new AreaDeLazer
-                    {
-                        Nome = areaDto.Nome,
-                        Descricao = areaDto.Descricao,
-                        CondominioId = areaDto.CondominioId,
-                        Disponibilidade = areaDto.Disponibilidade
-                    };
-
-                    _areaService.Create(novaArea);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
-                }
+                CarregarCondominios();
+                return View(vm);
             }
 
-            CarregarCondominios();
-            return View(areaDto);
+            try
+            {
+                var novaArea = _mapper.Map<AreaDeLazer>(vm);
+                _areaService.Create(novaArea);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                CarregarCondominios();
+                return View(vm);
+            }
         }
 
         private void CarregarCondominios()
