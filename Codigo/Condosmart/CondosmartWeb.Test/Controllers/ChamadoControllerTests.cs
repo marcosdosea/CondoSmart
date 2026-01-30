@@ -60,7 +60,7 @@ namespace CondosmartWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<ChamadoViewModel>));
             var lista = (List<ChamadoViewModel>)viewResult.ViewData.Model;
 
-            Assert.AreEqual(3, lista.Count);
+            Assert.HasCount(3, lista);
         }
 
         [TestMethod]
