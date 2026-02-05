@@ -27,48 +27,51 @@
 				<input class="form-control" placeholder="Procurar..." />
 			</div>
 
-		<nav class="cs-nav d-grid gap-2">
-			<a asp-controller="Home" asp-action="Index">
-				&#127968; Home
-			</a>
+			<nav class="cs-nav d-grid gap-2">
+				<a asp-controller="Home" asp-action="Index">
+					&#127968; Home
+				</a>
 
-			<a asp-controller="Condominio" asp-action="Index">
-				&#127970; Condomínios
-			</a>
+				<a asp-controller="Condominio" asp-action="Index">
+					&#127970; Condomínios
+				</a>
 
-			<a asp-controller="UnidadesResidenciais" asp-action="Index">
-				&#127961; Unidades Residenciais
-			</a>
+				<a asp-controller="UnidadesResidenciais" asp-action="Index">
+					&#127961; Unidades Residenciais
+				</a>
 
-			<a asp-controller="Sindico" asp-action="Index">
-				&#129333; Síndico
-			</a>
+				<a asp-controller="Sindico" asp-action="Index">
+					&#129333; Síndico
+				</a>
 
-			<a asp-controller="Ata" asp-action="Index">
-				&#128203; Atas
-			</a>
+				<a asp-controller="Ata" asp-action="Index">
+					&#128203; Atas
+				</a>
 
-			<a asp-controller="Visitante" asp-action="Index">
-				&#128100; Visitantes
-			</a>
+				<a asp-controller="Visitante" asp-action="Index">
+					&#128100; Visitantes
+				</a>
 
-			<a asp-controller="Reserva" asp-action="Index">
-				&#128197; Reservas
-			</a>
-			<a asp-controller="AreaDeLazer" asp-action="Index">
-				&#127946; Áreas de Lazer
-			</a>
+				<a asp-controller="Reserva" asp-action="Index">
+					&#128197; Reservas
+				</a>
+				<a asp-controller="AreaDeLazer" asp-action="Index">
+					&#127946; Áreas de Lazer
+				</a>
+				<a asp-controller="Morador" asp-action="Index">
+					&#129333; Moradores
+				</a>
 
-		</nav>
+			</nav>
 		</aside>
 
 		<div class="cs-main">
 
 			<header class="cs-topbar">
 				<div class="d-flex align-items-center gap-2">
-				<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
-					&#9776;
-				</button>
+					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
+						&#9776;
+					</button>
 					<div class="title">@ViewData["Title"]</div>
 				</div>
 

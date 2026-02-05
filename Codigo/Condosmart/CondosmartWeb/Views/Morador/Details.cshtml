@@ -1,7 +1,7 @@
-﻿@model CondosmartWeb.Models.CondominioViewModel
+﻿@model CondosmartWeb.Models.MoradorViewModel
 
 @{
-    ViewData["Title"] = "Detalhes do Condomínio";
+    ViewData["Title"] = "Detalhes do Morador";
 }
 
 <div class="cs-card">
@@ -21,8 +21,23 @@
             </div>
 
             <div class="col-12 col-lg-6">
-                <div class="text-muted small">CNPJ</div>
-                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.Cnpj) ? "-" : Model.Cnpj)</div>
+                <div class="text-muted small">CPF</div>
+                <div class="fw-semibold">@Model.Cpf</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">RG</div>
+                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.Rg) ? "-" : Model.Rg)</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">Telefone</div>
+                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.Telefone) ? "-" : Model.Telefone)</div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="text-muted small">E-mail</div>
+                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.Email) ? "-" : Model.Email)</div>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -61,18 +76,8 @@
             </div>
 
             <div class="col-12 col-lg-6">
-                <div class="text-muted small">E-mail</div>
-                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.Email) ? "-" : Model.Email)</div>
-            </div>
-
-            <div class="col-12 col-lg-4">
-                <div class="text-muted small">Telefone</div>
-                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.Telefone) ? "-" : Model.Telefone)</div>
-            </div>
-
-            <div class="col-12 col-lg-2">
-                <div class="text-muted small">Unidades</div>
-                <div class="fw-semibold">@Model.Unidades</div>
+                <div class="text-muted small">Condomínio</div>
+                <div class="fw-semibold">@(Model.CondominioId.HasValue ? Model.CondominioId.Value.ToString() : "-")</div>
             </div>
         </div>
     </div>
