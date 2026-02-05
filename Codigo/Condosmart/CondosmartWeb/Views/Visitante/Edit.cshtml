@@ -22,15 +22,27 @@
             </div>
 
             <div class="col-12 col-lg-6">
-                <label asp-for="Cpf" class="form-label fw-semibold"></label>
-                <input asp-for="Cpf" class="form-control" />
-                <span asp-validation-for="Cpf" class="text-danger"></span>
+                <label asp-for="Telefone" class="form-label fw-semibold"></label>
+                <input asp-for="Telefone" class="form-control" placeholder="(11) 99999-9999" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
             </div>
 
-            <div class="col-12 col-lg-4">
-                <label asp-for="Telefone" class="form-label fw-semibold"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
+            <div class="col-12 col-lg-6">
+                <label asp-for="MoradorId" class="form-label fw-semibold"></label>
+                <select asp-for="MoradorId" class="form-select">
+                    <option value="">-- Selecione o morador que está sendo visitado --</option>
+                    @foreach (var morador in Model.MoradoresDisponiveis ?? new List<Core.Models.Morador>())
+                    {
+                        <option value="@morador.Id">@morador.Nome</option>
+                    }
+                </select>
+                <span asp-validation-for="MoradorId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="Cpf" class="form-label fw-semibold"></label>
+                <input asp-for="Cpf" class="form-control" placeholder="000.000.000-00" />
+                <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">

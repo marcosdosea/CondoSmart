@@ -22,6 +22,7 @@ namespace CondosmartWeb.Controllers.Tests
         {
             // Arrange
             var mockService = new Mock<IVisitanteService>();
+            var mockMoradorService = new Mock<IMoradorService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new VisitanteProfile())
@@ -42,7 +43,10 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new VisitanteController(mockService.Object, mapper);
+            mockMoradorService.Setup(s => s.GetAll())
+                .Returns(GetTestMoradores());
+
+            controller = new VisitanteController(mockService.Object, mockMoradorService.Object, mapper);
         }
 
         [TestMethod]
@@ -188,7 +192,8 @@ namespace CondosmartWeb.Controllers.Tests
                 Id = 1,
                 Nome = "João Silva",
                 Cpf = "12345678901",
-                Telefone = "11987654321", // Adicionei telefone aqui para garantir
+                Telefone = "11987654321",
+                MoradorId = 1,
                 Observacao = "Visitante frequente",
                 DataHoraEntrada = new DateTime(2024, 1, 15, 10, 30, 0),
                 DataHoraSaida = null
@@ -203,6 +208,7 @@ namespace CondosmartWeb.Controllers.Tests
                 Nome = "João Silva",
                 Cpf = "12345678901",
                 Telefone = "11987654321",
+                MoradorId = 1,
                 Observacao = "Visitante frequente",
                 DataHoraEntrada = new DateTime(2024, 1, 15, 10, 30, 0),
                 DataHoraSaida = null
@@ -217,6 +223,7 @@ namespace CondosmartWeb.Controllers.Tests
                 Nome = "Maria Santos",
                 Cpf = "98765432109",
                 Telefone = "11912345678",
+                MoradorId = 2,
                 Observacao = "Primeira visita",
                 DataHoraEntrada = new DateTime(2024, 1, 20, 14, 0, 0),
                 DataHoraSaida = null
@@ -232,6 +239,8 @@ namespace CondosmartWeb.Controllers.Tests
                     Id = 1,
                     Nome = "João Silva",
                     Cpf = "12345678901",
+                    Telefone = "11987654321",
+                    MoradorId = 1,
                     Observacao = "Visitante frequente",
                     DataHoraEntrada = new DateTime(2024, 1, 15, 10, 30, 0),
                     DataHoraSaida = null
@@ -241,6 +250,8 @@ namespace CondosmartWeb.Controllers.Tests
                     Id = 2,
                     Nome = "Maria Oliveira",
                     Cpf = "23456789012",
+                    Telefone = "11987654322",
+                    MoradorId = 2,
                     Observacao = "Entrega de encomenda",
                     DataHoraEntrada = new DateTime(2024, 1, 16, 14, 0, 0),
                     DataHoraSaida = new DateTime(2024, 1, 16, 14, 30, 0)
@@ -250,9 +261,30 @@ namespace CondosmartWeb.Controllers.Tests
                     Id = 3,
                     Nome = "Carlos Souza",
                     Cpf = "34567890123",
+                    Telefone = "11987654323",
+                    MoradorId = 1,
                     Observacao = "Técnico de manutenção",
                     DataHoraEntrada = new DateTime(2024, 1, 17, 9, 0, 0),
                     DataHoraSaida = new DateTime(2024, 1, 17, 12, 0, 0)
+                }
+            };
+        }
+
+        private List<Morador> GetTestMoradores()
+        {
+            return new List<Morador>
+            {
+                new Morador
+                {
+                    Id = 1,
+                    Nome = "Ana Silva",
+                    Cpf = "11122233344"
+                },
+                new Morador
+                {
+                    Id = 2,
+                    Nome = "Pedro Santos",
+                    Cpf = "22233344455"
                 }
             };
         }

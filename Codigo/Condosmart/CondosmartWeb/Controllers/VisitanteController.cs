@@ -9,11 +9,13 @@ namespace CondosmartWeb.Controllers
     public class VisitanteController : Controller
     {
         private readonly IVisitanteService _visitanteService;
+        private readonly IMoradorService _moradorService;
         private readonly IMapper _mapper;
 
-        public VisitanteController(IVisitanteService visitanteService, IMapper mapper)
+        public VisitanteController(IVisitanteService visitanteService, IMoradorService moradorService, IMapper mapper)
         {
             _visitanteService = visitanteService;
+            _moradorService = moradorService;
             _mapper = mapper;
         }
 
@@ -36,7 +38,11 @@ namespace CondosmartWeb.Controllers
         // GET: Visitante/Create
         public ActionResult Create()
         {
-            return View();
+            var viewModel = new VisitanteViewModel
+            {
+                MoradoresDisponiveis = _moradorService.GetAll()
+            };
+            return View(viewModel);
         }
 
         // POST: Visitante/Create
@@ -50,6 +56,8 @@ namespace CondosmartWeb.Controllers
                 _visitanteService.Create(visitante);
                 return RedirectToAction(nameof(Index));
             }
+            
+            visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
             return View(visitanteViewModel);
         }
 
@@ -58,6 +66,7 @@ namespace CondosmartWeb.Controllers
         {
             var visitante = _visitanteService.GetById(id);
             var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
+            visitanteVM.MoradoresDisponiveis = _moradorService.GetAll();
             return View(visitanteVM);
         }
 
@@ -77,6 +86,8 @@ namespace CondosmartWeb.Controllers
                 _visitanteService.Edit(visitante);
                 return RedirectToAction(nameof(Index));
             }
+            
+            visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
             return View(visitanteViewModel);
         }
 
