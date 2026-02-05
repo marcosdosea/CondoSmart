@@ -1,0 +1,42 @@
+@model IEnumerable<CondosmartWeb.Models.PagamentoViewModel>
+
+@{
+    ViewData["Title"] = "Contas a Receber";
+}
+
+<h1>Contas a Receber</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nova Cobrança</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Descricao)</th>
+            <th>@Html.DisplayNameFor(model => model.Valor)</th>
+            <th>@Html.DisplayNameFor(model => model.DataVencimento)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.Descricao)</td>
+            <td>R$ @Html.DisplayFor(modelItem => item.Valor)</td>
+            <td>@item.DataVencimento.ToString("dd/MM/yyyy")</td>
+            <td>
+                @if(item.Status == "Pago") {
+                    <span class="badge bg-success">Pago</span>
+                } else {
+                    <span class="badge bg-warning text-dark">Pendente</span>
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Excluir", "Delete", new { id=item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

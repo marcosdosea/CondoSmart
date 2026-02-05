@@ -4,7 +4,7 @@ using Core.Models;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure; // Adicione este using
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Service;
 
 namespace Condosmart
@@ -29,6 +29,7 @@ namespace Condosmart
                     ServerVersion.AutoDetect(connectionString)
                 ));
 
+            // Registro dos Serviços
             builder.Services.AddScoped<ICondominioService, CondominioService>();
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
@@ -37,6 +38,9 @@ namespace Condosmart
             builder.Services.AddScoped<IUnidadesResidenciaisService, UnidadesResidenciaisService>();
             builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
 
+            // --- ADICIONADO AGORA ---
+            builder.Services.AddScoped<IPagamentoService, PagamentoService>();
+            // ------------------------
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -46,7 +50,6 @@ namespace Condosmart
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

@@ -1,115 +1,120 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewData["Title"] - Condosmart</title>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@ViewData["Title"] - Condosmart</title>
 
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
+		<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	</head>
 
-<body>
-	<div class="cs-shell">
+	<body>
+		<div class="cs-shell">
 
-		<div id="csOverlay" class="cs-overlay" onclick="toggleSidebar(false)"></div>
+			<div id="csOverlay" class="cs-overlay" onclick="toggleSidebar(false)"></div>
 
-		<aside id="csSidebar" class="cs-sidebar">
-			<div class="cs-brand">
-				<div class="cs-brand-badge">C</div>
-				<div>
-					<div>CONDOMÕNIO</div>
-					<small class="text-muted">CondoSmart</small>
+			<aside id="csSidebar" class="cs-sidebar">
+				<div class="cs-brand">
+					<div class="cs-brand-badge">C</div>
+					<div>
+						<div>CONDOM√çNIO</div>
+						<small class="text-muted">CondoSmart</small>
+					</div>
 				</div>
+
+				<div class="cs-search">
+					<input class="form-control" placeholder="Procurar..." />
+				</div>
+
+				<nav class="cs-nav d-grid gap-2">
+					<a asp-controller="Home" asp-action="Index">
+						&#127968; Home
+					</a>
+
+					<a asp-controller="Condominio" asp-action="Index">
+						&#127970; Condom√≠nios
+					</a>
+
+					<a asp-controller="UnidadesResidenciais" asp-action="Index">
+						&#127961; Unidades Residenciais
+					</a>
+
+					<a asp-controller="Sindico" asp-action="Index">
+						&#129333; S√≠ndico
+					</a>
+
+					<a asp-controller="Ata" asp-action="Index">
+						&#128203; Atas
+					</a>
+
+					<a asp-controller="Visitante" asp-action="Index">
+						&#128100; Visitantes
+					</a>
+
+					<a asp-controller="Reserva" asp-action="Index">
+						&#128197; Reservas
+					</a>
+
+					<a asp-controller="AreaDeLazer" asp-action="Index">
+						&#127946; √Åreas de Lazer
+					</a>
+
+					<a asp-controller="Pagamento" asp-action="Index">
+						&#128181; Contas a Receber
+					</a>
+
+				</nav>
+			</aside>
+
+			<div class="cs-main">
+
+				<header class="cs-topbar">
+					<div class="d-flex align-items-center gap-2">
+						<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
+							&#9776;
+						</button>
+						<div class="title">@ViewData["Title"]</div>
+					</div>
+
+					<div class="cs-top-actions">
+						<button class="cs-icon-btn" title="Notifica√ß√µes">&#128276;</button>
+						<button class="cs-icon-btn" title="Configura√ß√µes">&#9881;</button>
+					</div>
+				</header>
+
+				<main class="container py-4">
+					@RenderBody()
+				</main>
+
+				<footer class="text-muted py-3">
+					<div class="container">
+						&copy; 2026 - Condosmart
+					</div>
+				</footer>
 			</div>
-
-			<div class="cs-search">
-				<input class="form-control" placeholder="Procurar..." />
-			</div>
-
-		<nav class="cs-nav d-grid gap-2">
-			<a asp-controller="Home" asp-action="Index">
-				&#127968; Home
-			</a>
-
-			<a asp-controller="Condominio" asp-action="Index">
-				&#127970; CondomÌnios
-			</a>
-
-			<a asp-controller="UnidadesResidenciais" asp-action="Index">
-				&#127961; Unidades Residenciais
-			</a>
-
-			<a asp-controller="Sindico" asp-action="Index">
-				&#129333; SÌndico
-			</a>
-
-			<a asp-controller="Ata" asp-action="Index">
-				&#128203; Atas
-			</a>
-
-			<a asp-controller="Visitante" asp-action="Index">
-				&#128100; Visitantes
-			</a>
-
-			<a asp-controller="Reserva" asp-action="Index">
-				&#128197; Reservas
-			</a>
-			<a asp-controller="AreaDeLazer" asp-action="Index">
-				&#127946; ¡reas de Lazer
-			</a>
-
-		</nav>
-		</aside>
-
-		<div class="cs-main">
-
-			<header class="cs-topbar">
-				<div class="d-flex align-items-center gap-2">
-				<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
-					&#9776;
-				</button>
-					<div class="title">@ViewData["Title"]</div>
-				</div>
-
-				<div class="cs-top-actions">
-					<button class="cs-icon-btn" title="NotificaÁıes">&#128276;</button>
-					<button class="cs-icon-btn" title="ConfiguraÁıes">&#9881;</button>
-				</div>
-			</header>
-
-			<main class="container py-4">
-				@RenderBody()
-			</main>
-
-			<footer class="text-muted py-3">
-				<div class="container">
-					&copy; 2026 - Condosmart
-				</div>
-			</footer>
 		</div>
-	</div>
 
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/site.js" asp-append-version="true"></script>
+		<script src="~/lib/jquery/dist/jquery.min.js"></script>
+		<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="~/js/site.js" asp-append-version="true"></script>
 
-	<script>
-		function toggleSidebar(open) {
-		const sidebar = document.getElementById('csSidebar');
-		const overlay = document.getElementById('csOverlay');
-		if (!sidebar || !overlay) return;
+		<script>
+			function toggleSidebar(open) {
+			const sidebar = document.getElementById('csSidebar');
+			const overlay = document.getElementById('csOverlay');
+			if (!sidebar || !overlay) return;
 
-		if (open) {
-		sidebar.classList.add('open');
-		overlay.classList.add('show');
-		} else {
-		sidebar.classList.remove('open');
-		overlay.classList.remove('show');
-		}
-		}
-	</script>
+			if (open) {
+			sidebar.classList.add('open');
+			overlay.classList.add('show');
+			} else {
+			sidebar.classList.remove('open');
+			overlay.classList.remove('show');
+			}
+			}
+		</script>
 
-	@await RenderSectionAsync("Scripts", required: false)
-</body>
+		@await RenderSectionAsync("Scripts", required: false)
+	</body>
 </html>
