@@ -50,4 +50,6 @@ public partial class Condominio
     public virtual Sindico? Sindico { get; set; }
 
     public virtual ICollection<UnidadesResidenciais> UnidadesResidenciais { get; set; } = new List<UnidadesResidenciais>();
+
+    public virtual ICollection<Mensalidade> Mensalidades { get; set; } = new List<Mensalidade>();
 }

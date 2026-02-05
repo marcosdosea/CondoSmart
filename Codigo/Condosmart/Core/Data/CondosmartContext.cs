@@ -39,6 +39,8 @@ public partial class CondosmartContext : DbContext
 
     public virtual DbSet<Visitantes> Visitantes { get; set; }
 
+    public virtual DbSet<Mensalidade> Mensalidades { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=123456;database=condosmart", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.44-mysql"));
 
@@ -657,6 +659,78 @@ public partial class CondosmartContext : DbContext
                 .HasForeignKey(d => d.UnidadeId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_visitante_unidade");
+        });
+
+        modelBuilder.Entity<Mensalidade>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("mensalidades");
+
+            entity.HasIndex(e => e.CondominioId, "ix_mensalidades_condominio");
+
+            entity.HasIndex(e => e.MoradorId, "ix_mensalidades_morador");
+
+            entity.HasIndex(e => e.Status, "ix_mensalidades_status");
+
+            entity.HasIndex(e => e.UnidadeId, "ix_mensalidades_unidade");
+
+            entity.HasIndex(e => e.Vencimento, "ix_mensalidades_vencimento");
+
+            entity.HasIndex(e => new { e.UnidadeId, e.CondominioId, e.Competencia }, "uq_mensalidade")
+                .IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            
+            entity.Property(e => e.UnidadeId).HasColumnName("unidade_id");
+            
+            entity.Property(e => e.MoradorId).HasColumnName("morador_id");
+            
+            entity.Property(e => e.CondominioId).HasColumnName("condominio_id");
+            
+            entity.Property(e => e.Competencia)
+                .HasColumnType("date")
+                .HasColumnName("competencia");
+            
+            entity.Property(e => e.Vencimento)
+                .HasColumnType("date")
+                .HasColumnName("vencimento");
+            
+            entity.Property(e => e.Valor)
+                .HasPrecision(10, 2)
+                .HasColumnName("valor");
+            
+            entity.Property(e => e.Status)
+                .HasColumnType("enum('pendente','pago','vencida','cancelada')")
+                .HasDefaultValueSql("'pendente'")
+                .HasColumnName("status");
+            
+            entity.Property(e => e.PagamentoId).HasColumnName("pagamento_id");
+            
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+
+            entity.HasOne(d => d.Unidade).WithMany(p => p.Mensalidades)
+                .HasForeignKey(d => d.UnidadeId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_mensalidade_unidade");
+
+            entity.HasOne(d => d.Morador).WithMany(p => p.Mensalidades)
+                .HasForeignKey(d => d.MoradorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_mensalidade_morador");
+
+            entity.HasOne(d => d.Condominio).WithMany(p => p.Mensalidades)
+                .HasForeignKey(d => d.CondominioId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_mensalidade_condominio");
+
+            entity.HasOne(d => d.Pagamento).WithMany(p => p.Mensalidades)
+                .HasForeignKey(d => d.PagamentoId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_mensalidade_pagamento");
         });
 
         OnModelCreatingPartial(modelBuilder);

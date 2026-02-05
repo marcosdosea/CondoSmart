@@ -48,4 +48,6 @@ public partial class Morador
     public virtual ICollection<UnidadesResidenciais> UnidadesResidenciais { get; set; } = new List<UnidadesResidenciais>();
 
     public virtual ICollection<Visitantes> Visitantes { get; set; } = new List<Visitantes>();
+
+    public virtual ICollection<Mensalidade> Mensalidades { get; set; } = new List<Mensalidade>();
 }
