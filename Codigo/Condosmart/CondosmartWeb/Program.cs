@@ -36,6 +36,7 @@ namespace Condosmart
             builder.Services.AddScoped<IReservaService, ReservaService>();
             builder.Services.AddScoped<IUnidadesResidenciaisService, UnidadesResidenciaisService>();
             builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
+            builder.Services.AddScoped<IPagamentoService, PagamentoService>();
 
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
