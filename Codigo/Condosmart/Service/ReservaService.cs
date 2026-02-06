@@ -67,7 +67,10 @@ namespace Service
         /// <returns>dados da reserva</returns>
         public Reserva? GetById(int id)
         {
-            return context.Reservas.Find(id);
+            return context.Reservas
+                .Include(r => r.Area)     
+                .Include(r => r.Morador)  
+                .FirstOrDefault(r => r.Id == id);
         }
 
         /// <summary>
@@ -76,7 +79,12 @@ namespace Service
         /// <returns>lista de reservas</returns>
         public List<Reserva> GetAll()
         {
-            return context.Reservas.AsNoTracking().ToList();
+            return context.Reservas
+                .AsNoTracking()
+                .Include(r => r.Area)     
+                .Include(r => r.Morador)  
+                .OrderByDescending(r => r.DataInicio) 
+                .ToList();
         }
 
         /// <summary>

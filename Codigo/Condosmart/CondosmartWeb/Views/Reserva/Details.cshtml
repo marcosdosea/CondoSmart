@@ -17,43 +17,22 @@
         <div class="row g-3">
             <div class="col-12 col-lg-6">
                 <div class="text-muted small">Área</div>
-                <div class="fw-semibold">@Model.AreaId</div>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <div class="text-muted small">Condomínio</div>
-                <div class="fw-semibold">@Model.CondominioId</div>
+                <div class="fw-semibold">@Model.NomeArea</div>
             </div>
 
             <div class="col-12 col-lg-6">
                 <div class="text-muted small">Morador</div>
-                <div class="fw-semibold">@Model.MoradorId</div>
+                <div class="fw-semibold">@(string.IsNullOrEmpty(Model.NomeMorador) ? "-" : Model.NomeMorador)</div>
             </div>
 
             <div class="col-12 col-lg-6">
-                <div class="text-muted small">Visitante</div>
+                <div class="text-muted small">Condomínio (ID)</div>
+                <div class="fw-semibold">@Model.CondominioId</div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Visitante (ID)</div>
                 <div class="fw-semibold">@Model.VisitanteId</div>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <div class="text-muted small">Síndico</div>
-                <div class="fw-semibold">@Model.SindicoId</div>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <div class="text-muted small">Status</div>
-                <div class="fw-semibold">
-                    @{
-                        var statusClass = Model.Status switch
-                        {
-                            "Confirmada" => "badge bg-success",
-                            "Pendente" => "badge bg-warning",
-                            "Cancelada" => "badge bg-danger",
-                            _ => "badge bg-secondary"
-                        };
-                    }
-                    <span class="@statusClass">@Model.Status</span>
-                </div>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -66,9 +45,21 @@
                 <div class="fw-semibold">@Model.DataFim.ToString("dd/MM/yyyy HH:mm")</div>
             </div>
 
-            <div class="col-12">
-                <div class="text-muted small">Data de Criação</div>
-                <div class="fw-semibold">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</div>
+            <div class="col-12 col-lg-6">
+                <div class="text-muted small">Status</div>
+                <div class="fw-semibold">
+                    @{
+                        var statusClass = Model.Status?.ToLower() switch
+                        {
+                            "confirmado" => "badge bg-success",
+                            "pendente" => "badge bg-warning text-dark",
+                            "cancelado" => "badge bg-danger",
+                            "concluido" => "badge bg-info",
+                            _ => "badge bg-secondary"
+                        };
+                    }
+                    <span class="@statusClass">@Model.Status</span>
+                </div>
             </div>
         </div>
     </div>

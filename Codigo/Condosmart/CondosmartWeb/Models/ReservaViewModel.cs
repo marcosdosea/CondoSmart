@@ -41,5 +41,11 @@ namespace CondosmartWeb.Models
         // Opcional: exibir quando foi criado
         [Display(Name = "Criado em")]
         public DateTime? CreatedAt { get; set; }
+
+        [Display(Name = "Área de Lazer")]
+        public string? NomeArea {get; set; }
+
+        [Display(Name = "Nome do Morador")]
+        public string? NomeMorador { get; set; }
     }
 }

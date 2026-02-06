@@ -42,6 +42,8 @@ namespace Condosmart
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddTransient<IReservaService, ReservaService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
