@@ -35,10 +35,9 @@
                     <thead class="table-light">
                         <tr>
                             <th>Área</th>
-                            <th>Condomínio</th>
                             <th>Morador</th>
-                            <th>Data Início</th>
-                            <th>Data Fim</th>
+                            <th>Início</th>
+                            <th>Fim</th>
                             <th>Status</th>
                             <th class="text-center">Ações</th>
                         </tr>
@@ -47,18 +46,21 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td class="fw-semibold">@item.AreaId</td>
-                                <td>@item.CondominioId</td>
-                                <td>@item.MoradorId</td>
+                                <td class="fw-semibold">@item.NomeArea</td>
+
+                                <td>@(string.IsNullOrEmpty(item.NomeMorador) ? "-" : item.NomeMorador)</td>
+
                                 <td>@item.DataInicio.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>@item.DataFim.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>
                                     @{
-                                        var statusClass = item.Status switch
+                                        // ToLower() garante que funcione com "Pendente" ou "pendente"
+                                        var statusClass = item.Status?.ToLower() switch
                                         {
-                                            "Confirmada" => "badge bg-success",
-                                            "Pendente" => "badge bg-warning",
-                                            "Cancelada" => "badge bg-danger",
+                                            "confirmado" => "badge bg-success",
+                                            "pendente" => "badge bg-warning text-dark",
+                                            "cancelado" => "badge bg-danger",
+                                            "concluido" => "badge bg-info",
                                             _ => "badge bg-secondary"
                                         };
                                     }

@@ -14,51 +14,51 @@
         <form asp-action="Create" method="post" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <input type="hidden" asp-for="CondominioId" value="1" />
+
             <div class="col-12 col-lg-6">
                 <label asp-for="AreaId" class="form-label fw-semibold"></label>
-                <input asp-for="AreaId" class="form-control" />
+                <select asp-for="AreaId" class="form-select" asp-items="ViewBag.AreaId">
+                    <option value="">Selecione a área...</option>
+                </select>
                 <span asp-validation-for="AreaId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
-                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
-                <input asp-for="CondominioId" class="form-control" />
-                <span asp-validation-for="CondominioId" class="text-danger"></span>
-            </div>
-
-            <div class="col-12 col-lg-6">
                 <label asp-for="MoradorId" class="form-label fw-semibold"></label>
-                <input asp-for="MoradorId" class="form-control" />
+                <select asp-for="MoradorId" class="form-select" asp-items="ViewBag.MoradorId">
+                    <option value="">Selecione o morador...</option>
+                </select>
                 <span asp-validation-for="MoradorId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="VisitanteId" class="form-label fw-semibold"></label>
-                <input asp-for="VisitanteId" class="form-control" />
+                <input asp-for="VisitanteId" class="form-control" placeholder="ID do Visitante (Opcional)" />
                 <span asp-validation-for="VisitanteId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="SindicoId" class="form-label fw-semibold"></label>
-                <input asp-for="SindicoId" class="form-control" />
+                <input asp-for="SindicoId" class="form-control" placeholder="ID do Síndico (Opcional)" />
                 <span asp-validation-for="SindicoId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="DataInicio" class="form-label fw-semibold"></label>
-                <input asp-for="DataInicio" class="form-control" />
+                <input asp-for="DataInicio" class="form-control" type="datetime-local" />
                 <span asp-validation-for="DataInicio" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="DataFim" class="form-label fw-semibold"></label>
-                <input asp-for="DataFim" class="form-control" />
+                <input asp-for="DataFim" class="form-control" type="datetime-local" />
                 <span asp-validation-for="DataFim" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="Status" class="form-label fw-semibold"></label>
-                <input asp-for="Status" class="form-control" />
+                <select asp-for="Status" class="form-select" asp-items="ViewBag.Status"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
 
