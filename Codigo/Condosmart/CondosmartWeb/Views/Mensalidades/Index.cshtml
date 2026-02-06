@@ -1,0 +1,147 @@
+@model IEnumerable<CondosmartWeb.Models.MensalidadeViewModel>
+
+@{
+    ViewData["Title"] = "Mensalidades";
+    var statusFiltro = Context.Request.Query["status"].ToString();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">&#128178; Mensalidades</h2>
+        <small class="text-muted">Gerencie os pagamentos de condomínio</small>
+    </div>
+</div>
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>Lista de Mensalidades</span>
+        <span class="text-muted small">Total: @Model.Count()</span>
+    </div>
+
+    <div class="cs-card-body">
+        <!-- Filtro de Status -->
+        <form method="get" class="mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label for="status" class="form-label small">Filtrar por Status:</label>
+                    <select name="status" id="status" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todos</option>
+                        @if (statusFiltro == "pendente")
+                        {
+                            <option value="pendente" selected>Pendente</option>
+                        }
+                        else
+                        {
+                            <option value="pendente">Pendente</option>
+                        }
+                        @if (statusFiltro == "vencida")
+                        {
+                            <option value="vencida" selected>Vencida</option>
+                        }
+                        else
+                        {
+                            <option value="vencida">Vencida</option>
+                        }
+                        @if (statusFiltro == "pago")
+                        {
+                            <option value="pago" selected>Pago</option>
+                        }
+                        else
+                        {
+                            <option value="pago">Pago</option>
+                        }
+                        @if (statusFiltro == "cancelada")
+                        {
+                            <option value="cancelada" selected>Cancelada</option>
+                        }
+                        else
+                        {
+                            <option value="cancelada">Cancelada</option>
+                        }
+                    </select>
+                </div>
+                @if (!string.IsNullOrEmpty(statusFiltro))
+                {
+                    <div class="col-auto">
+                        <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary">Limpar Filtro</a>
+                    </div>
+                }
+            </div>
+        </form>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center mb-0">
+                Nenhuma mensalidade encontrada.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>Competência</th>
+                            <th>Vencimento</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Condomínio</th>
+                            <th>Unidade</th>
+                            <th>Morador</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Competencia.ToString("MM/yyyy")</td>
+                                <td>
+                                    @item.Vencimento.ToString("dd/MM/yyyy")
+                                    @if (item.EstaVencida)
+                                    {
+                                        <span class="badge bg-danger ms-1">Vencida</span>
+                                    }
+                                </td>
+                                <td>@item.Valor.ToString("C")</td>
+                                <td>
+                                    @{
+                                        var statusClass = item.Status switch
+                                        {
+                                            "pago" => "badge bg-success",
+                                            "pendente" => "badge bg-warning text-dark",
+                                            "vencida" => "badge bg-danger",
+                                            "cancelada" => "badge bg-secondary",
+                                            _ => "badge bg-secondary"
+                                        };
+                                    }
+                                    <span class="@statusClass">@item.Status.ToUpper()</span>
+                                </td>
+                                <td>@(item.CondominioNome ?? $"Condomínio {item.CondominioId}")</td>
+                                <td>@(item.UnidadeIdentificador ?? $"Unidade {item.UnidadeId}")</td>
+                                <td>@(item.MoradorNome ?? (item.MoradorId.HasValue ? $"Morador {item.MoradorId}" : "-"))</td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">&#128269;</a>
+
+                                    @if (item.PodePagar)
+                                    {
+                                        <a asp-action="Pagar" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-success" title="Pagar">&#128179; Pagar</a>
+                                    }
+                                    else if (item.PagamentoId.HasValue)
+                                    {
+                                        <a asp-action="Comprovante" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-info text-white" title="Ver 2ª Via">&#128196; 2ª Via</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -28,4 +28,6 @@ public partial class Pagamento
     public virtual Morador? Morador { get; set; }
 
     public virtual UnidadesResidenciais? Unidade { get; set; }
+
+    public virtual ICollection<Mensalidade> Mensalidades { get; set; } = new List<Mensalidade>();
 }

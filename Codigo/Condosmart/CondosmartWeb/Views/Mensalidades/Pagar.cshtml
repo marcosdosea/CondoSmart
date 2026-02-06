@@ -1,0 +1,94 @@
+@model CondosmartWeb.Models.PagarMensalidadeViewModel
+
+@{
+    ViewData["Title"] = "Pagar Mensalidade";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">&#128179; Pagar Mensalidade</h2>
+        <small class="text-muted">Confirme o pagamento da mensalidade</small>
+    </div>
+    <a asp-action="Index" class="btn btn-cs-outline">
+        &#11013; Voltar
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="cs-card">
+            <div class="cs-card-header">
+                Confirmação de Pagamento
+            </div>
+
+            <div class="cs-card-body">
+                <!-- Resumo da Mensalidade -->
+                <div class="alert alert-info">
+                    <h5 class="alert-heading mb-3">&#128203; Dados da Mensalidade</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <strong>Competência:</strong> @Model.Competencia.ToString("MMMM/yyyy")
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>Vencimento:</strong> @Model.Vencimento.ToString("dd/MM/yyyy")
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>Condomínio:</strong> @(Model.CondominioNome ?? "-")
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>Unidade:</strong> @(Model.UnidadeIdentificador ?? "-")
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>Morador:</strong> @(Model.MoradorNome ?? "-")
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong class="text-primary">Valor:</strong>
+                            <span class="fs-5 text-primary">@Model.Valor.ToString("C")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Pagamento -->
+                <form asp-action="Pagar" method="post">
+                    <input type="hidden" asp-for="MensalidadeId" />
+                    <input type="hidden" asp-for="Valor" />
+                    <input type="hidden" asp-for="Competencia" />
+                    <input type="hidden" asp-for="Vencimento" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="FormaPagamento" class="form-label fw-semibold"></label>
+                        <select asp-for="FormaPagamento" class="form-select form-select-lg">
+                            <option value="">Selecione a forma de pagamento...</option>
+                            <option value="pix">&#128176; PIX</option>
+                            <option value="cartao_credito">&#128179; Cartão de Crédito</option>
+                            <option value="cartao_debito">&#128179; Cartão de Débito</option>
+                            <option value="boleto">&#128196; Boleto Bancário</option>
+                            <option value="dinheiro">&#128181; Dinheiro</option>
+                        </select>
+                        <span asp-validation-for="FormaPagamento" class="text-danger small"></span>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <strong>&#9888; Atenção:</strong> Ao confirmar o pagamento, será gerado um registro de pagamento com status pendente. 
+                        O pagamento será processado conforme a forma selecionada.
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a asp-action="Details" asp-route-id="@Model.MensalidadeId" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            &#9989; Confirmar Pagamento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

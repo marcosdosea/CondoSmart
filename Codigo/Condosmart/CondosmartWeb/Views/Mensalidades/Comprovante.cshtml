@@ -1,0 +1,156 @@
+@model CondosmartWeb.Models.ComprovantePagamentoViewModel
+
+@{
+    ViewData["Title"] = "Comprovante de Pagamento";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">&#128196; Comprovante de Pagamento</h2>
+        <small class="text-muted">2ª via do comprovante</small>
+    </div>
+    <a asp-action="Index" class="btn btn-cs-outline">
+        &#11013; Voltar
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="cs-card">
+            <div class="cs-card-header d-flex justify-content-between align-items-center">
+                <span>Comprovante #@Model.PagamentoId</span>
+                @{
+                    var statusClass = Model.StatusPagamento switch
+                    {
+                        "confirmado" => "badge bg-success",
+                        "pendente" => "badge bg-warning text-dark",
+                        "cancelado" => "badge bg-danger",
+                        _ => "badge bg-secondary"
+                    };
+                }
+                <span class="@statusClass">@Model.StatusPagamento.ToUpper()</span>
+            </div>
+
+            <div class="cs-card-body">
+                <!-- Informações do Pagamento -->
+                <div class="border-bottom pb-3 mb-3">
+                    <h5 class="fw-bold mb-3">&#128179; Dados do Pagamento</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Número do Pagamento:</label>
+                            <div class="fw-semibold">#@Model.PagamentoId</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Forma de Pagamento:</label>
+                            <div class="fw-semibold">@Model.FormaPagamentoFormatada</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Valor Pago:</label>
+                            <div class="fw-semibold fs-5 text-success">@Model.ValorPago.ToString("C")</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Status:</label>
+                            <div>
+                                <span class="@statusClass fs-6">@Model.StatusPagamento.ToUpper()</span>
+                            </div>
+                        </div>
+
+                        @if (Model.DataPagamento.HasValue)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Data do Pagamento:</label>
+                                <div class="fw-semibold">@Model.DataPagamento.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                        }
+
+                        @if (Model.DataRegistro.HasValue)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Data de Registro:</label>
+                                <div class="fw-semibold">@Model.DataRegistro.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Informações da Mensalidade -->
+                <div>
+                    <h5 class="fw-bold mb-3">&#128203; Dados da Mensalidade</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Mensalidade:</label>
+                            <div class="fw-semibold">#@Model.MensalidadeId</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Competência:</label>
+                            <div class="fw-semibold">@Model.Competencia.ToString("MMMM/yyyy")</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Vencimento:</label>
+                            <div class="fw-semibold">@Model.Vencimento.ToString("dd/MM/yyyy")</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Valor da Mensalidade:</label>
+                            <div class="fw-semibold">@Model.ValorMensalidade.ToString("C")</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Condomínio:</label>
+                            <div class="fw-semibold">@(Model.CondominioNome ?? "-")</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Unidade:</label>
+                            <div class="fw-semibold">@(Model.UnidadeIdentificador ?? "-")</div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="text-muted small">Morador:</label>
+                            <div class="fw-semibold">@(Model.MoradorNome ?? "-")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- Ações -->
+                <div class="d-flex gap-2 justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        <i>Este comprovante serve como 2ª via do pagamento realizado.</i>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@Model.MensalidadeId" class="btn btn-secondary">
+                            Ver Mensalidade
+                        </a>
+                        <a asp-action="Index" class="btn btn-primary">
+                            Voltar para Lista
+                        </a>
+                        <button type="button" class="btn btn-success" onclick="window.print()">
+                            &#128424; Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn, .cs-card-header .badge, nav, header, footer, .d-flex.gap-2.justify-content-between {
+                display: none !important;
+            }
+            .cs-card {
+                border: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+}
