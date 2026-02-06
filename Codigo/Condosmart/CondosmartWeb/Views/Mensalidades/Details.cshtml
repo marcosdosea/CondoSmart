@@ -1,0 +1,115 @@
+@model CondosmartWeb.Models.MensalidadeViewModel
+
+@{
+    ViewData["Title"] = "Detalhes da Mensalidade";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">&#128178; Detalhes da Mensalidade</h2>
+        <small class="text-muted">Informações completas da mensalidade</small>
+    </div>
+    <a asp-action="Index" class="btn btn-cs-outline">
+        &#11013; Voltar
+    </a>
+</div>
+
+<div class="cs-card">
+    <div class="cs-card-header">
+        Mensalidade #@Model.Id
+    </div>
+
+    <div class="cs-card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Competência:</label>
+                <div class="fw-semibold">@Model.Competencia.ToString("MMMM/yyyy")</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Vencimento:</label>
+                <div class="fw-semibold">
+                    @Model.Vencimento.ToString("dd/MM/yyyy")
+                    @if (Model.EstaVencida)
+                    {
+                        <span class="badge bg-danger ms-2">Vencida</span>
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Valor:</label>
+                <div class="fw-semibold fs-5 text-primary">@Model.Valor.ToString("C")</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Status:</label>
+                <div>
+                    @{
+                        var statusClass = Model.Status switch
+                        {
+                            "pago" => "badge bg-success",
+                            "pendente" => "badge bg-warning text-dark",
+                            "vencida" => "badge bg-danger",
+                            "cancelada" => "badge bg-secondary",
+                            _ => "badge bg-secondary"
+                        };
+                    }
+                    <span class="@statusClass fs-6">@Model.Status.ToUpper()</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Condomínio:</label>
+                <div class="fw-semibold">@(Model.CondominioNome ?? $"Condomínio {Model.CondominioId}")</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Unidade:</label>
+                <div class="fw-semibold">@(Model.UnidadeIdentificador ?? $"Unidade {Model.UnidadeId}")</div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="text-muted small">Morador:</label>
+                <div class="fw-semibold">@(Model.MoradorNome ?? (Model.MoradorId.HasValue ? $"Morador {Model.MoradorId}" : "Não informado"))</div>
+            </div>
+
+            @if (Model.PagamentoId.HasValue)
+            {
+                <div class="col-md-6 mb-3">
+                    <label class="text-muted small">Pagamento:</label>
+                    <div class="fw-semibold">
+                        <span class="badge bg-success">Pagamento #@Model.PagamentoId registrado</span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.CreatedAt.HasValue)
+            {
+                <div class="col-md-12 mb-3">
+                    <label class="text-muted small">Data de Criação:</label>
+                    <div class="fw-semibold">@Model.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                </div>
+            }
+        </div>
+
+        <hr />
+
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-action="Index" class="btn btn-secondary">Voltar para Lista</a>
+
+            @if (Model.PodePagar)
+            {
+                <a asp-action="Pagar" asp-route-id="@Model.Id" class="btn btn-success">
+                    &#128179; Pagar Mensalidade
+                </a>
+            }
+            else if (Model.PagamentoId.HasValue)
+            {
+                <a asp-action="Comprovante" asp-route-id="@Model.Id" class="btn btn-info text-white">
+                    &#128196; Ver Comprovante
+                </a>
+            }
+        </div>
+    </div>
+</div>
