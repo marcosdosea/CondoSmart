@@ -5,7 +5,7 @@ namespace CondosmartWeb.Models
     public class CondominioViewModel
     {
         [Display(Name = "Código")]
-        public int Id { get; set; }
+        public int Id {get; set; }
 
         [Required(ErrorMessage = "O campo Nome é obrigatório")]
         [StringLength(80, ErrorMessage = "O nome não pode exceder 80 caracteres.")]
