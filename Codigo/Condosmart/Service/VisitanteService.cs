@@ -65,6 +65,12 @@ namespace Service
             if (string.IsNullOrWhiteSpace(visitante.Nome))
                 throw new ArgumentException("O nome do visitante é obrigatório.");
 
+            if (string.IsNullOrWhiteSpace(visitante.Telefone))
+                throw new ArgumentException("O telefone do visitante é obrigatório.");
+
+            if (!visitante.MoradorId.HasValue || visitante.MoradorId <= 0)
+                throw new ArgumentException("O morador que está sendo visitado é obrigatório.");
+
             if (!string.IsNullOrWhiteSpace(visitante.Cpf))
             {
                 var cpfLimpo = visitante.Cpf.Replace(".", "").Replace("-", "").Trim();
