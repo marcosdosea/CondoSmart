@@ -8,6 +8,7 @@ namespace CondosmartWeb.Controllers.API
 {
     [ApiController]
     [Route("api/[controller]")]
+    [IgnoreAntiforgeryToken]
     public class MoradoresController : ControllerBase
     {
         private readonly IMoradorService _service;
