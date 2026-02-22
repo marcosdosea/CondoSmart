@@ -18,6 +18,9 @@ namespace Condosmart
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -38,11 +41,16 @@ namespace Condosmart
             builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
             builder.Services.AddScoped<IPagamentoService, PagamentoService>();
             builder.Services.AddScoped<IMensalidadeService, MensalidadeService>();
-
+            builder.Services.AddScoped<IMoradorService, MoradorService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddTransient<IReservaService, ReservaService>();
+
+            builder.Services.AddHttpClient("CondosmartApi", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
+            });
 
             var app = builder.Build();
 
@@ -53,6 +61,9 @@ namespace Condosmart
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
