@@ -3,6 +3,7 @@ using CondosmartWeb.Infrastructure;
 using CondosmartWeb.Models;
 using Core.Data;
 using Core.Service;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -64,6 +65,13 @@ namespace Condosmart
                 options.ExpireTimeSpan = TimeSpan.FromHours(8);
                 options.SlidingExpiration = true;
             });
+
+            // DataProtection compartilhado com CondosmartAPI
+            // (permite que o cookie seja validado nos dois projetos)
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(
+                    new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "..", "keys")))
+                .SetApplicationName("CondoSmart");
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddTransient<CookieAuthDelegatingHandler>();

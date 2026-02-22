@@ -1,7 +1,7 @@
 using AutoMapper;
-using CondosmartWeb.Controllers.API;
-using CondosmartWeb.Mappers;
-using CondosmartWeb.Models;
+using CondosmartAPI.Controllers;
+using CondosmartAPI.Mappers;
+using CondosmartAPI.Models;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Identity;
