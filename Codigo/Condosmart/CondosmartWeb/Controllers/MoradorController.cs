@@ -1,76 +1,92 @@
-﻿using AutoMapper;
-using CondosmartWeb.Models;
-using Core.Models;
-using Core.Service;
+﻿using CondosmartWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Json;
 
 namespace CondosmartWeb.Controllers
 {
     public class MoradorController : Controller
     {
-        private readonly IMoradorService _service;
-        private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public MoradorController(IMoradorService service, IMapper mapper)
+        public MoradorController(IHttpClientFactory httpClientFactory)
         {
-            _service = service;
-            _mapper = mapper;
+            _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        private HttpClient CreateClient() => _httpClientFactory.CreateClient("CondoSmartAPI");
+
+        public async Task<IActionResult> Index()
         {
-            var lista = _service.GetAll();
-            var vms = _mapper.Map<List<MoradorViewModel>>(lista);
-            return View(vms);
+            var client = CreateClient();
+            var moradores = await client.GetFromJsonAsync<List<MoradorViewModel>>("api/moradores");
+            return View(moradores ?? new List<MoradorViewModel>());
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
-            return View(_mapper.Map<MoradorViewModel>(entity));
+            var client = CreateClient();
+            var response = await client.GetAsync($"api/moradores/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
+            var morador = await response.Content.ReadFromJsonAsync<MoradorViewModel>();
+            return View(morador);
         }
 
         public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(MoradorViewModel vm)
+        public async Task<IActionResult> Create(MoradorViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
 
-            var entity = _mapper.Map<Morador>(vm);
-            _service.Create(entity);
-            return RedirectToAction(nameof(Index));
+            var client = CreateClient();
+            var response = await client.PostAsJsonAsync("api/moradores", vm);
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction(nameof(Index));
+
+            ModelState.AddModelError(string.Empty, "Erro ao criar morador.");
+            return View(vm);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var entity = _service.GetById(id);
-            return View(_mapper.Map<MoradorViewModel>(entity));
+            var client = CreateClient();
+            var response = await client.GetAsync($"api/moradores/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
+            var morador = await response.Content.ReadFromJsonAsync<MoradorViewModel>();
+            return View(morador);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(MoradorViewModel vm)
+        public async Task<IActionResult> Edit(MoradorViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
 
-            _service.Edit(_mapper.Map<Morador>(vm));
-            return RedirectToAction(nameof(Index));
+            var client = CreateClient();
+            var response = await client.PutAsJsonAsync($"api/moradores/{vm.Id}", vm);
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction(nameof(Index));
+
+            ModelState.AddModelError(string.Empty, "Erro ao editar morador.");
+            return View(vm);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var entity = _service.GetById(id);
-            return View(_mapper.Map<MoradorViewModel>(entity));
+            var client = CreateClient();
+            var response = await client.GetAsync($"api/moradores/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
+            var morador = await response.Content.ReadFromJsonAsync<MoradorViewModel>();
+            return View(morador);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _service.Delete(id);
+            var client = CreateClient();
+            await client.DeleteAsync($"api/moradores/{id}");
             return RedirectToAction(nameof(Index));
         }
     }
