@@ -20,7 +20,7 @@ namespace CondosmartWeb.Controllers.API
         }
 
         /// <summary>
-        /// Retorna todos os moradores cadastrados.
+        /// Retorna todos os moradores cadastrados;
         /// </summary>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
