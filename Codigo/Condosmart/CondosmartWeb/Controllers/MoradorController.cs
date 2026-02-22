@@ -1,9 +1,11 @@
 ﻿using CondosmartWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 
 namespace CondosmartWeb.Controllers
 {
+    [Authorize(Roles = "Admin,Sindico")]
     public class MoradorController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

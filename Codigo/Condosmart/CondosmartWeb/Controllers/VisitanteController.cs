@@ -2,10 +2,12 @@
 using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CondosmartWeb.Controllers
 {
+    [Authorize(Roles = "Admin,Sindico")]
     public class VisitanteController : Controller
     {
         private readonly IVisitanteService _visitanteService;

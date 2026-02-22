@@ -2,6 +2,8 @@ using AutoMapper;
 using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CondosmartWeb.Controllers.API
@@ -9,19 +11,25 @@ namespace CondosmartWeb.Controllers.API
     [ApiController]
     [Route("api/[controller]")]
     [IgnoreAntiforgeryToken]
+    [Authorize(Roles = "Admin,Sindico")]
     public class MoradoresController : ControllerBase
     {
         private readonly IMoradorService _service;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MoradoresController(IMoradorService service, IMapper mapper)
+        public MoradoresController(
+            IMoradorService service,
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager)
         {
             _service = service;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         /// <summary>
-        /// Retorna todos os moradores cadastrados;
+        /// Retorna todos os moradores cadastrados.
         /// </summary>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -47,19 +55,60 @@ namespace CondosmartWeb.Controllers.API
         }
 
         /// <summary>
-        /// Cria um novo morador.
+        /// Cria um novo morador e gera automaticamente um usuário Identity com a role Morador.
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<MoradorViewModel> Create(MoradorViewModel vm)
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<MoradorViewModel>> Create(MoradorViewModel vm)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            if (string.IsNullOrWhiteSpace(vm.Email))
+            {
+                ModelState.AddModelError(nameof(vm.Email), "O e-mail é obrigatório para criação do acesso do morador.");
+                return BadRequest(ModelState);
+            }
+
+            var emailExistente = await _userManager.FindByEmailAsync(vm.Email);
+            if (emailExistente != null)
+            {
+                ModelState.AddModelError(nameof(vm.Email), "Já existe um usuário cadastrado com este e-mail.");
+                return Conflict(ModelState);
+            }
+
+            // 1. Persiste o Morador na base de domínio
             var entity = _mapper.Map<Morador>(vm);
             var id = _service.Create(entity);
             vm.Id = id;
+
+            // 2. Cria usuário Identity associado ao Morador
+            var novoUsuario = new ApplicationUser
+            {
+                UserName = vm.Email,
+                Email = vm.Email,
+                NomeCompleto = vm.Nome,
+                EmailConfirmed = true
+            };
+
+            // Senha temporária padrão — deve ser trocada no primeiro acesso
+            const string senhaTemporaria = "Condo@12345!";
+
+            var resultado = await _userManager.CreateAsync(novoUsuario, senhaTemporaria);
+            if (!resultado.Succeeded)
+            {
+                // Rollback compensatório: remove o Morador já salvo
+                _service.Delete(id);
+                foreach (var erro in resultado.Errors)
+                    ModelState.AddModelError(string.Empty, erro.Description);
+                return BadRequest(ModelState);
+            }
+
+            // 3. Atribui a role Morador
+            await _userManager.AddToRoleAsync(novoUsuario, "Morador");
+
             return CreatedAtAction(nameof(GetById), new { id }, vm);
         }
 
