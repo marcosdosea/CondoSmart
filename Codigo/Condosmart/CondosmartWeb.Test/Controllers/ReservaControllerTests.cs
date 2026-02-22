@@ -3,9 +3,11 @@ using CondosmartWeb.Controllers;
 using CondosmartWeb.Mappers;
 using CondosmartWeb.Models;
 using CondosmartWeb.Profiles;
+using Core.Data;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -43,7 +45,27 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new ReservaController(mockService.Object, mapper);
+            var mockContext = new Mock<CondosmartContext>();
+
+            var emptyAreas = new List<AreaDeLazer>().AsQueryable();
+            var mockAreaSet = CreateMockDbSet(emptyAreas);
+            mockContext.Setup(c => c.AreaDeLazer).Returns(mockAreaSet.Object);
+
+            var emptyMoradores = new List<Morador>().AsQueryable();
+            var mockMoradoresSet = CreateMockDbSet(emptyMoradores);
+            mockContext.Setup(c => c.Moradores).Returns(mockMoradoresSet.Object);
+
+            controller = new ReservaController(mockService.Object, mockContext.Object, mapper);
+        }
+
+        private static Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
+        {
+            var mockSet = new Mock<DbSet<T>>();
+            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(data.Provider);
+            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
+            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
+            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            return mockSet;
         }
 
         [TestMethod]

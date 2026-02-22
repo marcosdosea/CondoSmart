@@ -1,10 +1,7 @@
-using Core;
 using Core.Data;
-using Core.Models;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure; // Adicione este using
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Service;
 
 namespace Condosmart
@@ -18,6 +15,9 @@ namespace Condosmart
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -29,6 +29,7 @@ namespace Condosmart
                     ServerVersion.AutoDetect(connectionString)
                 ));
 
+            builder.Services.AddScoped<IMoradorService, MoradorService>();
             builder.Services.AddScoped<ICondominioService, CondominioService>();
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
@@ -42,11 +43,22 @@ namespace Condosmart
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddHttpClient("CondoSmartAPI", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);
+            });
+
             builder.Services.AddTransient<IReservaService, ReservaService>();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -61,6 +73,7 @@ namespace Condosmart
 
             app.UseAuthorization();
 
+            app.MapControllers();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
