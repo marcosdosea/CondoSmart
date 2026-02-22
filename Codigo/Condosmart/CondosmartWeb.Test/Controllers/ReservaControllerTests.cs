@@ -3,9 +3,11 @@ using CondosmartWeb.Controllers;
 using CondosmartWeb.Mappers;
 using CondosmartWeb.Models;
 using CondosmartWeb.Profiles;
+using Core.Data;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -43,7 +45,9 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new ReservaController(mockService.Object, mapper);
+            controller = new ReservaController(mockService.Object,
+                new CondosmartContext(new DbContextOptionsBuilder<CondosmartContext>().UseInMemoryDatabase("TestDb").Options),
+                mapper);
         }
 
         [TestMethod]
