@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CondoSmart</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .cs-auth-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #e8fafa 0%, #c8f0ef 50%, #e0f7f7 100%);
+        }
+
+        .cs-auth-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .cs-auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(23, 190, 187, 0.18);
+            overflow: hidden;
+        }
+
+        .cs-auth-header {
+            background: linear-gradient(135deg, var(--cs-primary) 0%, var(--cs-primary-700) 100%);
+            padding: 2rem 2rem 1.6rem;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .cs-auth-brand-badge {
+            width: 52px;
+            height: 52px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0 auto 0.75rem;
+            letter-spacing: -1px;
+        }
+
+        .cs-auth-header h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .cs-auth-header p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin: 0.25rem 0 0;
+        }
+
+        .cs-auth-body {
+            padding: 2rem;
+        }
+
+        .cs-auth-footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--cs-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--cs-border);
+        }
+
+        .form-control:focus {
+            border-color: var(--cs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(23, 190, 187, 0.2);
+        }
+
+        .btn-cs-login {
+            background: linear-gradient(135deg, var(--cs-primary) 0%, var(--cs-primary-700) 100%);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.65rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: opacity .2s;
+        }
+
+        .btn-cs-login:hover {
+            opacity: 0.88;
+            color: #fff;
+        }
+
+        .form-floating > label {
+            color: var(--cs-muted);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--cs-primary);
+            border-color: var(--cs-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="cs-auth-page">
+        <div class="cs-auth-center">
+            @RenderBody()
+        </div>
+
+        <footer class="cs-auth-footer">
+            &copy; 2026 CondoSmart — Todos os direitos reservados
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,3 +1,5 @@
+@inject Microsoft.AspNetCore.Identity.SignInManager<CondosmartWeb.Models.ApplicationUser> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<CondosmartWeb.Models.ApplicationUser> UserManager
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -28,45 +30,60 @@
 			</div>
 
 		<nav class="cs-nav d-grid gap-2">
-			<a asp-controller="Home" asp-action="Index">
-				&#127968; Home
-			</a>
-
-			<a asp-controller="Condominio" asp-action="Index">
-				&#127970; Condomínios
-			</a>
-
-			<a asp-controller="UnidadesResidenciais" asp-action="Index">
-				&#127961; Unidades Residenciais
-			</a>
-
-			<a asp-controller="Sindico" asp-action="Index">
-				&#129333; Síndico
-			</a>
-
-			<a asp-controller="Ata" asp-action="Index">
-				&#128203; Atas
-			</a>
-
-			<a asp-controller="Visitante" asp-action="Index">
-					&#128100; Visitantes
+				<a asp-controller="Home" asp-action="Index">
+					&#127968; Home
 				</a>
 
-			<a asp-controller="Morador" asp-action="Index">
-				&#128101; Moradores
-			</a>
+				@* ── Apenas Admin ─────────────────────────────── *@
+				@if (User.IsInRole("Admin"))
+				{
+					<a asp-controller="Condominio" asp-action="Index">
+						&#127970; Condomínios
+					</a>
+				}
 
-			<a asp-controller="Reserva" asp-action="Index">
-			&#128197; Reservas
-		</a>
-		<a asp-controller="Mensalidades" asp-action="Index">
-			&#128178; Mensalidades
-		</a>
-		<a asp-controller="AreaDeLazer" asp-action="Index">
-			&#127946; Áreas de Lazer
-		</a>
+				@* ── Admin e Síndico ───────────────────────────── *@
+				@if (User.IsInRole("Admin") || User.IsInRole("Sindico"))
+				{
+					<a asp-controller="UnidadesResidenciais" asp-action="Index">
+						&#127961; Unidades Residenciais
+					</a>
 
-		</nav>
+					<a asp-controller="Sindico" asp-action="Index">
+						&#129333; Síndico
+					</a>
+
+					<a asp-controller="Visitante" asp-action="Index">
+						&#128100; Visitantes
+					</a>
+
+					<a asp-controller="Morador" asp-action="Index">
+						&#128101; Moradores
+					</a>
+
+					<a asp-controller="AreaDeLazer" asp-action="Index">
+						&#127946; Áreas de Lazer
+					</a>
+				}
+
+				@* ── Todos os perfis autenticados ─────────────── *@
+					<a asp-controller="Ata" asp-action="Index">
+						&#128203; Atas
+					</a>
+
+					<a asp-controller="Reserva" asp-action="Index">
+						&#128197; Reservas
+					</a>
+
+					<a asp-controller="Mensalidades" asp-action="Index">
+						&#128178; Mensalidades
+					</a>
+
+					<a asp-controller="Chamado" asp-action="Index">
+						&#128172; Chamados
+					</a>
+
+				</nav>
 		</aside>
 
 		<div class="cs-main">
@@ -80,8 +97,22 @@
 				</div>
 
 				<div class="cs-top-actions">
-					<button class="cs-icon-btn" title="Notificações">&#128276;</button>
-					<button class="cs-icon-btn" title="Configurações">&#9881;</button>
+					@if (SignInManager.IsSignedIn(User))
+					{
+						var nomeUsuario = UserManager.GetUserName(User) ?? "Usuário";
+						<span class="me-2 text-muted small">&#128100; @nomeUsuario</span>
+						@if (User.IsInRole("Admin") || User.IsInRole("Sindico"))
+						{
+							<a asp-area="Identity" asp-page="/Account/Register" class="btn btn-sm btn-outline-success me-1">&#10133; Registrar</a>
+						}
+						<form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
+							<button type="submit" class="btn btn-sm btn-outline-danger">&#128275; Sair</button>
+						</form>
+					}
+					else
+					{
+						<a asp-area="Identity" asp-page="/Account/Login" class="btn btn-sm btn-primary">&#128274; Entrar</a>
+					}
 				</div>
 			</header>
 

@@ -3,11 +3,13 @@ using CondosmartWeb.Models;
 using Core.Data; // Necessário para acessar o banco e preencher as listas
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; // Necessário para SelectList
 
 namespace CondosmartWeb.Controllers
 {
+    [Authorize(Roles = "Admin,Sindico,Morador")]
     public class ReservaController : Controller
     {
         private readonly IReservaService _service;

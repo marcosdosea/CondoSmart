@@ -1,9 +1,10 @@
 using AutoMapper;
-using CondosmartWeb.Controllers.API;
-using CondosmartWeb.Mappers;
-using CondosmartWeb.Models;
+using CondosmartAPI.Controllers;
+using CondosmartAPI.Mappers;
+using CondosmartAPI.Models;
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -43,7 +44,23 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new MoradoresController(mockService.Object, mapper);
+            var store = new Mock<IUserStore<ApplicationUser>>();
+            var mockUserManager = new Mock<UserManager<ApplicationUser>>(
+                store.Object, null, null, null, null, null, null, null, null);
+
+            mockUserManager
+                .Setup(u => u.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser?)null);
+
+            mockUserManager
+                .Setup(u => u.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            mockUserManager
+                .Setup(u => u.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            controller = new MoradoresController(mockService.Object, mapper, mockUserManager.Object);
         }
 
         // ---- GET /api/moradores ----
@@ -96,10 +113,10 @@ namespace CondosmartWeb.Controllers.Tests
         // ---- POST /api/moradores ----
 
         [TestMethod]
-        public void Create_Valido_Retorna201Created()
+        public async Task Create_Valido_Retorna201Created()
         {
             // Act
-            var result = controller.Create(GetNewMoradorModel());
+            var result = await controller.Create(GetNewMoradorModel());
 
             // Assert
             Assert.IsInstanceOfType(result.Result, typeof(CreatedAtActionResult));
@@ -110,13 +127,13 @@ namespace CondosmartWeb.Controllers.Tests
         }
 
         [TestMethod]
-        public void Create_ModeloInvalido_Retorna400()
+        public async Task Create_ModeloInvalido_Retorna400()
         {
             // Arrange
             controller.ModelState.AddModelError("Nome", "Campo requerido");
 
             // Act
-            var result = controller.Create(GetNewMoradorModel());
+            var result = await controller.Create(GetNewMoradorModel());
 
             // Assert
             Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
