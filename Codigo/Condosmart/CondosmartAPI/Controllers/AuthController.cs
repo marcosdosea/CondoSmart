@@ -11,6 +11,7 @@ namespace CondosmartAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[IgnoreAntiforgeryToken]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
