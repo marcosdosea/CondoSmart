@@ -109,7 +109,7 @@ namespace Condosmart
                 await condosmartDb.Database.MigrateAsync();
 
                 var identityDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                await identityDb.Database.MigrateAsync();
+                await MigrateIdentityContextSafelyAsync(identityDb);
 
                 await IdentitySeedService.SeedRolesAndAdminAsync(
                     scope.ServiceProvider, builder.Configuration);
@@ -146,6 +146,33 @@ namespace Condosmart
             app.MapRazorPages();
 
             app.Run();
+        }
+
+        /// <summary>
+        /// Aplica migrações do Identity de forma segura.
+        /// Se as tabelas já existem no banco mas não estão registradas no histórico de migrações
+        /// (erro MySQL 1050 "Table already exists"), registra as migrações como aplicadas
+        /// via INSERT IGNORE, evitando falha no startup.
+        /// </summary>
+        private static async Task MigrateIdentityContextSafelyAsync(ApplicationDbContext identityDb)
+        {
+            try
+            {
+                await identityDb.Database.MigrateAsync();
+            }
+            catch (MySqlConnector.MySqlException ex) when (ex.ErrorCode == MySqlConnector.MySqlErrorCode.TableExists)
+            {
+                // As tabelas já existem, mas as migrações não estão no histórico.
+                // Registra cada migração pendente como aplicada sem tentar recriar as tabelas.
+                var pendingMigrations = await identityDb.Database.GetPendingMigrationsAsync();
+                foreach (var migration in pendingMigrations)
+                {
+                    var productVersion = typeof(ApplicationDbContext).Assembly
+                        .GetName().Version?.ToString() ?? "8.0.0";
+                    var sql = $"INSERT IGNORE INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('{migration}', '{productVersion}')";
+                    await identityDb.Database.ExecuteSqlRawAsync(sql);
+                }
+            }
         }
     }
 }
