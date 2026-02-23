@@ -100,6 +100,8 @@ namespace CondosmartAPI
             });
 
             builder.Services.AddScoped<IMoradorService, MoradorService>();
+            builder.Services.AddScoped<IReservaService, ReservaService>();
+            builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
