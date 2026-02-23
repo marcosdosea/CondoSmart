@@ -108,6 +108,9 @@ namespace CondosmartAPI
 
             using (var scope = app.Services.CreateScope())
             {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await dbContext.Database.MigrateAsync();
+
                 await IdentitySeedService.SeedRolesAndAdminAsync(
                     scope.ServiceProvider, builder.Configuration);
             }
