@@ -1,4 +1,5 @@
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,10 +10,17 @@ namespace CondosmartWeb.Areas.Identity.Pages.Account;
 public class LoginModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly JwtTokenService _jwtTokenService;
 
-    public LoginModel(SignInManager<ApplicationUser> signInManager)
+    public LoginModel(
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        JwtTokenService jwtTokenService)
     {
         _signInManager = signInManager;
+        _userManager = userManager;
+        _jwtTokenService = jwtTokenService;
     }
 
     [BindProperty]
@@ -52,7 +60,15 @@ public class LoginModel : PageModel
             Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 
         if (result.Succeeded)
+        {
+            var user = await _userManager.FindByEmailAsync(Input.Email);
+            if (user != null)
+            {
+                var token = await _jwtTokenService.GenerateTokenAsync(user);
+                HttpContext.Session.SetString("jwt_token", token);
+            }
             return LocalRedirect(ReturnUrl);
+        }
 
         if (result.IsLockedOut)
         {

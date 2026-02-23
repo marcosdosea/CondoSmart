@@ -1,9 +1,9 @@
 using CondosmartWeb.Data;
 using CondosmartWeb.Infrastructure;
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Core.Data;
 using Core.Service;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -66,15 +66,17 @@ namespace Condosmart
                 options.SlidingExpiration = true;
             });
 
-            // DataProtection compartilhado com CondosmartAPI
-            // (permite que o cookie seja validado nos dois projetos)
-            builder.Services.AddDataProtection()
-                .PersistKeysToFileSystem(
-                    new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "..", "keys")))
-                .SetApplicationName("CondoSmart");
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.IdleTimeout = TimeSpan.FromHours(8);
+            });
 
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddTransient<CookieAuthDelegatingHandler>();
+            builder.Services.AddScoped<JwtTokenService>();
+            builder.Services.AddTransient<JwtAuthDelegatingHandler>();
 
             builder.Services.AddScoped<IMoradorService, MoradorService>();
             builder.Services.AddScoped<ICondominioService, CondominioService>();
@@ -93,7 +95,7 @@ namespace Condosmart
             builder.Services.AddHttpClient("CondoSmartAPI", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);
-            }).AddHttpMessageHandler<CookieAuthDelegatingHandler>();
+            }).AddHttpMessageHandler<JwtAuthDelegatingHandler>();
 
             builder.Services.AddTransient<IReservaService, ReservaService>();
 
@@ -101,7 +103,8 @@ namespace Condosmart
 
             using (var scope = app.Services.CreateScope())
             {
-                await IdentitySeedService.SeedRolesAndAdminAsync(scope.ServiceProvider);
+                await IdentitySeedService.SeedRolesAndAdminAsync(
+                    scope.ServiceProvider, builder.Configuration);
             }
 
             // Configure the HTTP request pipeline.
@@ -123,6 +126,7 @@ namespace Condosmart
 
             app.UseRouting();
 
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
 

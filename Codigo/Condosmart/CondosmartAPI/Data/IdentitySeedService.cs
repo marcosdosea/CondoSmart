@@ -7,7 +7,7 @@ public static class IdentitySeedService
 {
     private static readonly string[] Roles = ["Admin", "Sindico", "Morador"];
 
-    public static async Task SeedRolesAndAdminAsync(IServiceProvider services)
+    public static async Task SeedRolesAndAdminAsync(IServiceProvider services, IConfiguration configuration)
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
@@ -18,8 +18,11 @@ public static class IdentitySeedService
                 await roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        const string adminEmail = "admin@condosmart.com";
-        const string adminPassword = "Admin@123456!";
+        var adminEmail = configuration["AdminUser:Email"];
+        var adminPassword = configuration["AdminUser:Password"];
+
+        if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPassword))
+            return;
 
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
