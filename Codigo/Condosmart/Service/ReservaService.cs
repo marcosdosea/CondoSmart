@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Service
 {
     /// <summary>
-                    
+
     /// </summary>
     public class ReservaService : IReservaService
     {
@@ -68,8 +68,8 @@ namespace Service
         public Reserva? GetById(int id)
         {
             return context.Reservas
-                .Include(r => r.Area)     
-                .Include(r => r.Morador)  
+                .Include(r => r.Area)
+                .Include(r => r.Morador)
                 .FirstOrDefault(r => r.Id == id);
         }
 
@@ -81,9 +81,9 @@ namespace Service
         {
             return context.Reservas
                 .AsNoTracking()
-                .Include(r => r.Area)     
-                .Include(r => r.Morador)  
-                .OrderByDescending(r => r.DataInicio) 
+                .Include(r => r.Area)
+                .Include(r => r.Morador)
+                .OrderByDescending(r => r.DataInicio)
                 .ToList();
         }
 
@@ -95,23 +95,10 @@ namespace Service
         private static void ValidarReserva(Reserva reserva)
         {
             if (reserva == null)
-                throw new ArgumentException("Reserva inválida.");
-
-            if (reserva.AreaId <= 0)
-                throw new ArgumentException("A área é obrigatória.");
-
-            if (reserva.CondominioId <= 0)
-                throw new ArgumentException("O condomínio é obrigatório.");
+                throw new Core.Exceptions.ServiceException("Reserva inválida.");
 
             if (reserva.DataFim < reserva.DataInicio)
-                throw new ArgumentException("A data/hora de fim não pode ser anterior à data/hora de início.");
-
-            if (string.IsNullOrWhiteSpace(reserva.Status))
-                throw new ArgumentException("O status da reserva é obrigatório.");
-
-            var allowed = new[] { "confirmado", "pendente", "cancelado", "concluido" };
-            if (!allowed.Contains(reserva.Status.Trim().ToLowerInvariant()))
-                throw new ArgumentException("Status inválido. Valores permitidos: confirmado, pendente, cancelado, concluido.");
+                throw new Core.Exceptions.ServiceException("A data/hora de fim não pode ser anterior à data/hora de início.");
         }
     }
 }

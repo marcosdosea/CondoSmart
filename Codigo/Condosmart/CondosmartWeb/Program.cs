@@ -42,7 +42,7 @@ namespace Condosmart
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddTransient<IReservaService, ReservaService>();
+            // builder.Services.AddTransient<IReservaService, ReservaService>(); // Removido duplicidade
 
             var app = builder.Build();
 

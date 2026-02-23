@@ -27,7 +27,7 @@ namespace Service
         /// <returns>id da ata</returns>
         public int Create(Ata ata)
         {
-            ValidarAta(ata);
+            // ValidarAta(ata); // Removido - agora na ViewModel e ServiceException se necessário
 
             context.Add(ata);
             context.SaveChanges();
@@ -40,7 +40,7 @@ namespace Service
         /// <param name="ata">dados da ata</param>
         public void Edit(Ata ata)
         {
-            ValidarAta(ata);
+            // ValidarAta(ata);
 
             context.Update(ata);
             context.SaveChanges();
@@ -83,19 +83,6 @@ namespace Service
         /// Valida regras básicas da ata
         /// </summary>
         /// <param name="ata"></param>
-        private static void ValidarAta(Ata ata)
-        {
-            if (ata == null)
-                throw new ArgumentException("Ata inválida.");
-
-            if (string.IsNullOrWhiteSpace(ata.Titulo))
-                throw new ArgumentException("O título da ata é obrigatório.");
-
-            if (ata.DataReuniao == default)
-                throw new ArgumentException("A data da reunião é obrigatória.");
-
-            if (ata.CondominioId <= 0)
-                throw new ArgumentException("Condomínio inválido.");
-        }
+        // ValidarAta removido conforme refatoração para ViewModel e ServiceException
     }
 }

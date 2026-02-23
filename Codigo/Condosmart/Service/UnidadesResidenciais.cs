@@ -6,6 +6,7 @@ using Core.Data;
 using Core.Models;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Core.Exceptions;
 
 namespace Service
 {
@@ -31,7 +32,7 @@ namespace Service
         /// <exception cref="ArgumentException"></exception>
         public int Create(UnidadesResidenciais unidade)
         {
-            ValidarUnidade(unidade);
+            // ValidarUnidade(unidade); // Removido - agora na ViewModel e ServiceException se necessário
 
             context.UnidadesResidenciais.Add(unidade);
             context.SaveChanges();
@@ -45,7 +46,7 @@ namespace Service
         /// <exception cref="ArgumentException"></exception>
         public void Edit(UnidadesResidenciais unidade)
         {
-            ValidarUnidade(unidade);
+            // ValidarUnidade(unidade);
 
             context.UnidadesResidenciais.Update(unidade);
             context.SaveChanges();
@@ -97,29 +98,6 @@ namespace Service
         /// </summary>
         /// <param name="unidade"></param>
         /// <exception cref="ArgumentException"></exception>
-        private static void ValidarUnidade(UnidadesResidenciais unidade)
-        {
-            if (unidade == null)
-                throw new ArgumentException("Unidade residencial inválida.");
-
-            if (string.IsNullOrWhiteSpace(unidade.Identificador))
-                throw new ArgumentException("O identificador da unidade é obrigatório.");
-
-            if (unidade.CondominioId <= 0)
-                throw new ArgumentException("Condomínio associado inválido.");
-
-            if (!string.IsNullOrWhiteSpace(unidade.Uf) && unidade.Uf.Length != 2)
-                throw new ArgumentException("UF deve ter 2 caracteres.");
-
-            if (!string.IsNullOrWhiteSpace(unidade.Cep) && unidade.Cep.Length != 8)
-                throw new ArgumentException("CEP deve ter 8 caracteres (somente números).");
-
-            // Telefones são opcionais, mas se informados validamos comprimento mínimo simples
-            if (!string.IsNullOrWhiteSpace(unidade.TelefoneResidencial) && unidade.TelefoneResidencial.Length < 8)
-                throw new ArgumentException("Telefone residencial inválido.");
-
-            if (!string.IsNullOrWhiteSpace(unidade.TelefoneCelular) && unidade.TelefoneCelular.Length < 8)
-                throw new ArgumentException("Telefone celular inválido.");
-        }
+        // ValidarUnidade removido conforme refatoração para ViewModel e ServiceException
     }
 }

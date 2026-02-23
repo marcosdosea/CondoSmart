@@ -16,7 +16,7 @@ namespace Service
 
         public int Create(Visitantes visitante)
         {
-            ValidarVisitante(visitante);
+            // ValidarVisitante(visitante); // Removido: validação feita na ViewModel
             _context.Add(visitante);
             _context.SaveChanges();
             return visitante.Id;
@@ -24,7 +24,7 @@ namespace Service
 
         public void Edit(Visitantes visitante)
         {
-            ValidarVisitante(visitante);
+            // ValidarVisitante(visitante); // Removido: validação feita na ViewModel
             _context.Update(visitante);
             _context.SaveChanges();
         }
@@ -60,28 +60,12 @@ namespace Service
         private static void ValidarVisitante(Visitantes visitante)
         {
             if (visitante == null)
-                throw new ArgumentException("Visitante inválido.");
-
-            if (string.IsNullOrWhiteSpace(visitante.Nome))
-                throw new ArgumentException("O nome do visitante é obrigatório.");
-
-            if (string.IsNullOrWhiteSpace(visitante.Telefone))
-                throw new ArgumentException("O telefone do visitante é obrigatório.");
-
-            if (!visitante.MoradorId.HasValue || visitante.MoradorId <= 0)
-                throw new ArgumentException("O morador que está sendo visitado é obrigatório.");
-
-            if (!string.IsNullOrWhiteSpace(visitante.Cpf))
-            {
-                var cpfLimpo = visitante.Cpf.Replace(".", "").Replace("-", "").Trim();
-                if (cpfLimpo.Length != 11)
-                    throw new ArgumentException("O CPF deve conter 11 caracteres.");
-            }
+                throw new Core.Exceptions.ServiceException("Visitante inválido.");
 
             if (visitante.DataHoraSaida.HasValue && visitante.DataHoraEntrada.HasValue &&
                 visitante.DataHoraSaida.Value < visitante.DataHoraEntrada.Value)
             {
-                throw new ArgumentException("A data/hora de saída não pode ser menor que a entrada.");
+                throw new Core.Exceptions.ServiceException("A data/hora de saída não pode ser menor que a entrada.");
             }
         }
     }

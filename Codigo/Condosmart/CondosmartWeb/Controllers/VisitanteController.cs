@@ -3,6 +3,7 @@ using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Core.Exceptions;
 
 namespace CondosmartWeb.Controllers
 {
@@ -53,10 +54,19 @@ namespace CondosmartWeb.Controllers
             if (ModelState.IsValid)
             {
                 var visitante = _mapper.Map<Visitantes>(visitanteViewModel);
-                _visitanteService.Create(visitante);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _visitanteService.Create(visitante);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
+                    visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
+                    return View(visitanteViewModel);
+                }
             }
-            
+
             visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
             return View(visitanteViewModel);
         }
@@ -83,10 +93,19 @@ namespace CondosmartWeb.Controllers
             if (ModelState.IsValid)
             {
                 var visitante = _mapper.Map<Visitantes>(visitanteViewModel);
-                _visitanteService.Edit(visitante);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _visitanteService.Edit(visitante);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
+                    visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
+                    return View(visitanteViewModel);
+                }
             }
-            
+
             visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
             return View(visitanteViewModel);
         }

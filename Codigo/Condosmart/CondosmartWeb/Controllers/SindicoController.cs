@@ -3,6 +3,7 @@ using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Core.Exceptions;
 
 namespace CondosmartWeb.Controllers
 {
@@ -40,8 +41,16 @@ namespace CondosmartWeb.Controllers
             if (!ModelState.IsValid) return View(vm);
 
             var entity = _mapper.Map<Sindico>(vm);
-            _service.Create(entity);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _service.Create(entity);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ServiceException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(vm);
+            }
         }
 
         public IActionResult Edit(int id)
@@ -56,8 +65,16 @@ namespace CondosmartWeb.Controllers
         {
             if (!ModelState.IsValid) return View(vm);
 
-            _service.Edit(_mapper.Map<Sindico>(vm));
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _service.Edit(_mapper.Map<Sindico>(vm));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ServiceException e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+                return View(vm);
+            }
         }
 
         public IActionResult Delete(int id)

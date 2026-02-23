@@ -4,38 +4,39 @@ using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Core.Exceptions;
 
 namespace CondosmartWeb.Controllers
 {
-    public class AtaController : Controller
+    public class UnidadesResidenciaisController : Controller
     {
-        private readonly IAtaService _service;
+        private readonly IUnidadesResidenciaisService _service;
         private readonly ICondominioService _condominioService;
-        private readonly ISindicoService _sindicoService;
         private readonly IMapper _mapper;
 
-        public AtaController(IAtaService service, ICondominioService condominioService, ISindicoService sindicoService, IMapper mapper)
+        public UnidadesResidenciaisController(
+            IUnidadesResidenciaisService service,
+            ICondominioService condominioService,
+            IMapper mapper)
         {
             _service = service;
             _condominioService = condominioService;
-            _sindicoService = sindicoService;
             _mapper = mapper;
         }
 
         public IActionResult Index()
         {
             var lista = _service.GetAll();
-            var vms = _mapper.Map<List<AtaViewModel>>(lista);
+            var vms = _mapper.Map<List<UnidadeResidencialViewModel>>(lista);
             return View(vms);
         }
 
         public IActionResult Details(int id)
         {
             var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+                return NotFound();
 
-            return View(_mapper.Map<AtaViewModel>(entity));
+            return View(_mapper.Map<UnidadeResidencialViewModel>(entity));
         }
 
         public IActionResult Create()
@@ -46,7 +47,7 @@ namespace CondosmartWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(AtaViewModel vm)
+        public IActionResult Create(UnidadeResidencialViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -54,32 +55,25 @@ namespace CondosmartWeb.Controllers
                 return View(vm);
             }
 
-            var entity = _mapper.Map<Ata>(vm);
-            try
-            {
-                _service.Create(entity);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (ServiceException e)
-            {
-                ModelState.AddModelError(string.Empty, e.Message);
-                PopularDropdowns();
-                return View(vm);
-            }
+            var entity = _mapper.Map<UnidadesResidenciais>(vm);
+            _service.Create(entity);
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int id)
         {
             var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+                return NotFound();
 
             PopularDropdowns();
-            return View(_mapper.Map<AtaViewModel>(entity));
+            return View(_mapper.Map<UnidadeResidencialViewModel>(entity));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(AtaViewModel vm)
+        public IActionResult Edit(UnidadeResidencialViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -87,25 +81,19 @@ namespace CondosmartWeb.Controllers
                 return View(vm);
             }
 
-            try
-            {
-                _service.Edit(_mapper.Map<Ata>(vm));
-                return RedirectToAction(nameof(Index));
-            }
-            catch (ServiceException e)
-            {
-                ModelState.AddModelError(string.Empty, e.Message);
-                PopularDropdowns();
-                return View(vm);
-            }
+            var entity = _mapper.Map<UnidadesResidenciais>(vm);
+            _service.Edit(entity);
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int id)
         {
             var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+                return NotFound();
 
-            return View(_mapper.Map<AtaViewModel>(entity));
+            return View(_mapper.Map<UnidadeResidencialViewModel>(entity));
         }
 
         [HttpPost]
@@ -120,9 +108,7 @@ namespace CondosmartWeb.Controllers
         {
             var condominios = _condominioService.GetAll();
             ViewBag.Condominios = new SelectList(condominios, "Id", "Nome");
-
-            var sindicos = _sindicoService.GetAll();
-            ViewBag.Sindicos = new SelectList(sindicos, "Id", "Nome");
         }
     }
 }
+

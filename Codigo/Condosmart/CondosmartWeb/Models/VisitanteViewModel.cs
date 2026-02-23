@@ -31,6 +31,7 @@ namespace CondosmartWeb.Models
         [StringLength(200, ErrorMessage = "A observação não pode exceder 200 caracteres.")]
         public string? Observacao { get; set; }
 
+        [Required(ErrorMessage = "A data e hora de entrada são obrigatórias")]
         [Display(Name = "Entrada")]
         [DataType(DataType.DateTime)]
         public DateTime? DataHoraEntrada { get; set; }

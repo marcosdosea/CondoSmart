@@ -25,7 +25,7 @@ namespace Service
         /// <exception cref="ArgumentException"></exception>
         public int Create(Sindico sindico)
         {
-            ValidarSindico(sindico);
+            // ValidarSindico(sindico); // Removido: validação feita na ViewModel
 
             context.Add(sindico);
             context.SaveChanges();
@@ -39,7 +39,7 @@ namespace Service
         /// <exception cref="ArgumentException"></exception>
         public void Edit(Sindico sindico)
         {
-            ValidarSindico(sindico);
+            // ValidarSindico(sindico); // Removido: validação feita na ViewModel
 
             context.Update(sindico);
             context.SaveChanges();
@@ -83,23 +83,13 @@ namespace Service
         /// </summary>
         /// <param name="sindico"></param>
         /// <exception cref="ArgumentException"></exception>
+        /*
         private static void ValidarSindico(Sindico sindico)
         {
             if (sindico == null)
-                throw new ArgumentException("Síndico inválido.");
-
-            if (string.IsNullOrWhiteSpace(sindico.Nome))
-                throw new ArgumentException("O nome do síndico é obrigatório.");
-
-            // CPF geralmente vem como char(11) no banco
-            if (!string.IsNullOrWhiteSpace(sindico.Cpf) && sindico.Cpf.Length != 11)
-                throw new ArgumentException("O CPF deve conter 11 caracteres (somente números).");
-
-            if (!string.IsNullOrWhiteSpace(sindico.Uf) && sindico.Uf.Length != 2)
-                throw new ArgumentException("UF deve ter 2 caracteres.");
-
-            if (!string.IsNullOrWhiteSpace(sindico.Cep) && sindico.Cep.Length != 8)
-                throw new ArgumentException("CEP deve ter 8 caracteres (somente números).");
+                throw new Core.Exceptions.ServiceException("Síndico inválido.");
+            // Validações de CPF, Nome, UF, CEP agora na ViewModel
         }
+        */
     }
 }

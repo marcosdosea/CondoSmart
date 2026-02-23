@@ -3,6 +3,7 @@ using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Core.Exceptions;
 
 namespace CondosmartWeb.Controllers
 {
@@ -43,8 +44,16 @@ namespace CondosmartWeb.Controllers
             if (ModelState.IsValid)
             {
                 var pagamento = _mapper.Map<Pagamento>(pagamentoVm);
-                _service.Create(pagamento);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _service.Create(pagamento);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
+                    return View(pagamentoVm);
+                }
             }
             return View(pagamentoVm);
         }
@@ -66,8 +75,16 @@ namespace CondosmartWeb.Controllers
             if (ModelState.IsValid)
             {
                 var pagamento = _mapper.Map<Pagamento>(pagamentoVm);
-                _service.Edit(pagamento);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _service.Edit(pagamento);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
+                    return View(pagamentoVm);
+                }
             }
             return View(pagamentoVm);
         }
@@ -84,8 +101,16 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            _service.Delete(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _service.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ServiceException e)
+            {
+                TempData["Erro"] = e.Message;
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }
