@@ -35,13 +35,15 @@ namespace Condosmart
             builder.Services.AddDbContext<CondosmartContext>(
                 options => options.UseMySql(
                     connectionString,
-                    ServerVersion.AutoDetect(connectionString)
+                    ServerVersion.AutoDetect(connectionString),
+                    mySqlOptions => mySqlOptions.MigrationsAssembly("CondosmartWeb")
                 ));
 
             builder.Services.AddDbContext<ApplicationDbContext>(
                 options => options.UseMySql(
                     connectionString,
-                    ServerVersion.AutoDetect(connectionString)
+                    ServerVersion.AutoDetect(connectionString),
+                    mySqlOptions => mySqlOptions.MigrationsAssembly("CondosmartWeb")
                 ));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

@@ -53,10 +53,12 @@ namespace CondosmartAPI
                 ?? throw new InvalidOperationException("Conexão com o banco de dados não foi configurada.");
 
             builder.Services.AddDbContext<CondosmartContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),
+                    mySqlOptions => mySqlOptions.MigrationsAssembly("CondosmartWeb")));
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),
+                    mySqlOptions => mySqlOptions.MigrationsAssembly("CondosmartWeb")));
 
             builder.Services.AddIdentityCore<ApplicationUser>(options =>
             {
