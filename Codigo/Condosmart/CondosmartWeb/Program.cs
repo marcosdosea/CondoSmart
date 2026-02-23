@@ -103,6 +103,12 @@ namespace Condosmart
 
             using (var scope = app.Services.CreateScope())
             {
+                var condosmartDb = scope.ServiceProvider.GetRequiredService<CondosmartContext>();
+                await condosmartDb.Database.MigrateAsync();
+
+                var identityDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await identityDb.Database.MigrateAsync();
+
                 await IdentitySeedService.SeedRolesAndAdminAsync(
                     scope.ServiceProvider, builder.Configuration);
             }
