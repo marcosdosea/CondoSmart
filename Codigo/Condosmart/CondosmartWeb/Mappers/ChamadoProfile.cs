@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CondosmartWeb.Models;
 using Core.Models;
+using Core.ViewModels; 
 
 namespace CondosmartWeb.Mappers
 {
@@ -9,6 +10,7 @@ namespace CondosmartWeb.Mappers
         public ChamadoProfile()
         {
             CreateMap<Chamado, ChamadoViewModel>().ReverseMap();
+            CreateMap<RegistrarChamadoViewModel, Chamado>();
         }
     }
 }
