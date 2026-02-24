@@ -39,5 +39,16 @@ public static class IdentitySeedService
             if (result.Succeeded)
                 await userManager.AddToRoleAsync(adminUser, "Admin");
         }
+        else
+        {
+            await userManager.SetLockoutEndDateAsync(adminUser, null);
+            await userManager.ResetAccessFailedCountAsync(adminUser);
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(adminUser);
+            await userManager.ResetPasswordAsync(adminUser, token, adminPassword);
+
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
     }
 }
