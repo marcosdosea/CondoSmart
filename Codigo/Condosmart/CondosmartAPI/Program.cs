@@ -104,6 +104,9 @@ namespace CondosmartAPI
             builder.Services.AddScoped<IMoradorService, MoradorService>();
             builder.Services.AddScoped<IReservaService, ReservaService>();
             builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
+            builder.Services.AddScoped<IAtaService, AtaService>();
+            builder.Services.AddScoped<ICondominioService, CondominioService>();
+            builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
