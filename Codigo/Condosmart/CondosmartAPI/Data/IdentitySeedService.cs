@@ -24,20 +24,28 @@
             if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPassword))
                 return;
 
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            if (adminUser == null)
-            {
-                adminUser = new ApplicationUser
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    NomeCompleto = "Administrador do Sistema",
-                    EmailConfirmed = true
-                };
+                    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                    if (adminUser == null)
+                    {
+                        adminUser = new ApplicationUser
+                        {
+                            UserName = adminEmail,
+                            Email = adminEmail,
+                            NomeCompleto = "Administrador do Sistema",
+                            EmailConfirmed = true
+                        };
 
-                var result = await userManager.CreateAsync(adminUser, adminPassword);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                        var result = await userManager.CreateAsync(adminUser, adminPassword);
+                        if (result.Succeeded)
+                            await userManager.AddToRoleAsync(adminUser, "Admin");
+                    }
+                    else
+                    {
+                        var token = await userManager.GeneratePasswordResetTokenAsync(adminUser);
+                        await userManager.ResetPasswordAsync(adminUser, token, adminPassword);
+
+                        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                            await userManager.AddToRoleAsync(adminUser, "Admin");
+                    }
+                }
             }
-        }
-    }
