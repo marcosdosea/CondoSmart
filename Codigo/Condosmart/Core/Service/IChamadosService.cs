@@ -9,5 +9,7 @@ namespace Core.Service
         void Delete(int id);
         Chamado? GetById(int id);
         List<Chamado> GetAll();
+
+        void RegistrarChamadoMorador(Chamado chamado);
     }
 }
