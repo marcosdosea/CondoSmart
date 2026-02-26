@@ -3,17 +3,22 @@ using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CondosmartWeb.Controllers
 {
     public class AreaDeLazerController : Controller
     {
         private readonly IAreaDeLazerService _service;
+        private readonly ICondominioService _condominioService;
+        private readonly ISindicoService _sindicoService;
         private readonly IMapper _mapper;
 
-        public AreaDeLazerController(IAreaDeLazerService service, IMapper mapper)
+        public AreaDeLazerController(IAreaDeLazerService service, ICondominioService condominioService, ISindicoService sindicoService, IMapper mapper)
         {
             _service = service;
+            _condominioService = condominioService;
+            _sindicoService = sindicoService;
             _mapper = mapper;
         }
 
@@ -33,6 +38,7 @@ namespace CondosmartWeb.Controllers
 
         public ActionResult Create()
         {
+            PopularDropdowns();
             return View();
         }
 
@@ -46,6 +52,7 @@ namespace CondosmartWeb.Controllers
                 _service.Create(area);
                 return RedirectToAction(nameof(Index));
             }
+            PopularDropdowns();
             return View(areaVm);
         }
 
@@ -53,8 +60,8 @@ namespace CondosmartWeb.Controllers
         {
             var item = _service.GetById(id);
             if (item == null) return NotFound();
-            var itemVm = _mapper.Map<AreaDeLazerViewModel>(item);
-            return View(itemVm);
+            PopularDropdowns();
+            return View(_mapper.Map<AreaDeLazerViewModel>(item));
         }
 
         [HttpPost]
@@ -69,6 +76,7 @@ namespace CondosmartWeb.Controllers
                 _service.Edit(area);
                 return RedirectToAction(nameof(Index));
             }
+            PopularDropdowns();
             return View(areaVm);
         }
 
@@ -76,16 +84,21 @@ namespace CondosmartWeb.Controllers
         {
             var item = _service.GetById(id);
             if (item == null) return NotFound();
-            var itemVm = _mapper.Map<AreaDeLazerViewModel>(item);
-            return View(itemVm);
+            return View(_mapper.Map<AreaDeLazerViewModel>(item));
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             _service.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopularDropdowns()
+        {
+            ViewBag.Condominios = new SelectList(_condominioService.GetAll(), "Id", "Nome");
+            ViewBag.Sindicos = new SelectList(_sindicoService.GetAll(), "Id", "Nome");
         }
     }
 }

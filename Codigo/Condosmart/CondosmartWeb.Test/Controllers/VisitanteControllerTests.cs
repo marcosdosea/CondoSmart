@@ -173,7 +173,7 @@ namespace CondosmartWeb.Controllers.Tests
         public void DeleteTest_Post_Valid()
         {
             // Act
-            var result = controller.Delete(1, new VisitanteViewModel());
+            var result = controller.DeleteConfirmed(1);
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));

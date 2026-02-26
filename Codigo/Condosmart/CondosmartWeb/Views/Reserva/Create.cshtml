@@ -12,13 +12,21 @@
 
     <div class="cs-card-body">
         <form asp-action="Create" method="post" class="row g-3">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
 
-            <input type="hidden" asp-for="CondominioId" value="1" />
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
+                <select asp-for="CondominioId" class="form-select" asp-items="ViewBag.Condominios">
+                    <option value="">Selecione o condomínio...</option>
+                </select>
+                <span asp-validation-for="CondominioId" class="text-danger"></span>
+            </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="AreaId" class="form-label fw-semibold"></label>
-                <select asp-for="AreaId" class="form-select" asp-items="ViewBag.AreaId">
+                <select asp-for="AreaId" class="form-select" asp-items="ViewBag.Areas">
                     <option value="">Selecione a área...</option>
                 </select>
                 <span asp-validation-for="AreaId" class="text-danger"></span>
@@ -26,22 +34,10 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="MoradorId" class="form-label fw-semibold"></label>
-                <select asp-for="MoradorId" class="form-select" asp-items="ViewBag.MoradorId">
+                <select asp-for="MoradorId" class="form-select" asp-items="ViewBag.Moradores">
                     <option value="">Selecione o morador...</option>
                 </select>
                 <span asp-validation-for="MoradorId" class="text-danger"></span>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <label asp-for="VisitanteId" class="form-label fw-semibold"></label>
-                <input asp-for="VisitanteId" class="form-control" placeholder="ID do Visitante (Opcional)" />
-                <span asp-validation-for="VisitanteId" class="text-danger"></span>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <label asp-for="SindicoId" class="form-label fw-semibold"></label>
-                <input asp-for="SindicoId" class="form-control" placeholder="ID do Síndico (Opcional)" />
-                <span asp-validation-for="SindicoId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -58,7 +54,7 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="Status" class="form-label fw-semibold"></label>
-                <select asp-for="Status" class="form-select" asp-items="ViewBag.Status"></select>
+                <select asp-for="Status" class="form-select" asp-items="ViewBag.StatusList"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
 

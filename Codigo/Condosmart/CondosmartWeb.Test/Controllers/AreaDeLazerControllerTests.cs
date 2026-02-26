@@ -19,6 +19,8 @@ namespace CondosmartWeb.Controllers.Tests
         {
             // Arrange
             var mockService = new Mock<IAreaDeLazerService>();
+            var mockCondominioService = new Mock<ICondominioService>();
+            var mockSindicoService = new Mock<ISindicoService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new AreaDeLazerProfile())
@@ -39,7 +41,10 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new AreaDeLazerController(mockService.Object, mapper);
+            mockCondominioService.Setup(s => s.GetAll()).Returns(new List<Condominio>());
+            mockSindicoService.Setup(s => s.GetAll()).Returns(new List<Sindico>());
+
+            controller = new AreaDeLazerController(mockService.Object, mockCondominioService.Object, mockSindicoService.Object, mapper);
         }
 
         [TestMethod]

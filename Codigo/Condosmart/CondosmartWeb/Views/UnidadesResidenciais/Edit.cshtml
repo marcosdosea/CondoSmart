@@ -73,13 +73,13 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="TelefoneResidencial" class="form-label fw-semibold"></label>
-                <input asp-for="TelefoneResidencial" class="form-control" />
+                <input asp-for="TelefoneResidencial" class="form-control" maxlength="11" placeholder="Somente números" />
                 <span asp-validation-for="TelefoneResidencial" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="TelefoneCelular" class="form-label fw-semibold"></label>
-                <input asp-for="TelefoneCelular" class="form-control" />
+                <input asp-for="TelefoneCelular" class="form-control" maxlength="11" placeholder="Somente números" />
                 <span asp-validation-for="TelefoneCelular" class="text-danger"></span>
             </div>
 

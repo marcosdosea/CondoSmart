@@ -40,11 +40,11 @@ namespace CondosmartWeb.Models
         [Display(Name = "UF")]
         public string? Uf { get; set; }
 
-        [StringLength(15)]
+        [StringLength(11, MinimumLength = 8, ErrorMessage = "Telefone residencial deve ter entre 8 e 11 dígitos (somente números).")]
         [Display(Name = "Telefone Residencial")]
         public string? TelefoneResidencial { get; set; }
 
-        [StringLength(15)]
+        [StringLength(11, MinimumLength = 8, ErrorMessage = "Telefone celular deve ter entre 8 e 11 dígitos (somente números).")]
         [Display(Name = "Telefone Celular")]
         public string? TelefoneCelular { get; set; }
 

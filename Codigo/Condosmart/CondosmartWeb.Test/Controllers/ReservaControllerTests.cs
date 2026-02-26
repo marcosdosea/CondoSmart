@@ -23,6 +23,9 @@ namespace CondosmartWeb.Controllers.Tests
         {
             // Arrange
             var mockService = new Mock<IReservaService>();
+            var mockCondominioService = new Mock<ICondominioService>();
+            var mockAreaService = new Mock<IAreaDeLazerService>();
+            var mockMoradorService = new Mock<IMoradorService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new ReservaProfile())
@@ -43,7 +46,11 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new ReservaController(mockService.Object, mapper);
+            mockCondominioService.Setup(s => s.GetAll()).Returns(new List<Condominio>());
+            mockAreaService.Setup(s => s.GetAll()).Returns(new List<AreaDeLazer>());
+            mockMoradorService.Setup(s => s.GetAll()).Returns(new List<Morador>());
+
+            controller = new ReservaController(mockService.Object, mockCondominioService.Object, mockAreaService.Object, mockMoradorService.Object, mapper);
         }
 
         [TestMethod]

@@ -27,13 +27,13 @@
 
             <div class="col-12 col-lg-4">
                 <label asp-for="Rg" class="form-label fw-semibold"></label>
-                <input asp-for="Rg" class="form-control" />
+                <input asp-for="Rg" class="form-control" maxlength="9" placeholder="Somente números" />
                 <span asp-validation-for="Rg" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-4">
                 <label asp-for="Telefone" class="form-label fw-semibold"></label>
-                <input asp-for="Telefone" class="form-control" />
+                <input asp-for="Telefone" class="form-control" maxlength="11" placeholder="Somente números" />
                 <span asp-validation-for="Telefone" class="text-danger"></span>
             </div>
 
@@ -87,7 +87,9 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="CondominioId" class="form-label fw-semibold"></label>
-                <input asp-for="CondominioId" class="form-control" />
+                <select asp-for="CondominioId" class="form-select" asp-items="ViewBag.Condominios">
+                    <option value="">Selecione um condomínio</option>
+                </select>
                 <span asp-validation-for="CondominioId" class="text-danger"></span>
             </div>
 

@@ -17,7 +17,7 @@ namespace CondosmartWeb.Models
         [Display(Name = "CPF")]
         public string Cpf { get; set; } = null!;
 
-        [StringLength(12)]
+        [StringLength(9, ErrorMessage = "RG deve ter no máximo 9 caracteres (somente números).")]
         [Display(Name = "RG")]
         public string? Rg { get; set; }
 

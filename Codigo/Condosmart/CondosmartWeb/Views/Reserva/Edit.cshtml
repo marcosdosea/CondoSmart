@@ -15,32 +15,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CondominioId" />
+
+            <div class="col-12 col-lg-6">
+                <label asp-for="CondominioId" class="form-label fw-semibold"></label>
+                <select asp-for="CondominioId" class="form-select" asp-items="ViewBag.Condominios">
+                    <option value="">Selecione o condomínio...</option>
+                </select>
+                <span asp-validation-for="CondominioId" class="text-danger"></span>
+            </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="AreaId" class="form-label fw-semibold"></label>
-                <select asp-for="AreaId" class="form-select" asp-items="ViewBag.AreaId"></select>
+                <select asp-for="AreaId" class="form-select" asp-items="ViewBag.Areas"></select>
                 <span asp-validation-for="AreaId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="MoradorId" class="form-label fw-semibold"></label>
-                <select asp-for="MoradorId" class="form-select" asp-items="ViewBag.MoradorId">
+                <select asp-for="MoradorId" class="form-select" asp-items="ViewBag.Moradores">
                     <option value="">Nenhum</option>
                 </select>
                 <span asp-validation-for="MoradorId" class="text-danger"></span>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <label asp-for="VisitanteId" class="form-label fw-semibold"></label>
-                <input asp-for="VisitanteId" class="form-control" />
-                <span asp-validation-for="VisitanteId" class="text-danger"></span>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <label asp-for="SindicoId" class="form-label fw-semibold"></label>
-                <input asp-for="SindicoId" class="form-control" />
-                <span asp-validation-for="SindicoId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -57,7 +52,7 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="Status" class="form-label fw-semibold"></label>
-                <select asp-for="Status" class="form-select" asp-items="ViewBag.Status"></select>
+                <select asp-for="Status" class="form-select" asp-items="ViewBag.StatusList"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
 
