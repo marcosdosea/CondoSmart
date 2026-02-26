@@ -1,0 +1,24 @@
+@page
+@model CondosmartWeb.Areas.Identity.Pages.Account.AccessDeniedModel
+@{
+    ViewData["Title"] = "Acesso Negado";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="cs-auth-card">
+    <div class="cs-auth-header" style="background: linear-gradient(135deg, #e63946 0%, #c1121f 100%);">
+        <div class="cs-auth-brand-badge">!</div>
+        <h1>Acesso Negado</h1>
+        <p>Você não tem permissão para esta página</p>
+    </div>
+    <div class="cs-auth-body text-center">
+        <p class="text-muted mb-4">
+            Seu perfil não possui acesso ao recurso solicitado.<br />
+            Entre em contato com o administrador se acredita que isso é um erro.
+        </p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-cs-login w-100">
+            &#127968; Voltar para o Início
+        </a>
+    </div>
+    <div class="cs-auth-footer">&copy; 2026 CondoSmart</div>
+</div>

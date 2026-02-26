@@ -1,268 +1,204 @@
-﻿using AutoMapper;
-using CondosmartWeb.Controllers;
-using CondosmartWeb.Mappers;
+﻿using CondosmartWeb.Controllers;
 using CondosmartWeb.Models;
-using CondosmartWeb.Profiles;
-using Core.Models;
-using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 
 namespace CondosmartWeb.Controllers.Tests
 {
     [TestClass]
     public class ReservaControllerTests
     {
-        private static ReservaController controller = null!;
-
-        [TestInitialize]
-        public void Initialize()
+        private static ReservaController CreateController(params HttpResponseMessage[] responses)
         {
-            // Arrange
-            var mockService = new Mock<IReservaService>();
+            var queue = new Queue<HttpResponseMessage>(responses);
+            var handler = new FakeHttpMessageHandler(queue);
+            var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/") };
+            var mockFactory = new Mock<IHttpClientFactory>();
+            mockFactory.Setup(f => f.CreateClient("CondoSmartAPI")).Returns(httpClient);
+            return new ReservaController(mockFactory.Object);
+        }
 
-            IMapper mapper = new MapperConfiguration(cfg =>
-                cfg.AddProfile(new ReservaProfile())
-            ).CreateMapper();
-
-            mockService.Setup(s => s.GetAll())
-                .Returns(GetTestReservas());
-
-            mockService.Setup(s => s.GetById(1))
-                .Returns(GetTargetReserva());
-
-            mockService.Setup(s => s.Edit(It.IsAny<Reserva>()))
-                .Verifiable();
-
-            mockService.Setup(s => s.Create(It.IsAny<Reserva>()))
-                .Returns(10);
-
-            mockService.Setup(s => s.Delete(It.IsAny<int>()))
-                .Verifiable();
-
-            controller = new ReservaController(mockService.Object, mapper);
+        private static HttpResponseMessage JsonResponse<T>(T data, HttpStatusCode status = HttpStatusCode.OK)
+        {
+            var json = JsonSerializer.Serialize(data);
+            return new HttpResponseMessage(status)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
         }
 
         [TestMethod]
-        public void IndexTest_Valido()
+        public async Task IndexTest_Valido()
         {
-            // Act
-            var result = controller.Index();
+            var controller = CreateController(JsonResponse(GetTestReservasVM()));
+            var result = await controller.Index();
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<ReservaViewModel>));
-            var lista = (List<ReservaViewModel>)viewResult.ViewData.Model;
-
+            var lista = (List<ReservaViewModel>)viewResult.ViewData.Model!;
             Assert.HasCount(3, lista);
         }
 
         [TestMethod]
-        public void DetailsTest_Valido()
+        public async Task DetailsTest_Valido()
         {
-            // Act
-            var result = controller.Details(1);
+            var controller = CreateController(JsonResponse(GetTargetReservaModel()));
+            var result = await controller.Details(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ReservaViewModel));
-            var model = (ReservaViewModel)viewResult.ViewData.Model;
-
+            var model = (ReservaViewModel)viewResult.ViewData.Model!;
             Assert.AreEqual(1, model.Id);
             Assert.AreEqual(2, model.AreaId);
             Assert.AreEqual(1, model.CondominioId);
         }
 
         [TestMethod]
-        public void CreateTest_Get_Valido()
+        public async Task CreateTest_Get_Valido()
         {
-            // Act
-            var result = controller.Create();
+            // CarregarListas faz 2 chamadas: GET api/areadelazer + GET api/moradores
+            var controller = CreateController(
+                JsonResponse(new List<AreaDeLazerViewModel>()),
+                JsonResponse(new List<MoradorViewModel>()));
 
-            // Assert
+            var result = await controller.Create();
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod]
-        public void CreateTest_Post_Valid()
+        public async Task CreateTest_Post_Valid()
         {
-            // Act
-            var result = controller.Create(GetNewReservaModel());
+            var controller = CreateController(JsonResponse(GetNewReservaModel(), HttpStatusCode.Created));
+            var result = await controller.Create(GetNewReservaModel());
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
-
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         [TestMethod]
-        public void CreateTest_Post_Invalid()
+        public async Task CreateTest_Post_Invalid()
         {
-            // Arrange
+            // ModelState inválido: pula o POST mas chama CarregarListas (2 chamadas)
+            var controller = CreateController(
+                JsonResponse(new List<AreaDeLazerViewModel>()),
+                JsonResponse(new List<MoradorViewModel>()));
             controller.ModelState.AddModelError("AreaId", "Campo requerido");
 
-            // Act
-            var result = controller.Create(GetNewReservaModel());
+            var result = await controller.Create(GetNewReservaModel());
 
-            // Assert
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
-            Assert.IsInstanceOfType(result, typeof(ViewResult)); // quando inválido, volta pra View
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod]
-        public void EditTest_Get_Valid()
+        public async Task EditTest_Get_Valid()
         {
-            // Act
-            var result = controller.Edit(1);
+            // 3 chamadas: GET api/reservas/{id} + GET api/areadelazer + GET api/moradores
+            var controller = CreateController(
+                JsonResponse(GetTargetReservaModel()),
+                JsonResponse(new List<AreaDeLazerViewModel>()),
+                JsonResponse(new List<MoradorViewModel>()));
 
-            // Assert
+            var result = await controller.Edit(1);
+
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ReservaViewModel));
-            var model = (ReservaViewModel)viewResult.ViewData.Model;
-
+            var model = (ReservaViewModel)viewResult.ViewData.Model!;
             Assert.AreEqual(1, model.Id);
             Assert.AreEqual(2, model.AreaId);
         }
 
         [TestMethod]
-        public void EditTest_Post_Valid()
+        public async Task EditTest_Post_Valid()
         {
-            // Act
+            var controller = CreateController(JsonResponse(GetTargetReservaModel()));
             var model = GetTargetReservaModel();
-            var result = controller.Edit(model.Id, model);
+            var result = await controller.Edit(model.Id, model);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
-
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         [TestMethod]
-        public void DeleteTest_Get_Valid()
+        public async Task DeleteTest_Get_Valid()
         {
-            // Act
-            var result = controller.Delete(1);
+            var controller = CreateController(JsonResponse(GetTargetReservaModel()));
+            var result = await controller.Delete(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ReservaViewModel));
-            var model = (ReservaViewModel)viewResult.ViewData.Model;
-
+            var model = (ReservaViewModel)viewResult.ViewData.Model!;
             Assert.AreEqual(1, model.Id);
         }
 
         [TestMethod]
-        public void DeleteTest_Post_Valid()
+        public async Task DeleteTest_Post_Valid()
         {
-            // Act
-            var result = controller.DeleteConfirmed(1);
+            var controller = CreateController(new HttpResponseMessage(HttpStatusCode.OK));
+            var result = await controller.DeleteConfirmed(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
-
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         // --------- Dados de Teste ---------
 
-        private static Reserva GetTargetReserva()
+        private static ReservaViewModel GetTargetReservaModel() => new()
         {
-            return new Reserva
-            {
-                Id = 1,
-                AreaId = 2,
-                CondominioId = 1,
-                DataInicio = new DateTime(2026, 01, 01, 10, 0, 0),
-                DataFim = new DateTime(2026, 01, 01, 12, 0, 0),
-                MoradorId = 5,
-                Status = "Confirmada",
-                CreatedAt = DateTime.UtcNow
-            };
-        }
+            Id = 1,
+            AreaId = 2,
+            CondominioId = 1,
+            DataInicio = new DateTime(2026, 01, 01, 10, 0, 0),
+            DataFim = new DateTime(2026, 01, 01, 12, 0, 0),
+            MoradorId = 5,
+            Status = "confirmado"
+        };
 
-        private ReservaViewModel GetTargetReservaModel()
+        private static ReservaViewModel GetNewReservaModel() => new()
         {
-            return new ReservaViewModel
-            {
-                Id = 1,
-                AreaId = 2,
-                CondominioId = 1,
-                DataInicio = new DateTime(2026, 01, 01, 10, 0, 0),
-                DataFim = new DateTime(2026, 01, 01, 12, 0, 0),
-                MoradorId = 5,
-                Status = "Confirmada"
-            };
-        }
+            Id = 99,
+            AreaId = 3,
+            CondominioId = 1,
+            DataInicio = DateTime.UtcNow.AddDays(1),
+            DataFim = DateTime.UtcNow.AddDays(1).AddHours(2),
+            MoradorId = 6,
+            Status = "pendente"
+        };
 
-        private ReservaViewModel GetNewReservaModel()
+        private static List<ReservaViewModel> GetTestReservasVM() => new()
         {
-            return new ReservaViewModel
-            {
-                Id = 99,
-                AreaId = 3,
-                CondominioId = 1,
-                DataInicio = DateTime.UtcNow.AddDays(1),
-                DataFim = DateTime.UtcNow.AddDays(1).AddHours(2),
-                MoradorId = 6,
-                Status = "Pendente"
-            };
-        }
+            GetTargetReservaModel(),
+            new ReservaViewModel { Id = 2, AreaId = 3, CondominioId = 1, DataInicio = DateTime.UtcNow.AddDays(2), DataFim = DateTime.UtcNow.AddDays(2).AddHours(3), MoradorId = 4, Status = "pendente" },
+            new ReservaViewModel { Id = 3, AreaId = 4, CondominioId = 1, DataInicio = DateTime.UtcNow.AddDays(3), DataFim = DateTime.UtcNow.AddDays(3).AddHours(1), MoradorId = 2, Status = "cancelado" }
+        };
 
-        private List<Reserva> GetTestReservas()
+        private sealed class FakeHttpMessageHandler : HttpMessageHandler
         {
-            return new List<Reserva>
-                    {
-                        new Reserva
-                        {
-                            Id = 1,
-                            AreaId = 2,
-                            CondominioId = 1,
-                            DataInicio = DateTime.UtcNow.AddDays(1),
-                            DataFim = DateTime.UtcNow.AddDays(1).AddHours(2),
-                            MoradorId = 5,
-                            Status = "Confirmada",
-                            CreatedAt = DateTime.UtcNow
-                        },
-                        new Reserva
-                        {
-                            Id = 2,
-                            AreaId = 3,
-                            CondominioId = 1,
-                            DataInicio = DateTime.UtcNow.AddDays(2),
-                            DataFim = DateTime.UtcNow.AddDays(2).AddHours(3),
-                            MoradorId = 4,
-                            Status = "Pendente",
-                            CreatedAt = DateTime.UtcNow
-                        },
-                        new Reserva
-                        {
-                            Id = 3,
-                            AreaId = 4,
-                            CondominioId = 1,
-                            DataInicio = DateTime.UtcNow.AddDays(3),
-                            DataFim = DateTime.UtcNow.AddDays(3).AddHours(1),
-                            MoradorId = 2,
-                            Status = "Cancelada",
-                            CreatedAt = DateTime.UtcNow
-                        }
-                    };
+            private readonly Queue<HttpResponseMessage> _responses;
+
+            public FakeHttpMessageHandler(Queue<HttpResponseMessage> responses) =>
+                _responses = responses;
+
+            protected override Task<HttpResponseMessage> SendAsync(
+                HttpRequestMessage request, CancellationToken cancellationToken) =>
+                Task.FromResult(_responses.Count > 0
+                    ? _responses.Dequeue()
+                    : new HttpResponseMessage(HttpStatusCode.OK));
         }
     }
 }
+
