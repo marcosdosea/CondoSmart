@@ -1,59 +1,79 @@
+using AutoMapper;
 using CondosmartWeb.Controllers;
+using CondosmartWeb.Mappers;
 using CondosmartWeb.Models;
+using Core.Models;
+using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Net;
-using System.Text;
-using System.Text.Json;
+using System;
+using System.Collections.Generic;
 
 namespace CondosmartWeb.Controllers.Tests
 {
     [TestClass]
     public class MoradorControllerTests
     {
-        private static MoradorController CreateController(params HttpResponseMessage[] responses)
-        {
-            var queue = new Queue<HttpResponseMessage>(responses);
-            var handler = new FakeHttpMessageHandler(queue);
-            var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/") };
-            var mockFactory = new Mock<IHttpClientFactory>();
-            mockFactory.Setup(f => f.CreateClient("CondoSmartAPI")).Returns(httpClient);
-            return new MoradorController(mockFactory.Object);
-        }
+        private static MoradorController controller = null!;
 
-        private static HttpResponseMessage JsonResponse<T>(T data, HttpStatusCode status = HttpStatusCode.OK)
+        [TestInitialize]
+        public void Initialize()
         {
-            var json = JsonSerializer.Serialize(data);
-            return new HttpResponseMessage(status)
-            {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
-            };
+            // Arrange
+            var mockService = new Mock<IMoradorService>();
+
+            IMapper mapper = new MapperConfiguration(cfg =>
+                cfg.AddProfile(new MoradorProfile())
+            ).CreateMapper();
+
+            mockService.Setup(s => s.GetAll())
+                .Returns(GetTestMoradores());
+
+            mockService.Setup(s => s.GetById(1))
+                .Returns(GetTargetMorador());
+
+            mockService.Setup(s => s.Edit(It.IsAny<Morador>()))
+                .Verifiable();
+
+            mockService.Setup(s => s.Create(It.IsAny<Morador>()))
+                .Returns(10);
+
+            mockService.Setup(s => s.Delete(It.IsAny<int>()))
+                .Verifiable();
+
+            controller = new MoradorController(mockService.Object, mapper);
         }
 
         [TestMethod]
-        public async Task IndexTest_Valido()
+        public void IndexTest_Valido()
         {
-            var controller = CreateController(JsonResponse(GetTestMoradoresVM()));
-            var result = await controller.Index();
+            // Act
+            var result = controller.Index();
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
+
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<MoradorViewModel>));
-            var lista = (List<MoradorViewModel>)viewResult.ViewData.Model!;
+            var lista = (List<MoradorViewModel>)viewResult.ViewData.Model;
+
             Assert.HasCount(3, lista);
         }
 
         [TestMethod]
-        public async Task DetailsTest_Valido()
+        public void DetailsTest_Valido()
         {
-            var controller = CreateController(JsonResponse(GetTargetMoradorModel()));
-            var result = await controller.Details(1);
+            // Act
+            var result = controller.Details(1);
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
+
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MoradorViewModel));
-            var model = (MoradorViewModel)viewResult.ViewData.Model!;
+            var model = (MoradorViewModel)viewResult.ViewData.Model;
+
             Assert.AreEqual("Maria Silva", model.Nome);
             Assert.AreEqual("12345678901", model.Cpf);
         }
@@ -61,141 +81,226 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void CreateTest_Get_Valido()
         {
-            var controller = CreateController();
+            // Act
             var result = controller.Create();
+
+            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod]
-        public async Task CreateTest_Post_Valid()
+        public void CreateTest_Post_Valid()
         {
-            var controller = CreateController(JsonResponse(GetNewMoradorModel(), HttpStatusCode.Created));
-            var result = await controller.Create(GetNewMoradorModel());
+            // Act
+            var result = controller.Create(GetNewMoradorModel());
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
+
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         [TestMethod]
-        public async Task CreateTest_Post_Invalid()
+        public void CreateTest_Post_Invalid()
         {
-            var controller = CreateController();
+            // Arrange
             controller.ModelState.AddModelError("Nome", "Campo requerido");
-            var result = await controller.Create(GetNewMoradorModel());
 
+            // Act
+            var result = controller.Create(GetNewMoradorModel());
+
+            // Assert
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod]
-        public async Task EditTest_Get_Valid()
+        public void EditTest_Get_Valid()
         {
-            var controller = CreateController(JsonResponse(GetTargetMoradorModel()));
-            var result = await controller.Edit(1);
+            // Act
+            var result = controller.Edit(1);
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
+
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MoradorViewModel));
-            var model = (MoradorViewModel)viewResult.ViewData.Model!;
+            var model = (MoradorViewModel)viewResult.ViewData.Model;
+
             Assert.AreEqual("Maria Silva", model.Nome);
             Assert.AreEqual("12345678901", model.Cpf);
         }
 
         [TestMethod]
-        public async Task EditTest_Post_Valid()
+        public void EditTest_Post_Valid()
         {
-            var controller = CreateController(JsonResponse(GetTargetMoradorModel()));
-            var result = await controller.Edit(GetTargetMoradorModel());
+            // Act
+            var result = controller.Edit(GetTargetMoradorModel());
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
+
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         [TestMethod]
-        public async Task DeleteTest_Get_Valid()
+        public void DeleteTest_Get_Valid()
         {
-            var controller = CreateController(JsonResponse(GetTargetMoradorModel()));
-            var result = await controller.Delete(1);
+            // Act
+            var result = controller.Delete(1);
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
+
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MoradorViewModel));
-            var model = (MoradorViewModel)viewResult.ViewData.Model!;
+            var model = (MoradorViewModel)viewResult.ViewData.Model;
+
             Assert.AreEqual("Maria Silva", model.Nome);
         }
 
         [TestMethod]
-        public async Task DeleteTest_Post_Valid()
+        public void DeleteTest_Post_Valid()
         {
-            var controller = CreateController(new HttpResponseMessage(HttpStatusCode.OK));
-            var result = await controller.DeleteConfirmed(1);
+            // Act
+            var result = controller.DeleteConfirmed(1);
 
+            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
+
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         // --------- Dados de Teste ---------
 
-        private static MoradorViewModel GetTargetMoradorModel() => new()
+        private static Morador GetTargetMorador()
         {
-            Id = 1,
-            Nome = "Maria Silva",
-            Cpf = "12345678901",
-            Rg = "123456789",
-            Telefone = "11987654321",
-            Email = "maria@example.com",
-            Rua = "Rua A",
-            Bairro = "Centro",
-            Numero = "123",
-            Complemento = "Apto 101",
-            Cep = "12345678",
-            Cidade = "São Paulo",
-            Uf = "SP",
-            CondominioId = 1
-        };
+            return new Morador
+            {
+                Id = 1,
+                Nome = "Maria Silva",
+                Cpf = "12345678901",
+                Rg = "123456789",
+                Telefone = "11987654321",
+                Email = "maria@example.com",
+                Rua = "Rua A",
+                Bairro = "Centro",
+                Numero = "123",
+                Complemento = "Apto 101",
+                Cep = "12345678",
+                Cidade = "São Paulo",
+                Uf = "SP",
+                CondominioId = 1,
+                CreatedAt = new DateTime(2024, 1, 15)
+            };
+        }
 
-        private static MoradorViewModel GetNewMoradorModel() => new()
+        private MoradorViewModel GetTargetMoradorModel()
         {
-            Nome = "João Santos",
-            Cpf = "98765432101",
-            Rg = "987654321",
-            Telefone = "11912345678",
-            Email = "joao@example.com",
-            Rua = "Rua B",
-            Bairro = "Vila",
-            Numero = "456",
-            Complemento = "Apto 202",
-            Cep = "87654321",
-            Cidade = "Rio de Janeiro",
-            Uf = "RJ",
-            CondominioId = 2
-        };
+            return new MoradorViewModel
+            {
+                Id = 1,
+                Nome = "Maria Silva",
+                Cpf = "12345678901",
+                Rg = "123456789",
+                Telefone = "11987654321",
+                Email = "maria@example.com",
+                Rua = "Rua A",
+                Bairro = "Centro",
+                Numero = "123",
+                Complemento = "Apto 101",
+                Cep = "12345678",
+                Cidade = "São Paulo",
+                Uf = "SP",
+                CondominioId = 1
+            };
+        }
 
-        private static List<MoradorViewModel> GetTestMoradoresVM() => new()
+        private MoradorViewModel GetNewMoradorModel()
         {
-            GetTargetMoradorModel(),
-            new MoradorViewModel { Id = 2, Nome = "João Santos", Cpf = "98765432101", CondominioId = 1 },
-            new MoradorViewModel { Id = 3, Nome = "Ana Costa",   Cpf = "55555555555", CondominioId = 2 }
-        };
+            return new MoradorViewModel
+            {
+                Nome = "João Santos",
+                Cpf = "98765432101",
+                Rg = "987654321",
+                Telefone = "11912345678",
+                Email = "joao@example.com",
+                Rua = "Rua B",
+                Bairro = "Vila",
+                Numero = "456",
+                Complemento = "Apto 202",
+                Cep = "87654321",
+                Cidade = "Rio de Janeiro",
+                Uf = "RJ",
+                CondominioId = 2
+            };
+        }
 
-        private sealed class FakeHttpMessageHandler : HttpMessageHandler
+        private List<Morador> GetTestMoradores()
         {
-            private readonly Queue<HttpResponseMessage> _responses;
-
-            public FakeHttpMessageHandler(Queue<HttpResponseMessage> responses) =>
-                _responses = responses;
-
-            protected override Task<HttpResponseMessage> SendAsync(
-                HttpRequestMessage request, CancellationToken cancellationToken) =>
-                Task.FromResult(_responses.Count > 0
-                    ? _responses.Dequeue()
-                    : new HttpResponseMessage(HttpStatusCode.OK));
+            return new List<Morador>
+            {
+                new Morador
+                {
+                    Id = 1,
+                    Nome = "Maria Silva",
+                    Cpf = "12345678901",
+                    Rg = "123456789",
+                    Telefone = "11987654321",
+                    Email = "maria@example.com",
+                    Rua = "Rua A",
+                    Bairro = "Centro",
+                    Numero = "123",
+                    Complemento = "Apto 101",
+                    Cep = "12345678",
+                    Cidade = "São Paulo",
+                    Uf = "SP",
+                    CondominioId = 1,
+                    CreatedAt = new DateTime(2024, 1, 15)
+                },
+                new Morador
+                {
+                    Id = 2,
+                    Nome = "João Santos",
+                    Cpf = "98765432101",
+                    Rg = "987654321",
+                    Telefone = "11912345678",
+                    Email = "joao@example.com",
+                    Rua = "Rua B",
+                    Bairro = "Vila",
+                    Numero = "456",
+                    Complemento = "Apto 202",
+                    Cep = "87654321",
+                    Cidade = "Rio de Janeiro",
+                    Uf = "RJ",
+                    CondominioId = 1,
+                    CreatedAt = new DateTime(2024, 2, 10)
+                },
+                new Morador
+                {
+                    Id = 3,
+                    Nome = "Ana Costa",
+                    Cpf = "55555555555",
+                    Rg = "555555555",
+                    Telefone = "11988888888",
+                    Email = "ana@example.com",
+                    Rua = "Rua C",
+                    Bairro = "Jardins",
+                    Numero = "789",
+                    Complemento = "Apto 303",
+                    Cep = "54321876",
+                    Cidade = "Brasília",
+                    Uf = "DF",
+                    CondominioId = 2,
+                    CreatedAt = new DateTime(2024, 3, 5)
+                }
+            };
         }
     }
 }

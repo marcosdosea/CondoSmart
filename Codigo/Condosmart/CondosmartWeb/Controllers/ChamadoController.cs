@@ -2,13 +2,11 @@
 using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace CondosmartWeb.Controllers
 {
-	[Authorize(Roles = "Admin,Sindico,Morador")]
 	public class ChamadoController : Controller
 	{
 		private readonly IChamadosService _service;

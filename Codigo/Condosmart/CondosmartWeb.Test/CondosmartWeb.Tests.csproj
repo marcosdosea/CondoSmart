@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CondosmartAPI\CondosmartAPI.csproj" />
     <ProjectReference Include="..\CondosmartWeb\CondosmartWeb.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />

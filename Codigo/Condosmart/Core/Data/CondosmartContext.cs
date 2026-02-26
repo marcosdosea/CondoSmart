@@ -42,10 +42,7 @@ public partial class CondosmartContext : DbContext
     public virtual DbSet<Mensalidade> Mensalidades { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=123456;database=condosmart", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.44-mysql"));
-    }
+        => optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=123456;database=condosmart", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.44-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

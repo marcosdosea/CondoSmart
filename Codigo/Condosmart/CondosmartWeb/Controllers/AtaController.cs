@@ -1,135 +1,109 @@
-﻿using CondosmartWeb.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using CondosmartWeb.Models;
+using Core.Models;
+using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Net.Http.Json;
 
 namespace CondosmartWeb.Controllers
 {
-    [Authorize(Roles = "Admin,Sindico,Morador")]
     public class AtaController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IAtaService _service;
+        private readonly ICondominioService _condominioService;
+        private readonly ISindicoService _sindicoService;
+        private readonly IMapper _mapper;
 
-        public AtaController(IHttpClientFactory httpClientFactory)
+        public AtaController(IAtaService service, ICondominioService condominioService, ISindicoService sindicoService, IMapper mapper)
         {
-            _httpClientFactory = httpClientFactory;
+            _service = service;
+            _condominioService = condominioService;
+            _sindicoService = sindicoService;
+            _mapper = mapper;
         }
 
-        private HttpClient CreateClient() => _httpClientFactory.CreateClient("CondoSmartAPI");
-
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var client = CreateClient();
-            var response = await client.GetAsync("api/atas");
-
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                return RedirectToAction("Logout", "Account", new { area = "Identity" });
-
-            response.EnsureSuccessStatusCode();
-
-            var atas = await response.Content.ReadFromJsonAsync<List<AtaViewModel>>();
-            return View(atas ?? new List<AtaViewModel>());
+            var lista = _service.GetAll();
+            var vms = _mapper.Map<List<AtaViewModel>>(lista);
+            return View(vms);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
-            var client = CreateClient();
-            var response = await client.GetAsync($"api/atas/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
-            var ata = await response.Content.ReadFromJsonAsync<AtaViewModel>();
-            return View(ata);
+            var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
+
+            return View(_mapper.Map<AtaViewModel>(entity));
         }
 
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            await CarregarListas();
+            PopularDropdowns();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(AtaViewModel vm)
+        public IActionResult Create(AtaViewModel vm)
         {
-            if (vm.CondominioId == 0) vm.CondominioId = 1;
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var client = CreateClient();
-                var response = await client.PostAsJsonAsync("api/atas", vm);
-                if (response.IsSuccessStatusCode)
-                    return RedirectToAction(nameof(Index));
-
-                var erro = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Erro ao criar ata: {erro}");
+                PopularDropdowns();
+                return View(vm);
             }
 
-            await CarregarListas();
-            return View(vm);
+            var entity = _mapper.Map<Ata>(vm);
+            _service.Create(entity);
+            return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
-            var client = CreateClient();
-            var response = await client.GetAsync($"api/atas/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
-            var ata = await response.Content.ReadFromJsonAsync<AtaViewModel>();
-            await CarregarListas();
-            return View(ata);
+            var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
+
+            PopularDropdowns();
+            return View(_mapper.Map<AtaViewModel>(entity));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, AtaViewModel vm)
+        public IActionResult Edit(AtaViewModel vm)
         {
-            if (id != vm.Id) return NotFound();
-            if (vm.CondominioId == 0) vm.CondominioId = 1;
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var client = CreateClient();
-                var response = await client.PutAsJsonAsync($"api/atas/{id}", vm);
-                if (response.IsSuccessStatusCode)
-                    return RedirectToAction(nameof(Index));
-
-                var erro = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Erro ao editar ata: {erro}");
+                PopularDropdowns();
+                return View(vm);
             }
 
-            await CarregarListas();
-            return View(vm);
-        }
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            var client = CreateClient();
-            var response = await client.GetAsync($"api/atas/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
-            var ata = await response.Content.ReadFromJsonAsync<AtaViewModel>();
-            return View(ata);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var client = CreateClient();
-            await client.DeleteAsync($"api/atas/{id}");
+            _service.Edit(_mapper.Map<Ata>(vm));
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task CarregarListas()
+        public IActionResult Delete(int id)
         {
-            var client = CreateClient();
+            var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
 
-            var condominios = await client.GetFromJsonAsync<List<dynamic>>("api/condominios")
-                              ?? new List<dynamic>();
+            return View(_mapper.Map<AtaViewModel>(entity));
+        }
 
-            var sindicos = await client.GetFromJsonAsync<List<dynamic>>("api/sindicos")
-                           ?? new List<dynamic>();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            _service.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
 
-            ViewBag.CondominioId = new SelectList(condominios, "id", "nome");
-            ViewBag.SindicoId = new SelectList(sindicos, "id", "nome");
+        private void PopularDropdowns()
+        {
+            var condominios = _condominioService.GetAll();
+            ViewBag.Condominios = new SelectList(condominios, "Id", "Nome");
+
+            var sindicos = _sindicoService.GetAll();
+            ViewBag.Sindicos = new SelectList(sindicos, "Id", "Nome");
         }
     }
 }

@@ -1,5 +1,4 @@
 <Solution>
-  <Project Path="CondosmartAPI/CondosmartAPI.csproj" Id="f88f0ff3-0dea-4534-8559-1c0ad72360d8" />
   <Project Path="CondosmartWeb.Test/CondosmartWeb.Tests.csproj" Id="8c619a7b-1d26-4b3b-a1e7-362e21f599f7" />
   <Project Path="CondosmartWeb/CondosmartWeb.csproj" />
   <Project Path="Core/Core.csproj" Id="cfff0db3-9661-4481-a9e6-8f0d05783497" />

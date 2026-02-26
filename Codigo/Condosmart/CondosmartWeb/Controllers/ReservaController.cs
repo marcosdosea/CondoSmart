@@ -1,135 +1,133 @@
+using AutoMapper;
 using CondosmartWeb.Models;
-using Microsoft.AspNetCore.Authorization;
+using Core.Data; // Necessário para acessar o banco e preencher as listas
+using Core.Models;
+using Core.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc.Rendering; // Necessário para SelectList
 
 namespace CondosmartWeb.Controllers
 {
-    [Authorize(Roles = "Admin,Sindico,Morador")]
     public class ReservaController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IReservaService _service;
+        private readonly CondosmartContext _context; // Adicionado para carregar Dropdowns
+        private readonly IMapper _mapper;
 
-        public ReservaController(IHttpClientFactory httpClientFactory)
+        // Injetamos o Contexto aqui no construtor
+        public ReservaController(IReservaService service, CondosmartContext context, IMapper mapper)
         {
-            _httpClientFactory = httpClientFactory;
+            _service = service;
+            _context = context;
+            _mapper = mapper;
         }
 
-        private HttpClient CreateClient() => _httpClientFactory.CreateClient("CondoSmartAPI");
-
-        public async Task<IActionResult> Index()
+        public ActionResult Index()
         {
-            var client = CreateClient();
-            var response = await client.GetAsync("api/reservas");
-
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                return RedirectToAction("Logout", "Account", new { area = "Identity" });
-
-            response.EnsureSuccessStatusCode();
-
-            var reservas = await response.Content.ReadFromJsonAsync<List<ReservaViewModel>>();
-            return View(reservas ?? new List<ReservaViewModel>());
+            var lista = _service.GetAll();
+            var listaVm = _mapper.Map<List<ReservaViewModel>>(lista);
+            return View(listaVm);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public ActionResult Details(int id)
         {
-            var client = CreateClient();
-            var response = await client.GetAsync($"api/reservas/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
-            var reserva = await response.Content.ReadFromJsonAsync<ReservaViewModel>();
-            return View(reserva);
+            var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
+            return View(_mapper.Map<ReservaViewModel>(entity));
         }
 
-        public async Task<IActionResult> Create()
+        public ActionResult Create()
         {
-            await CarregarListas();
+            CarregarListas(); // Preenche os dropdowns antes de abrir a tela
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ReservaViewModel vm)
+        public ActionResult Create(ReservaViewModel reservaVm)
         {
-            if (vm.CondominioId == 0) vm.CondominioId = 1;
+            // Tapa-buraco: Define CondominioId = 1 se vier 0 (já que não temos login ainda)
+            if (reservaVm.CondominioId == 0) reservaVm.CondominioId = 1;
 
             if (ModelState.IsValid)
             {
-                var client = CreateClient();
-                var response = await client.PostAsJsonAsync("api/reservas", vm);
-                if (response.IsSuccessStatusCode)
+                try
+                {
+                    var reserva = _mapper.Map<Reserva>(reservaVm);
+                    _service.Create(reserva);
                     return RedirectToAction(nameof(Index));
-
-                var erro = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Erro ao criar reserva: {erro}");
+                }
+                catch (ArgumentException ex)
+                {
+                    // Captura erros de validação do Service (ex: datas inválidas) e joga na tela
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
 
-            await CarregarListas();
-            return View(vm);
+            // Se algo deu errado, recarrega os dropdowns para a tela não quebrar
+            CarregarListas();
+            return View(reservaVm);
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public ActionResult Edit(int id)
         {
-            var client = CreateClient();
-            var response = await client.GetAsync($"api/reservas/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
-            var reserva = await response.Content.ReadFromJsonAsync<ReservaViewModel>();
-            await CarregarListas();
-            return View(reserva);
+            var item = _service.GetById(id);
+            if (item == null) return NotFound();
+
+            var itemVm = _mapper.Map<ReservaViewModel>(item);
+            CarregarListas(); // Preenche os dropdowns com os dados atuais selecionados
+            return View(itemVm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ReservaViewModel vm)
+        public ActionResult Edit(int id, ReservaViewModel reservaVm)
         {
-            if (id != vm.Id) return NotFound();
-            if (vm.CondominioId == 0) vm.CondominioId = 1;
+            if (id != reservaVm.Id) return NotFound();
+            if (reservaVm.CondominioId == 0) reservaVm.CondominioId = 1;
 
             if (ModelState.IsValid)
             {
-                var client = CreateClient();
-                var response = await client.PutAsJsonAsync($"api/reservas/{id}", vm);
-                if (response.IsSuccessStatusCode)
+                try
+                {
+                    var reserva = _mapper.Map<Reserva>(reservaVm);
+                    _service.Edit(reserva);
                     return RedirectToAction(nameof(Index));
-
-                var erro = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Erro ao editar reserva: {erro}");
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
 
-            await CarregarListas();
-            return View(vm);
+            CarregarListas();
+            return View(reservaVm);
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            var client = CreateClient();
-            var response = await client.GetAsync($"api/reservas/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
-            var reserva = await response.Content.ReadFromJsonAsync<ReservaViewModel>();
-            return View(reserva);
+            var item = _service.GetById(id);
+            if (item == null) return NotFound();
+            var itemVm = _mapper.Map<ReservaViewModel>(item);
+            return View(itemVm);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            var client = CreateClient();
-            await client.DeleteAsync($"api/reservas/{id}");
+            _service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task CarregarListas()
+        // Método auxiliar para não repetir código
+        private void CarregarListas()
         {
-            var client = CreateClient();
+            // Carrega Areas e Moradores do banco para o Select da tela
+            ViewBag.AreaId = new SelectList(_context.AreaDeLazer, "Id", "Nome");
+            ViewBag.MoradorId = new SelectList(_context.Moradores, "Id", "Nome");
 
-            var areas = await client.GetFromJsonAsync<List<AreaDeLazerViewModel>>("api/areadelazer")
-                        ?? new List<AreaDeLazerViewModel>();
-
-            var moradores = await client.GetFromJsonAsync<List<MoradorViewModel>>("api/moradores")
-                            ?? new List<MoradorViewModel>();
-
-            ViewBag.AreaId = new SelectList(areas, "Id", "Nome");
-            ViewBag.MoradorId = new SelectList(moradores, "Id", "Nome");
+            // Lista estática de status
             ViewBag.Status = new SelectList(new[] { "pendente", "confirmado", "cancelado", "concluido" });
         }
     }
