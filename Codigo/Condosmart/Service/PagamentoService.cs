@@ -2,7 +2,10 @@ using Core;
 using Core.Data;
 using Core.Models;
 using Core.Service;
+using Core.DTO; 
 using Microsoft.EntityFrameworkCore;
+using System; 
+using System.Linq; 
 
 namespace Service
 {
@@ -17,6 +20,75 @@ namespace Service
         {
             this.context = context;
         }
+
+        // =======================================================================
+        // INÍCIO DA NOVA FUNCIONALIDADE (NÃO-CRUD) - Exigência do Professor
+        // =======================================================================
+
+        /// <summary>
+        /// Processa a liquidação de uma mensalidade, calculando juros e multas por atraso.
+        /// </summary>
+        /// <param name="dto">Dados seguros vindos da requisição</param>
+        public void LiquidarMensalidade(LiquidarMensalidadeDTO dto)
+        {
+            // 1. Busca a mensalidade no banco de dados
+            var mensalidade = context.Mensalidades
+                .FirstOrDefault(m => m.Id == dto.MensalidadeId);
+
+            // 2. Validações Iniciais (Tratamento de Exceções)
+            if (mensalidade == null)
+                throw new ArgumentException("Erro: Mensalidade não encontrada no sistema.");
+
+            if (mensalidade.Status?.ToUpper() == "PAGO")
+                throw new ArgumentException("Aviso: Esta mensalidade já encontra-se quitada.");
+
+            // 3. O Cálculo "Não-CRUD" (Multa e Juros)
+            decimal valorExigido = mensalidade.Valor;
+
+            if (dto.DataPagamento.Date > mensalidade.Vencimento.Date)
+            {
+                int diasAtraso = (dto.DataPagamento.Date - mensalidade.Vencimento.Date).Days;
+
+                decimal multa = mensalidade.Valor * 0.02m; // Multa fixa de 2%
+                decimal juros = mensalidade.Valor * 0.00033m * diasAtraso; // Juros de aprox 1% ao mês
+
+                valorExigido += (multa + juros);
+                valorExigido = Math.Round(valorExigido, 2); // Evita dízimas financeiras
+            }
+
+            // 4. Validação da Regra de Negócio
+            if (dto.ValorPago < valorExigido)
+            {
+                throw new ArgumentException($"Valor insuficiente. O total atualizado com os encargos é de {valorExigido:C2}.");
+            }
+
+            // 5. Criação do Registro de Pagamento
+            var pagamento = new Pagamento
+            {
+                CondominioId = mensalidade.CondominioId,
+                UnidadeId = mensalidade.UnidadeId,
+                MoradorId = mensalidade.MoradorId,
+                FormaPagamento = dto.FormaPagamento,
+                Valor = dto.ValorPago,
+                DataPagamento = dto.DataPagamento,
+                Status = "CONCLUIDO",
+                CreatedAt = DateTime.Now
+            };
+
+            // 6. Atualização de Status e Persistência
+            mensalidade.Status = "PAGO";
+            context.Pagamentos.Add(pagamento);
+
+            context.SaveChanges();
+
+            // Vincula o pagamento à mensalidade e salva novamente
+            mensalidade.PagamentoId = pagamento.Id;
+            context.SaveChanges();
+        }
+
+        // =======================================================================
+        // MÉTODOS CRUD ORIGINAIS (Mantidos intactos)
+        // =======================================================================
 
         /// <summary>
         /// Criar um novo pagamento na base de dados

@@ -1,3 +1,4 @@
+using Core.DTO;
 using Core.Models;
 
 namespace Core.Service
@@ -9,5 +10,7 @@ namespace Core.Service
         void Delete(int id);
         Pagamento? GetById(int id);
         List<Pagamento> GetAll();
+
+        void LiquidarMensalidade(LiquidarMensalidadeDTO dto);
     }
 }
