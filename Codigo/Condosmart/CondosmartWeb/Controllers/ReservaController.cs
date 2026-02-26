@@ -1,24 +1,26 @@
 using AutoMapper;
 using CondosmartWeb.Models;
-using Core.Data; // Necessário para acessar o banco e preencher as listas
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // Necessário para SelectList
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CondosmartWeb.Controllers
 {
     public class ReservaController : Controller
     {
         private readonly IReservaService _service;
-        private readonly CondosmartContext _context; // Adicionado para carregar Dropdowns
+        private readonly ICondominioService _condominioService;
+        private readonly IAreaDeLazerService _areaService;
+        private readonly IMoradorService _moradorService;
         private readonly IMapper _mapper;
 
-        // Injetamos o Contexto aqui no construtor
-        public ReservaController(IReservaService service, CondosmartContext context, IMapper mapper)
+        public ReservaController(IReservaService service, ICondominioService condominioService, IAreaDeLazerService areaService, IMoradorService moradorService, IMapper mapper)
         {
             _service = service;
-            _context = context;
+            _condominioService = condominioService;
+            _areaService = areaService;
+            _moradorService = moradorService;
             _mapper = mapper;
         }
 
@@ -38,17 +40,14 @@ namespace CondosmartWeb.Controllers
 
         public ActionResult Create()
         {
-            CarregarListas(); // Preenche os dropdowns antes de abrir a tela
-            return View();
+            CarregarListas();
+            return View(new ReservaViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ReservaViewModel reservaVm)
         {
-            // Tapa-buraco: Define CondominioId = 1 se vier 0 (já que não temos login ainda)
-            if (reservaVm.CondominioId == 0) reservaVm.CondominioId = 1;
-
             if (ModelState.IsValid)
             {
                 try
@@ -59,12 +58,14 @@ namespace CondosmartWeb.Controllers
                 }
                 catch (ArgumentException ex)
                 {
-                    // Captura erros de validação do Service (ex: datas inválidas) e joga na tela
                     ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Erro ao salvar a reserva: " + ex.Message);
                 }
             }
 
-            // Se algo deu errado, recarrega os dropdowns para a tela não quebrar
             CarregarListas();
             return View(reservaVm);
         }
@@ -84,7 +85,6 @@ namespace CondosmartWeb.Controllers
         public ActionResult Edit(int id, ReservaViewModel reservaVm)
         {
             if (id != reservaVm.Id) return NotFound();
-            if (reservaVm.CondominioId == 0) reservaVm.CondominioId = 1;
 
             if (ModelState.IsValid)
             {
@@ -97,6 +97,10 @@ namespace CondosmartWeb.Controllers
                 catch (ArgumentException ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Erro ao salvar a reserva: " + ex.Message);
                 }
             }
 
@@ -112,7 +116,7 @@ namespace CondosmartWeb.Controllers
             return View(itemVm);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
@@ -120,15 +124,12 @@ namespace CondosmartWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Método auxiliar para não repetir código
         private void CarregarListas()
         {
-            // Carrega Areas e Moradores do banco para o Select da tela
-            ViewBag.AreaId = new SelectList(_context.AreaDeLazer, "Id", "Nome");
-            ViewBag.MoradorId = new SelectList(_context.Moradores, "Id", "Nome");
-
-            // Lista estática de status
-            ViewBag.Status = new SelectList(new[] { "pendente", "confirmado", "cancelado", "concluido" });
+            ViewBag.Areas = new SelectList(_areaService.GetAll(), "Id", "Nome");
+            ViewBag.Moradores = new SelectList(_moradorService.GetAll(), "Id", "Nome");
+            ViewBag.Condominios = new SelectList(_condominioService.GetAll(), "Id", "Nome");
+            ViewBag.StatusList = new SelectList(new[] { "pendente", "confirmado", "cancelado", "concluido" });
         }
     }
 }

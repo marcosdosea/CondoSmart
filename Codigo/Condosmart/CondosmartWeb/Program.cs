@@ -31,6 +31,7 @@ namespace Condosmart
 
             builder.Services.AddScoped<ICondominioService, CondominioService>();
             builder.Services.AddScoped<ISindicoService, SindicoService>();
+            builder.Services.AddScoped<IMoradorService, MoradorService>();
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
             builder.Services.AddScoped<IAtaService, AtaService>();
             builder.Services.AddScoped<IReservaService, ReservaService>();
@@ -39,10 +40,7 @@ namespace Condosmart
             builder.Services.AddScoped<IPagamentoService, PagamentoService>();
             builder.Services.AddScoped<IMensalidadeService, MensalidadeService>();
 
-
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            builder.Services.AddTransient<IReservaService, ReservaService>();
 
             var app = builder.Build();
 

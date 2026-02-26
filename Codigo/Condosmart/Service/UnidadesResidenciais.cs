@@ -33,6 +33,13 @@ namespace Service
         {
             ValidarUnidade(unidade);
 
+            bool duplicado = context.UnidadesResidenciais.Any(u =>
+                u.CondominioId == unidade.CondominioId &&
+                u.Identificador == unidade.Identificador);
+
+            if (duplicado)
+                throw new ArgumentException($"Já existe uma unidade com o identificador '{unidade.Identificador}' neste condomínio.");
+
             context.UnidadesResidenciais.Add(unidade);
             context.SaveChanges();
             return unidade.Id;
@@ -47,6 +54,14 @@ namespace Service
         {
             ValidarUnidade(unidade);
 
+            bool duplicado = context.UnidadesResidenciais.Any(u =>
+                u.CondominioId == unidade.CondominioId &&
+                u.Identificador == unidade.Identificador &&
+                u.Id != unidade.Id);
+
+            if (duplicado)
+                throw new ArgumentException($"Já existe outra unidade com o identificador '{unidade.Identificador}' neste condomínio.");
+
             context.UnidadesResidenciais.Update(unidade);
             context.SaveChanges();
         }
@@ -57,12 +72,9 @@ namespace Service
         /// <param name="id">id da unidade</param>
         public void Delete(int id)
         {
-            var unidade = context.UnidadesResidenciais.Find(id);
-            if (unidade != null)
-            {
-                context.UnidadesResidenciais.Remove(unidade);
-                context.SaveChanges();
-            }
+            context.UnidadesResidenciais
+                   .Where(u => u.Id == id)
+                   .ExecuteDelete();
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model CondosmartWeb.Models.DashboardViewModel
+@{
     ViewData["Title"] = "Dashboard";
 }
 
@@ -8,7 +9,7 @@
             <div class="cs-kpi">
                 <div class="cs-kpi-circle">$</div>
                 <div>
-                    <div class="cs-kpi-value">31 MIL</div>
+                    <div class="cs-kpi-value">R$ @Model.TotalRecebidoMes.ToString("N0")</div>
                     <div class="cs-kpi-label">Total recebido no mês</div>
                 </div>
             </div>
@@ -20,7 +21,7 @@
             <div class="cs-kpi">
                 <div class="cs-kpi-circle">%</div>
                 <div>
-                    <div class="cs-kpi-value">3%</div>
+                    <div class="cs-kpi-value">@Model.TaxaInadimplencia%</div>
                     <div class="cs-kpi-label">Taxa de inadimplência</div>
                 </div>
             </div>
@@ -32,7 +33,7 @@
             <div class="cs-kpi">
                 <div class="cs-kpi-circle">🏠</div>
                 <div>
-                    <div class="cs-kpi-value">403</div>
+                    <div class="cs-kpi-value">@Model.EntradasHoje</div>
                     <div class="cs-kpi-label">Entradas registradas hoje</div>
                 </div>
             </div>
@@ -44,8 +45,8 @@
             <div class="cs-kpi">
                 <div class="cs-kpi-circle">⚠️</div>
                 <div>
-                    <div class="cs-kpi-value">16</div>
-                    <div class="cs-kpi-label">Pendências administrativas</div>
+                    <div class="cs-kpi-value">@Model.MensalidadesEmAtraso</div>
+                    <div class="cs-kpi-label">Mensalidades em atraso</div>
                 </div>
             </div>
         </div>
@@ -57,16 +58,22 @@
         <div class="cs-card">
             <div class="cs-card-header">OCUPAÇÃO</div>
             <div class="cs-card-body">
-                <h1 class="fw-bold mb-0">80 <small class="text-muted fs-6">de 91 casas</small></h1>
+                <h1 class="fw-bold mb-0">
+                    @Model.UnidadesOcupadas
+                    <small class="text-muted fs-6">de @Model.TotalUnidades unidades</small>
+                </h1>
             </div>
         </div>
     </div>
 
     <div class="col-12 col-lg-4">
         <div class="cs-card">
-            <div class="cs-card-header">CHAMADOS EM ABERTO</div>
+            <div class="cs-card-header">MENSALIDADES EM ATRASO</div>
             <div class="cs-card-body">
-                <h1 class="fw-bold mb-0">11 <small class="text-muted fs-6">essa semana</small></h1>
+                <h1 class="fw-bold mb-0">
+                    @Model.MensalidadesEmAtraso
+                    <small class="text-muted fs-6">no total</small>
+                </h1>
             </div>
         </div>
     </div>
@@ -75,14 +82,20 @@
         <div class="cs-card">
             <div class="cs-card-header">ESPAÇOS RESERVADOS</div>
             <div class="cs-card-body">
-                <h1 class="fw-bold mb-0">6 <small class="text-muted fs-6">de 10 locais</small></h1>
+                <h1 class="fw-bold mb-0">
+                    @Model.ReservasConfirmadas
+                    <small class="text-muted fs-6">de @Model.TotalAreasLazer locais</small>
+                </h1>
             </div>
         </div>
     </div>
 </div>
 
-<div class="cs-card mt-3">
-    <div class="cs-card-body" style="background: var(--cs-primary); color:#fff; border-radius: var(--cs-radius);">
-        <strong>3 chamados urgentes pendentes</strong> ⚠️
+@if (Model.MensalidadesEmAtraso > 0)
+{
+    <div class="cs-card mt-3">
+        <div class="cs-card-body" style="background: var(--cs-primary); color:#fff; border-radius: var(--cs-radius);">
+            <strong>@Model.MensalidadesEmAtraso mensalidade(s) em atraso pendente(s)</strong> ⚠️
+        </div>
     </div>
-</div>
+}

@@ -55,10 +55,18 @@ namespace CondosmartWeb.Controllers
                 return View(vm);
             }
 
-            var entity = _mapper.Map<UnidadesResidenciais>(vm);
-            _service.Create(entity);
-
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var entity = _mapper.Map<UnidadesResidenciais>(vm);
+                _service.Create(entity);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(nameof(vm.Identificador), ex.Message);
+                PopularDropdowns();
+                return View(vm);
+            }
         }
 
         public IActionResult Edit(int id)
@@ -81,10 +89,18 @@ namespace CondosmartWeb.Controllers
                 return View(vm);
             }
 
-            var entity = _mapper.Map<UnidadesResidenciais>(vm);
-            _service.Edit(entity);
-
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var entity = _mapper.Map<UnidadesResidenciais>(vm);
+                _service.Edit(entity);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(nameof(vm.Identificador), ex.Message);
+                PopularDropdowns();
+                return View(vm);
+            }
         }
 
         public IActionResult Delete(int id)

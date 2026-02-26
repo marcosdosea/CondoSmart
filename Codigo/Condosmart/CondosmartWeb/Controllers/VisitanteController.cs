@@ -99,10 +99,10 @@ namespace CondosmartWeb.Controllers
             return View(visitanteVM);
         }
 
-        // POST: Visitante/Delete/5
+        // POST: Visitante/DeleteConfirmed/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, VisitanteViewModel collection)
+        public ActionResult DeleteConfirmed(int id)
         {
             _visitanteService.Delete(id);
             return RedirectToAction(nameof(Index));

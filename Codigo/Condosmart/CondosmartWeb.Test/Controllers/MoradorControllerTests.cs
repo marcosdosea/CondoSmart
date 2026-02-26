@@ -22,6 +22,7 @@ namespace CondosmartWeb.Controllers.Tests
         {
             // Arrange
             var mockService = new Mock<IMoradorService>();
+            var mockCondominioService = new Mock<ICondominioService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new MoradorProfile())
@@ -42,7 +43,9 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new MoradorController(mockService.Object, mapper);
+            mockCondominioService.Setup(s => s.GetAll()).Returns(new List<Condominio>());
+
+            controller = new MoradorController(mockService.Object, mockCondominioService.Object, mapper);
         }
 
         [TestMethod]
