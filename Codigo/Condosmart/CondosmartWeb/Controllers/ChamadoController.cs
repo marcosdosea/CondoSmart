@@ -2,10 +2,11 @@
 using CondosmartWeb.Models;
 using Core.Models;
 using Core.Service;
-using Core.ViewModels; // Necessário para acessar o RegistrarChamadoViewModel
+using Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims; // <-- Isso aqui permite ler os dados de quem tá logado
 using System.Collections.Generic;
 
 namespace CondosmartWeb.Controllers
@@ -156,7 +157,11 @@ namespace CondosmartWeb.Controllers
             {
                 var entity = _mapper.Map<Chamado>(vm);
 
-                // TODO: Pegar o ID do Morador e Condomínio pelo Login real no futuro
+                // Pega o ID único do usuário que está logado no momento no sistema
+                var usuarioLogadoId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                // TODO: Usar o serviço de Morador para buscar o MoradorId e CondominioId reais usando o 'usuarioLogadoId'
+                // Fixado em 1 temporariamente apenas para não quebrar o banco local nos testes da PR:
                 entity.MoradorId = 1;
                 entity.CondominioId = 1;
 

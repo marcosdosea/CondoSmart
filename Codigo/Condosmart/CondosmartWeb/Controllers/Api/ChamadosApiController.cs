@@ -5,6 +5,7 @@ using Core.ViewModels;
 using Core.Service;
 using Core.Models;
 using System;
+using System.Security.Claims;
 
 namespace CondosmartWeb.Controllers.Api
 {
