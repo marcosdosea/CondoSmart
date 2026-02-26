@@ -8,6 +8,8 @@
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
+@inject Microsoft.AspNetCore.Identity.SignInManager<Core.Models.UsuarioSistema> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<Core.Models.UsuarioSistema> UserManager
 
 <body>
 	<div class="cs-shell">
@@ -73,15 +75,51 @@
 
 			<header class="cs-topbar">
 				<div class="d-flex align-items-center gap-2">
-				<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
-					&#9776;
-				</button>
+					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
+						&#9776;
+					</button>
 					<div class="title">@ViewData["Title"]</div>
 				</div>
 
 				<div class="cs-top-actions">
 					<button class="cs-icon-btn" title="Notificações">&#128276;</button>
 					<button class="cs-icon-btn" title="Configurações">&#9881;</button>
+
+					@if (SignInManager.IsSignedIn(User))
+					{
+						var usuario = await UserManager.GetUserAsync(User);
+						var emailCompleto = UserManager.GetUserName(User) ?? "";
+						string displayName;
+						string iniciais;
+
+						if (!string.IsNullOrWhiteSpace(usuario?.NomeCompleto))
+						{
+							var partes = usuario.NomeCompleto.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+							displayName = partes.Length >= 2 ? $"{partes[0]} {partes[^1]}" : partes[0];
+							iniciais = partes.Length >= 2
+								? $"{partes[0][0]}{partes[^1][0]}".ToUpper()
+								: partes[0][0].ToString().ToUpper();
+						}
+						else
+						{
+							displayName = emailCompleto.Contains('@') ? emailCompleto.Split('@')[0] : emailCompleto;
+							iniciais = displayName.Length > 0 ? displayName[0].ToString().ToUpper() : "U";
+						}
+
+						<div class="cs-user-chip" title="@emailCompleto">
+							<div class="cs-user-avatar">@iniciais</div>
+							<span class="cs-user-name">@displayName</span>
+						</div>
+						<form method="post" asp-area="Identity" asp-page="/Account/Logout" style="display:contents">
+							<button type="submit" class="cs-icon-btn cs-logout-btn" title="Sair">&#128682;</button>
+						</form>
+					}
+					else
+					{
+						<a asp-area="Identity" asp-page="/Account/Login" class="cs-btn-entrar">
+							&#128274; Entrar
+						</a>
+					}
 				</div>
 			</header>
 

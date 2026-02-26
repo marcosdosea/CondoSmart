@@ -1,0 +1,127 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="cs-auth-shell">
+
+    <!-- Painel da marca -->
+    <div class="cs-auth-brand">
+        <div class="cs-auth-brand-inner">
+            <div class="cs-auth-logo">
+                <div class="cs-auth-logo-badge">C</div>
+                <div>
+                    <div class="cs-auth-brand-name">CondoSmart</div>
+                    <div class="cs-auth-brand-tag">Gestão inteligente</div>
+                </div>
+            </div>
+
+            <p class="cs-auth-brand-heading">
+                Tudo que seu condomínio precisa, em um só lugar.
+            </p>
+
+            <ul class="cs-auth-features">
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#127968;</span>
+                    Controle de unidades e moradores
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#128178;</span>
+                    Gestão financeira e mensalidades
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#128197;</span>
+                    Reservas de áreas de lazer
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#128203;</span>
+                    Atas e comunicados
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Painel do formulário -->
+    <div class="cs-auth-form-side">
+        <div class="cs-auth-form-box">
+
+            <div class="cs-auth-form-header">
+                <h1 class="cs-auth-form-title">Bem-vindo de volta &#128075;</h1>
+                <p class="cs-auth-form-desc">Faça login para acessar o painel do condomínio</p>
+            </div>
+
+            <form method="post" id="loginForm">
+                <input type="hidden" asp-for="ReturnUrl" />
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="cs-validation-alert">
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                }
+
+                <div class="cs-field">
+                    <label asp-for="Input.Email" class="cs-field-label">&#128231; E-mail</label>
+                    <input asp-for="Input.Email"
+                           class="cs-field-input"
+                           placeholder="seu&#64;email.com"
+                           autocomplete="email" />
+                    <span asp-validation-for="Input.Email" class="cs-field-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label asp-for="Input.Senha" class="cs-field-label">&#128274; Senha</label>
+                    <div class="cs-pw-wrap">
+                        <input asp-for="Input.Senha"
+                               id="pwLogin"
+                               type="password"
+                               class="cs-field-input cs-pw-input"
+                               placeholder="••••••••"
+                               autocomplete="current-password" />
+                        <button type="button"
+                                class="cs-pw-toggle"
+                                onclick="csToglePw('pwLogin', this)"
+                                title="Mostrar senha">&#128065;</button>
+                    </div>
+                    <span asp-validation-for="Input.Senha" class="cs-field-error"></span>
+                </div>
+
+                <div class="cs-check-row">
+                    <input asp-for="Input.LembrarMe" type="checkbox" id="lembrarMe" />
+                    <label for="lembrarMe">Lembrar-me por 8 horas</label>
+                </div>
+
+                <button type="submit" class="cs-auth-submit">
+                    Entrar no sistema &rarr;
+                </button>
+            </form>
+
+            <div class="cs-auth-footer-link">
+                Não tem uma conta? <a asp-page="./Registro">Cadastre-se gratuitamente</a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function csToglePw(id, btn) {
+            var input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '&#128064;';
+                btn.title = 'Ocultar senha';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '&#128065;';
+                btn.title = 'Mostrar senha';
+            }
+        }
+    </script>
+}
+}

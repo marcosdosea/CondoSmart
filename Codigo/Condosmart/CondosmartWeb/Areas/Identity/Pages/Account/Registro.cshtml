@@ -1,0 +1,165 @@
+@page
+@model RegistroModel
+@{
+    ViewData["Title"] = "Criar Conta";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="cs-auth-shell">
+
+    <!-- Painel da marca -->
+    <div class="cs-auth-brand">
+        <div class="cs-auth-brand-inner">
+            <div class="cs-auth-logo">
+                <div class="cs-auth-logo-badge">C</div>
+                <div>
+                    <div class="cs-auth-brand-name">CondoSmart</div>
+                    <div class="cs-auth-brand-tag">Gestão inteligente</div>
+                </div>
+            </div>
+
+            <p class="cs-auth-brand-heading">
+                Comece agora a gerenciar seu condomínio com inteligência.
+            </p>
+
+            <ul class="cs-auth-features">
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#9989;</span>
+                    Cadastro rápido e gratuito
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#128274;</span>
+                    Dados protegidos com criptografia
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#128241;</span>
+                    Acesse de qualquer dispositivo
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">&#128202;</span>
+                    Relatórios e dashboards em tempo real
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Painel do formulário -->
+    <div class="cs-auth-form-side">
+        <div class="cs-auth-form-box">
+
+            <div class="cs-auth-form-header">
+                <h1 class="cs-auth-form-title">Crie sua conta &#127881;</h1>
+                <p class="cs-auth-form-desc">Preencha os dados abaixo para começar</p>
+            </div>
+
+            <form method="post" id="registroForm">
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="cs-validation-alert">
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                }
+
+                <div class="cs-field">
+                    <label asp-for="Input.NomeCompleto" class="cs-field-label">&#128100; Nome Completo</label>
+                    <input asp-for="Input.NomeCompleto"
+                           class="cs-field-input"
+                           placeholder="Seu nome completo"
+                           autocomplete="name" />
+                    <span asp-validation-for="Input.NomeCompleto" class="cs-field-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label asp-for="Input.Email" class="cs-field-label">&#128231; E-mail</label>
+                    <input asp-for="Input.Email"
+                           class="cs-field-input"
+                           placeholder="seu&#64;email.com"
+                           autocomplete="email" />
+                    <span asp-validation-for="Input.Email" class="cs-field-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label asp-for="Input.Senha" class="cs-field-label">&#128273; Senha</label>
+                    <div class="cs-pw-wrap">
+                        <input asp-for="Input.Senha"
+                               id="pwRegistro"
+                               type="password"
+                               class="cs-field-input cs-pw-input"
+                               placeholder="Mínimo 6 caracteres"
+                               autocomplete="new-password"
+                               oninput="csAvaliarSenha(this.value)" />
+                        <button type="button"
+                                class="cs-pw-toggle"
+                                onclick="csToglePw('pwRegistro', this)"
+                                title="Mostrar senha">&#128065;</button>
+                    </div>
+                    <div class="cs-pw-strength">
+                        <div class="cs-pw-strength-bar" id="pwStrengthBar"></div>
+                    </div>
+                    <span asp-validation-for="Input.Senha" class="cs-field-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label asp-for="Input.ConfirmacaoSenha" class="cs-field-label">&#128273; Confirmar Senha</label>
+                    <div class="cs-pw-wrap">
+                        <input asp-for="Input.ConfirmacaoSenha"
+                               id="pwConfirm"
+                               type="password"
+                               class="cs-field-input cs-pw-input"
+                               placeholder="Repita a senha"
+                               autocomplete="new-password" />
+                        <button type="button"
+                                class="cs-pw-toggle"
+                                onclick="csToglePw('pwConfirm', this)"
+                                title="Mostrar senha">&#128065;</button>
+                    </div>
+                    <span asp-validation-for="Input.ConfirmacaoSenha" class="cs-field-error"></span>
+                </div>
+
+                <button type="submit" class="cs-auth-submit">
+                    Criar minha conta &rarr;
+                </button>
+            </form>
+
+            <div class="cs-auth-footer-link">
+                Já tem uma conta? <a asp-page="./Login">Faça login</a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function csToglePw(id, btn) {
+            var input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '&#128064;';
+                btn.title = 'Ocultar senha';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '&#128065;';
+                btn.title = 'Mostrar senha';
+            }
+        }
+
+        function csAvaliarSenha(val) {
+            var bar = document.getElementById('pwStrengthBar');
+            var score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            var widths = ['0%', '20%', '40%', '65%', '85%', '100%'];
+            var colors = ['transparent', '#e63946', '#f4a261', '#f4d03f', '#2a9d8f', '#17bebb'];
+            bar.style.width = widths[score];
+            bar.style.background = colors[score];
+        }
+    </script>
+}
