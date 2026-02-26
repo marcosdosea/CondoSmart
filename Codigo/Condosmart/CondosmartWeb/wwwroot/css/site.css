@@ -179,10 +179,85 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--cs-text);
 }
 
     .cs-icon-btn:hover {
         border-color: rgba(23,190,187,.55);
+        color: var(--cs-text);
+    }
+
+/* Chip de usuário logado */
+.cs-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(23,190,187,.1);
+    border: 1px solid rgba(23,190,187,.25);
+    border-radius: 99px;
+    padding: 4px 12px 4px 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cs-text);
+    max-width: 190px;
+    white-space: nowrap;
+}
+
+.cs-user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--cs-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.cs-user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Botão de logout no topbar */
+.cs-logout-btn {
+    border-color: rgba(230,57,70,.2);
+    color: var(--cs-danger);
+}
+
+    .cs-logout-btn:hover {
+        background: rgba(230,57,70,.06);
+        border-color: rgba(230,57,70,.5);
+        color: var(--cs-danger);
+    }
+
+/* Botão Entrar (não logado) */
+.cs-btn-entrar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    background: var(--cs-primary);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s, box-shadow .2s;
+}
+
+    .cs-btn-entrar:hover {
+        background: var(--cs-primary-600);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(23,190,187,.3);
     }
 
 /* KPI cards */
@@ -214,7 +289,344 @@ a {
     font-size: 13px;
 }
 
-/* Responsive: sidebar vira offcanvas-like */
+/* ==========================
+   AUTH PAGES
+   ========================== */
+
+.cs-auth-shell {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* Brand panel */
+.cs-auth-brand {
+    width: 42%;
+    max-width: 500px;
+    background: linear-gradient(150deg, var(--cs-primary) 0%, var(--cs-primary-700) 55%, #097a78 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 44px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.cs-auth-brand::before {
+    content: '';
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    border: 56px solid rgba(255,255,255,.06);
+    top: -80px;
+    right: -100px;
+    pointer-events: none;
+}
+
+.cs-auth-brand::after {
+    content: '';
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    border: 36px solid rgba(255,255,255,.07);
+    bottom: 30px;
+    left: -70px;
+    pointer-events: none;
+}
+
+.cs-auth-brand-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 320px;
+}
+
+.cs-auth-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 48px;
+}
+
+.cs-auth-logo-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    background: rgba(255,255,255,.2);
+    border: 2px solid rgba(255,255,255,.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.cs-auth-brand-name {
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: .3px;
+}
+
+.cs-auth-brand-tag {
+    font-size: 12px;
+    color: rgba(255,255,255,.65);
+    margin-top: 4px;
+}
+
+.cs-auth-brand-heading {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.4;
+    margin-bottom: 28px;
+}
+
+.cs-auth-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cs-auth-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(255,255,255,.85);
+}
+
+.cs-auth-feature-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* Form panel */
+.cs-auth-form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    background: var(--cs-bg);
+    overflow-y: auto;
+}
+
+.cs-auth-form-box {
+    width: 100%;
+    max-width: 400px;
+}
+
+.cs-auth-form-header {
+    margin-bottom: 28px;
+}
+
+.cs-auth-form-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--cs-text);
+    margin: 0 0 6px;
+}
+
+.cs-auth-form-desc {
+    font-size: 13px;
+    color: var(--cs-muted);
+    margin: 0;
+}
+
+/* Fields */
+.cs-field {
+    margin-bottom: 18px;
+}
+
+.cs-field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cs-text);
+    margin-bottom: 6px;
+}
+
+.cs-field-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--cs-border);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--cs-text);
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    display: block;
+    box-sizing: border-box;
+}
+
+.cs-field-input:focus {
+    border-color: var(--cs-primary);
+    box-shadow: 0 0 0 3px rgba(23,190,187,.12);
+}
+
+.cs-field-input::placeholder {
+    color: #b0c4c4;
+}
+
+/* Password toggle */
+.cs-pw-wrap {
+    position: relative;
+}
+
+.cs-pw-input {
+    padding-right: 44px;
+}
+
+.cs-pw-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--cs-muted);
+    padding: 4px 6px;
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 6px;
+    transition: color .15s;
+}
+
+.cs-pw-toggle:hover {
+    color: var(--cs-primary);
+}
+
+/* Validation */
+.cs-validation-alert {
+    background: rgba(230,57,70,.07);
+    border: 1px solid rgba(230,57,70,.22);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--cs-danger);
+}
+
+.cs-validation-alert .validation-summary-valid {
+    display: none;
+}
+
+.cs-field-error {
+    display: block;
+    font-size: 12px;
+    color: var(--cs-danger);
+    margin-top: 4px;
+}
+
+/* Remember me */
+.cs-check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.cs-check-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--cs-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.cs-check-row label {
+    font-size: 13px;
+    color: var(--cs-muted);
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Submit button */
+.cs-auth-submit {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: var(--cs-primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, box-shadow .2s, transform .1s;
+    letter-spacing: .3px;
+}
+
+.cs-auth-submit:hover {
+    background: var(--cs-primary-600);
+    box-shadow: 0 6px 20px rgba(23,190,187,.35);
+    transform: translateY(-1px);
+}
+
+.cs-auth-submit:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Footer link */
+.cs-auth-footer-link {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 13px;
+    color: var(--cs-muted);
+}
+
+.cs-auth-footer-link a {
+    color: var(--cs-primary);
+    font-weight: 600;
+}
+
+.cs-auth-footer-link a:hover {
+    text-decoration: underline;
+}
+
+/* Password strength bar */
+.cs-pw-strength {
+    height: 3px;
+    border-radius: 99px;
+    margin-top: 6px;
+    background: var(--cs-border);
+    overflow: hidden;
+}
+
+.cs-pw-strength-bar {
+    height: 100%;
+    border-radius: 99px;
+    width: 0;
+    transition: width .3s, background .3s;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+    .cs-auth-brand {
+        display: none;
+    }
+}
+
+/* ==========================
+   RESPONSIVE: sidebar vira offcanvas-like */
 @media (max-width: 992px) {
     .cs-sidebar {
         position: fixed;

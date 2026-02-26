@@ -1,7 +1,10 @@
 using Core;
 using Core.Data;
+using Core.Identity.Data;
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure; // Adicione este using
@@ -17,6 +20,7 @@ namespace Condosmart
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))
@@ -29,6 +33,39 @@ namespace Condosmart
                     ServerVersion.AutoDetect(connectionString)
                 ));
 
+            var identityConnectionString = builder.Configuration.GetConnectionString("IdentityDatabase");
+            if (string.IsNullOrEmpty(identityConnectionString))
+            {
+                throw new InvalidOperationException("Conexão com o banco Identity não foi configurada corretamente.");
+            }
+            builder.Services.AddDbContext<IdentityContext>(
+                options => options.UseMySql(
+                    identityConnectionString,
+                    ServerVersion.AutoDetect(identityConnectionString)
+                ));
+
+            builder.Services.AddIdentity<UsuarioSistema, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+            .AddEntityFrameworkStores<IdentityContext>()
+            .AddDefaultTokenProviders();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
+                options.AccessDeniedPath = "/Identity/Account/AcessoNegado";
+                options.ExpireTimeSpan = TimeSpan.FromHours(8);
+                options.SlidingExpiration = true;
+            });
+
+            builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
             builder.Services.AddScoped<ICondominioService, CondominioService>();
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IMoradorService, MoradorService>();
@@ -41,6 +78,13 @@ namespace Condosmart
             builder.Services.AddScoped<IMensalidadeService, MensalidadeService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
 
             var app = builder.Build();
 
@@ -57,11 +101,13 @@ namespace Condosmart
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapRazorPages();
 
             app.Run();
         }

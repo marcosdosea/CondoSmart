@@ -1,0 +1,20 @@
+@page
+@model AcessoNegadoModel
+@{
+    ViewData["Title"] = "Acesso Negado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-6">
+        <div class="cs-card text-center">
+            <div class="cs-card-header">
+                <span>&#128683; Acesso Negado</span>
+            </div>
+            <div class="cs-card-body">
+                <p class="text-danger">Você não tem permissão para acessar esta página.</p>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">&#127968; Voltar ao Início</a>
+            </div>
+        </div>
+    </div>
+</div>
