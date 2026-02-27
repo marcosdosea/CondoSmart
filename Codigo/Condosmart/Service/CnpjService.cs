@@ -11,7 +11,9 @@ namespace Service
     public class CnpjService : ICnpjService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://www.receitaws.com.br/v1/cnpj";
+        // Preferir BrasilAPI por ser mais estável; fallback para ReceitaWS
+        private const string BrasilApiUrl = "https://brasilapi.com.br/api/cnpj/v1";
+        private const string ReceitaWsUrl = "https://www.receitaws.com.br/v1/cnpj";
 
         public CnpjService(HttpClient httpClient)
         {
@@ -34,19 +36,53 @@ namespace Service
 
                 if (cnpjLimpo.Length != 14)
                     return null;
+                // 1) Tentar BrasilAPI
+                try
+                {
+                    var resp = await _httpClient.GetAsync($"{BrasilApiUrl}/{cnpjLimpo}");
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        var content = await resp.Content.ReadAsStringAsync();
+                        var brasil = System.Text.Json.JsonSerializer.Deserialize<BrasilApiResponse>(content,
+                            new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                var response = await _httpClient.GetAsync($"{BaseUrl}/{cnpjLimpo}");
+                        if (brasil != null && !string.IsNullOrWhiteSpace(brasil.Cnpj))
+                        {
+                            return new CnpjDataDTO
+                            {
+                                Cnpj = FormatarCnpj(brasil.Cnpj),
+                                Nome = brasil.Nome ?? brasil.Fantasia,
+                                Rua = BrasilApiNormalize(brasil.Logradouro),
+                                Numero = brasil.Numero,
+                                Bairro = brasil.Bairro,
+                                Cidade = brasil.Municipio,
+                                Uf = brasil.Uf,
+                                Cep = FormatarCep(brasil.Cep),
+                                Complemento = brasil.Complemento,
+                                ValorValido = true
+                            };
+                        }
+                    }
+                }
+                catch
+                {
+                    // ignora e tenta fallback
+                }
+
+                // 2) Fallback ReceitaWS
+                var response = await _httpClient.GetAsync($"{ReceitaWsUrl}/{cnpjLimpo}");
 
                 if (!response.IsSuccessStatusCode)
                     return null;
 
-                var content = await response.Content.ReadAsStringAsync();
-                var dados = System.Text.Json.JsonSerializer.Deserialize<ReceitaWsResponse>(content, 
+                var contentWs = await response.Content.ReadAsStringAsync();
+                var dados = System.Text.Json.JsonSerializer.Deserialize<ReceitaWsResponse>(contentWs,
                     new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (dados == null || dados.Status == 0)
+                if (dados == null)
                     return null;
 
+                // ReceitaWS returns status string sometimes; check fields
                 return new CnpjDataDTO
                 {
                     Cnpj = FormatarCnpj(dados.Cnpj),
@@ -65,6 +101,12 @@ namespace Service
             {
                 return null;
             }
+        }
+
+        private static string BrasilApiNormalize(string? s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return s ?? string.Empty;
+            return s;
         }
 
         private static string FormatarCnpj(string? cnpj)
@@ -122,6 +164,39 @@ namespace Service
 
             [JsonPropertyName("status")]
             public int Status { get; set; }
+        }
+
+        private class BrasilApiResponse
+        {
+            [JsonPropertyName("cnpj")]
+            public string? Cnpj { get; set; }
+
+            [JsonPropertyName("nome")]
+            public string? Nome { get; set; }
+
+            [JsonPropertyName("fantasia")]
+            public string? Fantasia { get; set; }
+
+            [JsonPropertyName("logradouro")]
+            public string? Logradouro { get; set; }
+
+            [JsonPropertyName("numero")]
+            public string? Numero { get; set; }
+
+            [JsonPropertyName("bairro")]
+            public string? Bairro { get; set; }
+
+            [JsonPropertyName("municipio")]
+            public string? Municipio { get; set; }
+
+            [JsonPropertyName("uf")]
+            public string? Uf { get; set; }
+
+            [JsonPropertyName("cep")]
+            public string? Cep { get; set; }
+
+            [JsonPropertyName("complemento")]
+            public string? Complemento { get; set; }
         }
     }
 }
