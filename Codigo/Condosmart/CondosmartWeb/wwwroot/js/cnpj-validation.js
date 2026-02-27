@@ -38,69 +38,28 @@ $(function() {
     }
 
     function validateCnpjFormat(cnpj) {
-        // Remove non-digits
+        // Função mantida para compatibilidade, mas agora apenas faz validação básica
         var cleanCnpj = cnpj.replace(/\D/g, '');
-        
-        // Validate length
-        if (cleanCnpj.length !== 14) {
-            return false;
-        }
-        
-        // Check if all digits are the same (invalid CNPJ)
-        if (/^(\d)\1{13}$/.test(cleanCnpj)) {
-            return false;
-        }
-        
-        // Calculate first verifier digit
-        var size = cleanCnpj.length - 2;
-        var numbers = cleanCnpj.substring(0, size);
-        var digits = cleanCnpj.substring(size);
-        var sum = 0;
-        var pos = size - 7;
-
-        for (var i = size; i >= 1; i--) {
-            sum += numbers.charAt(size - i) * pos--;
-            if (pos < 2)
-                pos = 9;
-        }
-
-        var result = sum % 11 < 2 ? 0 : 11 - sum % 11;
-        if (result != digits.charAt(0))
-            return false;
-
-        // Calculate second verifier digit
-        size = size + 1;
-        numbers = cleanCnpj.substring(0, size);
-        sum = 0;
-        pos = size - 7;
-
-        for (var i = size; i >= 1; i--) {
-            sum += numbers.charAt(size - i) * pos--;
-            if (pos < 2)
-                pos = 9;
-        }
-
-        result = sum % 11 < 2 ? 0 : 11 - sum % 11;
-        if (result != digits.charAt(1))
-            return false;
-
-        return true;
+        return cleanCnpj.length === 14;
     }
 
     function validateAndFillCnpj(cnpj) {
         // Remove non-digits
         var cleanCnpj = cnpj.replace(/\D/g, '');
         
-        // Validate format first
-        if (!validateCnpjFormat(cleanCnpj)) {
+        // Validate minimum length only
+        if (cleanCnpj.length < 14) {
             clearEnderecoFields();
-            showCnpjError('CNPJ inválido. Verifique o número informado.');
+            showCnpjError('CNPJ deve conter 14 dígitos.');
             return;
         }
 
+        // Take only first 14 digits if more were pasted
+        cleanCnpj = cleanCnpj.substring(0, 14);
+        
         console.debug('Validating CNPJ:', cleanCnpj);
 
-        // Fetch from API
+        // Fetch from API - let the server validate the CNPJ
         $.ajax({
             url: '/api/Cnpj/consultar/' + encodeURIComponent(cleanCnpj),
             method: 'GET',
@@ -117,9 +76,10 @@ $(function() {
                     $("input[name='Uf']").val(data.uf || '');
                     $("input[name='Cep']").val(data.cep || '');
                     hideCnpjError();
+                    console.debug('CNPJ preenchimento realizado com sucesso');
                 } else {
                     clearEnderecoFields();
-                    showCnpjError('CNPJ não encontrado ou inválido.');
+                    showCnpjError('CNPJ não encontrado na base de dados.');
                 }
             },
             error: function(jqxhr, textStatus, error) {
@@ -130,7 +90,16 @@ $(function() {
                 if (jqxhr.status === 404) {
                     showCnpjError('CNPJ não encontrado. Verifique o CNPJ informado.');
                 } else if (jqxhr.status === 400) {
-                    showCnpjError('CNPJ inválido. Verifique o número informado.');
+                    var errorMsg = 'CNPJ inválido. Verifique o número informado.';
+                    try {
+                        var errorResponse = JSON.parse(jqxhr.responseText);
+                        if (errorResponse.erro) {
+                            errorMsg = errorResponse.erro;
+                        }
+                    } catch (e) {
+                        // Use default error message
+                    }
+                    showCnpjError(errorMsg);
                 } else if (jqxhr.status === 500) {
                     showCnpjError('Erro ao validar CNPJ. Tente novamente mais tarde.');
                 } else if (textStatus === 'timeout') {
