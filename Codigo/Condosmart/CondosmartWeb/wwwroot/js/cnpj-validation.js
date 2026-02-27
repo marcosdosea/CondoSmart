@@ -98,11 +98,14 @@ $(function() {
             return;
         }
 
+        console.debug('Validating CNPJ:', cleanCnpj);
+
         // Fetch from API
         $.ajax({
             url: '/api/Cnpj/consultar/' + encodeURIComponent(cleanCnpj),
             method: 'GET',
             dataType: 'json',
+            timeout: 10000,
             success: function(data) {
                 console.debug('CNPJ validation result:', data);
                 if (data && data.valorValido) {
@@ -120,14 +123,18 @@ $(function() {
                 }
             },
             error: function(jqxhr, textStatus, error) {
-                console.warn('Erro ao validar CNPJ:', textStatus, error);
+                console.error('AJAX Error - Status:', jqxhr.status, 'Text:', textStatus, 'Error:', error);
+                console.error('Response:', jqxhr.responseText);
                 clearEnderecoFields();
+                
                 if (jqxhr.status === 404) {
                     showCnpjError('CNPJ não encontrado. Verifique o CNPJ informado.');
                 } else if (jqxhr.status === 400) {
                     showCnpjError('CNPJ inválido. Verifique o número informado.');
                 } else if (jqxhr.status === 500) {
                     showCnpjError('Erro ao validar CNPJ. Tente novamente mais tarde.');
+                } else if (textStatus === 'timeout') {
+                    showCnpjError('Tempo limite excedido. Tente novamente.');
                 } else {
                     showCnpjError('Erro ao validar CNPJ. Tente novamente.');
                 }
