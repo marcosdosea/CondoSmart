@@ -15,7 +15,7 @@ namespace CondosmartWeb.Controllers
             _httpFactory = httpFactory;
         }
 
-        // GET /Cep/GetEndereco?cep=01001000
+        // GET         /Cep/GetEndereco?cep=01001000
         [HttpGet]
         public async Task<IActionResult> GetEndereco(string cep)
         {
