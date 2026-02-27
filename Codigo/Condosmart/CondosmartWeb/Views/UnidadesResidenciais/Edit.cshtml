@@ -93,4 +93,12 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        window.condominiosData = @Html.Raw(ViewBag.CondominiosData ?? "[]");
+    </script>
+    <script>
+        window.cepWarningMessage = 'Endereço retornado pelo CEP é diferente do endereço do condomínio selecionado. Deseja sobrescrever ou mesclar?';
+    </script>
+    <script src="~/js/cep-lookup.js" asp-append-version="true"></script>
+    <script src="~/js/condominio-endereco.js" asp-append-version="true"></script>
 }

@@ -21,6 +21,7 @@ namespace Condosmart
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
+            builder.Services.AddHttpClient();
 
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))

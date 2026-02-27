@@ -91,4 +91,83 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // expose embedded condominios data as a global var for easier access/debug
+        window.condominiosData = @Html.Raw(ViewBag.CondominiosData ?? "[]");
+    </script>
+    <script>
+        // mensagem customizavel (evita problemas de encoding)
+        window.cepWarningMessage = 'Endereço retornado pelo CEP é diferente do endereço do condomínio selecionado. Deseja sobrescrever ou mesclar?';
+    </script>
+    <script src="~/js/cep-lookup.js" asp-append-version="true"></script>
+    <script>
+        // Inline fallback: preenche campos de endereço ao selecionar condomínio
+        (function() {
+            try {
+                console.debug('inline condominio-endereco script loaded');
+                var $ = window.jQuery;
+                if (!$) return;
+
+                function setField(name, value) {
+                    var v = value || '';
+                    var $byName = $("[name='" + name + "']");
+                    if ($byName.length) { $byName.val(v); return true; }
+                    var $byId = $("#" + name);
+                    if ($byId.length) { $byId.val(v); return true; }
+                    var $byNameSuffix = $("[name$='." + name + "']");
+                    if ($byNameSuffix.length) { $byNameSuffix.val(v); return true; }
+                    return false;
+                }
+
+                function fetchAndFill(id) {
+                    if (!id) return;
+                    $.getJSON('/Condominio/GetEndereco/' + id)
+                        .done(function(data) {
+                            if (!data) return;
+                            setField('Rua', data.rua);
+                            setField('Numero', data.numero);
+                            setField('Bairro', data.bairro);
+                            setField('Complemento', data.complemento);
+                            setField('Cidade', data.cidade);
+                            setField('Uf', data.uf);
+                            setField('Cep', data.cep);
+                        })
+                        .fail(function(jqxhr, textStatus, error) {
+                            console.warn('GetEndereco fail', textStatus, error);
+                        });
+                }
+
+                $(function() {
+                    var $select = $("select[name='CondominioId']");
+                    if (!$select.length) return;
+                    // primeiro tentamos preencher a partir do JSON embutido (mais rápido e sem AJAX)
+                    var dataJson = window.condominiosData || null;
+
+                    function fillFromEmbedded(id) {
+                        if (!id || !dataJson) return false;
+                        var item = dataJson.find(function(d) { return String(d.id) === String(id); });
+                        if (!item) return false;
+                        setField('Rua', item.rua);
+                        setField('Numero', item.numero);
+                        setField('Bairro', item.bairro);
+                        setField('Complemento', item.complemento);
+                        setField('Cidade', item.cidade);
+                        setField('Uf', item.uf);
+                        setField('Cep', item.cep);
+                        return true;
+                    }
+
+                    $select.on('change', function() {
+                        var id = $(this).val();
+                        if (!fillFromEmbedded(id)) fetchAndFill(id);
+                    });
+
+                    var initial = $select.val();
+                    if (initial) {
+                        if (!fillFromEmbedded(initial)) fetchAndFill(initial);
+                    }
+                });
+            } catch (e) { console.error(e); }
+        })();
+    </script>
 }
