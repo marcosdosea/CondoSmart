@@ -73,5 +73,25 @@ namespace CondosmartWeb.Controllers
             _service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public IActionResult GetEndereco(int id)
+        {
+            var entity = _service.GetById(id);
+            if (entity == null) return NotFound();
+
+            var endereco = new
+            {
+                rua = entity.Rua,
+                numero = entity.Numero,
+                bairro = entity.Bairro,
+                complemento = entity.Complemento,
+                cidade = entity.Cidade,
+                uf = entity.Uf,
+                cep = entity.Cep
+            };
+
+            return Json(endereco);
+        }
     }
 }
