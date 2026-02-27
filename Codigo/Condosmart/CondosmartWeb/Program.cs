@@ -67,6 +67,7 @@ namespace Condosmart
 
             builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
             builder.Services.AddScoped<ICondominioService, CondominioService>();
+            builder.Services.AddScoped<ICnpjService, CnpjService>();
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IMoradorService, MoradorService>();
             builder.Services.AddScoped<IVisitanteService, VisitanteService>();
@@ -76,6 +77,8 @@ namespace Condosmart
             builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
             builder.Services.AddScoped<IPagamentoService, PagamentoService>();
             builder.Services.AddScoped<IMensalidadeService, MensalidadeService>();
+
+            builder.Services.AddHttpClient<ICnpjService, CnpjService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

@@ -40,8 +40,59 @@ namespace CondosmartWeb.Controllers
             if (!ModelState.IsValid) return View(vm);
 
             var entity = _mapper.Map<Condominio>(vm);
+
+            // Validar CNPJ localmente e avisar se inválido
+            if (!string.IsNullOrWhiteSpace(entity.Cnpj) && !ValidarCnpjLocal(entity.Cnpj))
+            {
+                ModelState.AddModelError("Cnpj", "Aviso: O CNPJ informado pode ser inválido. Verifique e corrija se necessário.");
+                return View(vm);
+            }
+
             _service.Create(entity);
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool ValidarCnpjLocal(string cnpj)
+        {
+            string cnpjLimpo = System.Text.RegularExpressions.Regex.Replace(cnpj, @"\D", "");
+
+            if (cnpjLimpo.Length != 14)
+                return false;
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(cnpjLimpo, @"^\d{14}$"))
+                return false;
+
+            if (cnpjLimpo == new string(cnpjLimpo[0], cnpjLimpo.Length))
+                return false;
+
+            int[] mult1 = new int[12] { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            int[] mult2 = new int[13] { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+            string temp = cnpjLimpo.Substring(0, 12);
+            int soma = 0;
+
+            for (int i = 0; i < 12; i++)
+                soma += int.Parse(temp[i].ToString()) * mult1[i];
+
+            int resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+
+            if (resto != int.Parse(cnpjLimpo[12].ToString()))
+                return false;
+
+            temp = cnpjLimpo.Substring(0, 13);
+            soma = 0;
+
+            for (int i = 0; i < 13; i++)
+                soma += int.Parse(temp[i].ToString()) * mult2[i];
+
+            resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+
+            if (resto != int.Parse(cnpjLimpo[13].ToString()))
+                return false;
+
+            return true;
         }
 
         public IActionResult Edit(int id)
@@ -55,6 +106,13 @@ namespace CondosmartWeb.Controllers
         public IActionResult Edit(CondominioViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
+
+            // Validar CNPJ localmente e avisar se inválido
+            if (!string.IsNullOrWhiteSpace(vm.Cnpj) && !ValidarCnpjLocal(vm.Cnpj))
+            {
+                ModelState.AddModelError("Cnpj", "Aviso: O CNPJ informado pode ser inválido. Verifique e corrija se necessário.");
+                return View(vm);
+            }
 
             _service.Edit(_mapper.Map<Condominio>(vm));
             return RedirectToAction(nameof(Index));
