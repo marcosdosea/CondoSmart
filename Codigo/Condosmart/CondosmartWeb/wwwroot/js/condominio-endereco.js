@@ -1,4 +1,4 @@
-// Preenche campos de endereço da unidade residencial ao selecionar um condomínio
+// Preenche campos de endereï¿½o da unidade residencial ao selecionar um condomï¿½nio
 $(function() {
     console.debug('condominio-endereco.js loaded');
     var $select = $("select[name='CondominioId']");
@@ -45,7 +45,7 @@ $(function() {
                 setField('Cep', data.cep);
             })
             .fail(function(jqxhr, textStatus, error) {
-                console.warn('Não foi possível obter o endereço do condomínio.', textStatus, error);
+                console.warn('Nï¿½o foi possï¿½vel obter o endereï¿½o do condomï¿½nio.', textStatus, error);
                 if (jqxhr && jqxhr.responseText) console.debug('response:', jqxhr.responseText);
             });
     }

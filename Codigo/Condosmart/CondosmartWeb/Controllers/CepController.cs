@@ -20,11 +20,11 @@ namespace CondosmartWeb.Controllers
         public async Task<IActionResult> GetEndereco(string cep)
         {
             if (string.IsNullOrWhiteSpace(cep))
-                return BadRequest("CEP é obrigatório");
+                return BadRequest("CEP ï¿½ obrigatï¿½rio");
 
             var digits = new string(cep.Where(char.IsDigit).ToArray());
             if (digits.Length != 8)
-                return BadRequest("CEP deve conter 8 dígitos");
+                return BadRequest("CEP deve conter 8 dï¿½gitos");
 
             var client = _httpFactory.CreateClient();
             var url = $"https://viacep.com.br/ws/{digits}/json/";
@@ -35,7 +35,7 @@ namespace CondosmartWeb.Controllers
             }
             catch
             {
-                return StatusCode(503, "Serviço de CEP indisponível");
+                return StatusCode(503, "Serviï¿½o de CEP indisponï¿½vel");
             }
 
             if (!response.IsSuccessStatusCode)
