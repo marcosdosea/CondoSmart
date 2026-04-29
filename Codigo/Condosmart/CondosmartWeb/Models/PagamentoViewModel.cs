@@ -5,28 +5,33 @@ namespace CondosmartWeb.Models
 {
     public class PagamentoViewModel
     {
-        [Display(Name = "CÛdigo")]
+        [Display(Name = "C√≥digo")]
         public int Id { get; set; }
 
         [Display(Name = "Morador")]
+        [Range(1, int.MaxValue, ErrorMessage = "Informe um morador v√°lido")]
         public int? MoradorId { get; set; }
 
         [Display(Name = "Unidade")]
+        [Range(1, int.MaxValue, ErrorMessage = "Informe uma unidade v√°lida")]
         public int? UnidadeId { get; set; }
 
-        [Required(ErrorMessage = "O campo CondomÌnio È obrigatÛrio")]
-        [Display(Name = "CondomÌnio")]
+        [Required(ErrorMessage = "O campo Condom√≠nio √© obrigat√≥rio")]
+        [Range(1, int.MaxValue, ErrorMessage = "Informe um condom√≠nio v√°lido")]
+        [Display(Name = "Condom√≠nio")]
         public int CondominioId { get; set; }
 
-        [Required(ErrorMessage = "O campo Forma de Pagamento È obrigatÛrio")]
+        [Required(ErrorMessage = "O campo Forma de Pagamento √© obrigat√≥rio")]
+        [RegularExpression("^(pix|cartao_credito|cartao_debito|boleto|dinheiro)$", ErrorMessage = "Selecione uma forma de pagamento v√°lida.")]
         [Display(Name = "Forma de Pagamento")]
         public string FormaPagamento { get; set; } = null!;
 
-        [Required(ErrorMessage = "O campo Status È obrigatÛrio")]
+        [Required(ErrorMessage = "O campo Status √© obrigat√≥rio")]
+        [RegularExpression("^(pendente|pago|cancelado)$", ErrorMessage = "Selecione um status v√°lido.")]
         [Display(Name = "Status")]
         public string Status { get; set; } = null!;
 
-        [Required(ErrorMessage = "O campo Valor È obrigatÛrio")]
+        [Required(ErrorMessage = "O campo Valor √© obrigat√≥rio")]
         [Display(Name = "Valor")]
         [Range(0.01, double.MaxValue, ErrorMessage = "O valor deve ser maior que 0")]
         public decimal Valor { get; set; }
@@ -34,7 +39,7 @@ namespace CondosmartWeb.Models
         [Display(Name = "Data de Pagamento")]
         public DateTime? DataPagamento { get; set; }
 
-        [Display(Name = "Data de CriaÁ„o")]
+        [Display(Name = "Data de Cria√ß√£o")]
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
     }
 }

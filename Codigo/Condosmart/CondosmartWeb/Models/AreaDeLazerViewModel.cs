@@ -4,25 +4,28 @@ namespace CondosmartWeb.Models
 {
     public class AreaDeLazerViewModel
     {
-        [Display(Name = "CÛdigo")]
+        [Display(Name = "C√≥digo")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O campo Nome È obrigatÛrio")]
+        [Required(ErrorMessage = "O campo Nome √© obrigat√≥rio")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "O nome deve ter entre 3 e 50 caracteres")]
         [Display(Name = "Nome")]
         public string Nome { get; set; } = null!;
 
-        [Display(Name = "DescriÁ„o")]
+        [Display(Name = "Descri√ß√£o")]
         [StringLength(200)]
         public string? Descricao { get; set; }
 
-        [Required(ErrorMessage = "O campo CondomÌnio È obrigatÛrio")]
-        [Display(Name = "CondomÌnio")]
+        [Required(ErrorMessage = "O campo Condom√≠nio √© obrigat√≥rio")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um condom√≠nio v√°lido")]
+        [Display(Name = "Condom√≠nio")]
         public int CondominioId { get; set; }
 
-        [Display(Name = "SÌndico")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um s√≠ndico v√°lido")]
+        [Display(Name = "S√≠ndico")]
         public int? SindicoId { get; set; }
 
+        [Required(ErrorMessage = "Informe a disponibilidade")]
         [Display(Name = "Disponibilidade")]
         public bool? Disponibilidade { get; set; } = true;
 

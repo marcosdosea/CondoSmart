@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace CondosmartWeb.Models
 {
@@ -61,9 +61,11 @@ namespace CondosmartWeb.Models
         public int? MoradorId { get; set; }
 
         [Required(ErrorMessage = "O condomínio é obrigatório")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um condomínio válido")]
         [Display(Name = "Condomínio")]
         public int CondominioId { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um síndico válido")]
         [Display(Name = "Síndico")]
         public int? SindicoId { get; set; }
 
