@@ -6,6 +6,7 @@
 	<title>@ViewData["Title"] - Condosmart</title>
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 @inject Microsoft.AspNetCore.Identity.SignInManager<Core.Models.UsuarioSistema> SignInManager
@@ -20,7 +21,7 @@
 			<div class="cs-brand">
 				<div class="cs-brand-badge">C</div>
 				<div>
-					<div>CONDOMÍNIO</div>
+					<div>CONDOMÃNIO</div>
 					<small class="text-muted">CondoSmart</small>
 				</div>
 			</div>
@@ -35,7 +36,7 @@
 			</a>
 
 			<a asp-controller="Condominio" asp-action="Index">
-				&#127970; Condomínios
+				&#127970; CondomÃ­nios
 			</a>
 
 			<a asp-controller="UnidadesResidenciais" asp-action="Index">
@@ -43,7 +44,7 @@
 			</a>
 
 			<a asp-controller="Sindico" asp-action="Index">
-				&#129333; Síndico
+				&#129333; SÃ­ndico
 			</a>
 
 			<a asp-controller="Morador" asp-action="Index">
@@ -65,7 +66,7 @@
 			&#128178; Mensalidades
 		</a>
 		<a asp-controller="AreaDeLazer" asp-action="Index">
-			&#127946; Áreas de Lazer
+			&#127946; Ãreas de Lazer
 		</a>
 
 		</nav>
@@ -82,8 +83,8 @@
 				</div>
 
 				<div class="cs-top-actions">
-					<button class="cs-icon-btn" title="Notificações">&#128276;</button>
-					<button class="cs-icon-btn" title="Configurações">&#9881;</button>
+					<button class="cs-icon-btn" title="NotificaÃ§Ãµes">&#128276;</button>
+					<button class="cs-icon-btn" title="ConfiguraÃ§Ãµes">&#9881;</button>
 
 					@if (SignInManager.IsSignedIn(User))
 					{
@@ -137,6 +138,8 @@
 
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 
 	<script>
