@@ -535,6 +535,40 @@ a {
     margin-top: 4px;
 }
 
+/* DataTables */
+.dt-container {
+    color: var(--cs-text);
+}
+
+.dt-container .dt-search input,
+.dt-container .dt-length select {
+    border: 1px solid var(--cs-border);
+    border-radius: 10px;
+    padding: 6px 10px;
+}
+
+.dt-container .dt-search input:focus,
+.dt-container .dt-length select:focus {
+    border-color: var(--cs-primary);
+    box-shadow: 0 0 0 .2rem rgba(23,190,187,.15);
+    outline: 0;
+}
+
+.dt-container .pagination {
+    margin-bottom: 0;
+}
+
+.dt-container .page-link {
+    color: var(--cs-primary);
+}
+
+.dt-container .active > .page-link,
+.dt-container .page-link.active {
+    background-color: var(--cs-primary);
+    border-color: var(--cs-primary);
+    color: #fff;
+}
+
 /* Remember me */
 .cs-check-row {
     display: flex;

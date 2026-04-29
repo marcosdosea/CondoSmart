@@ -8,7 +8,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h2 class="fw-bold mb-0">&#128178; Mensalidades</h2>
-        <small class="text-muted">Gerencie os pagamentos de condomínio</small>
+        <small class="text-muted">Gerencie os pagamentos de condomÃ­nio</small>
     </div>
 </div>
 
@@ -78,18 +78,18 @@
         else
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0 js-data-table">
                     <thead class="table-light">
                         <tr>
                             <th>Id</th>
-                            <th>Competência</th>
+                            <th>CompetÃªncia</th>
                             <th>Vencimento</th>
                             <th>Valor</th>
                             <th>Status</th>
-                            <th>Condomínio</th>
+                            <th>CondomÃ­nio</th>
                             <th>Unidade</th>
                             <th>Morador</th>
-                            <th class="text-center">Ações</th>
+                            <th class="text-center">AÃ§Ãµes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,7 +119,7 @@
                                     }
                                     <span class="@statusClass">@item.Status.ToUpper()</span>
                                 </td>
-                                <td>@(item.CondominioNome ?? $"Condomínio {item.CondominioId}")</td>
+                                <td>@(item.CondominioNome ?? $"CondomÃ­nio {item.CondominioId}")</td>
                                 <td>@(item.UnidadeIdentificador ?? $"Unidade {item.UnidadeId}")</td>
                                 <td>@(item.MoradorNome ?? (item.MoradorId.HasValue ? $"Morador {item.MoradorId}" : "-"))</td>
                                 <td class="text-center">
@@ -134,7 +134,7 @@
                                     else if (item.PagamentoId.HasValue)
                                     {
                                         <a asp-action="Comprovante" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-info text-white" title="Ver 2ª Via">&#128196; 2ª Via</a>
+                                           class="btn btn-sm btn-info text-white" title="Ver 2Âª Via">&#128196; 2Âª Via</a>
                                     }
                                 </td>
                             </tr>
