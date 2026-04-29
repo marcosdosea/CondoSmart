@@ -38,9 +38,9 @@ public class ComprovantePagamentoViewModel
             return FormaPagamento switch
             {
                 "pix" => "PIX",
-                "cartao_credito" => "Cartão de Crédito",
-                "cartao_debito" => "Cartão de Débito",
-                "boleto" => "Boleto Bancário",
+                "cartao_credito" => "CartÃ£o de CrÃ©dito",
+                "cartao_debito" => "CartÃ£o de DÃ©bito",
+                "boleto" => "Boleto BancÃ¡rio",
                 "dinheiro" => "Dinheiro",
                 _ => FormaPagamento
             };

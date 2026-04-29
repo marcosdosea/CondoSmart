@@ -3,38 +3,44 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CondosmartWeb.Models
 {
-    public class ReservaViewModel
+    public class ReservaViewModel : IValidatableObject
     {
-        [Display(Name = "CÛdigo")]
+        [Display(Name = "C√≥digo")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O campo ¡rea È obrigatÛrio")]
-        [Display(Name = "¡rea")]
+        [Required(ErrorMessage = "O campo √Årea √© obrigat√≥rio")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione uma √°rea v√°lida")]
+        [Display(Name = "√Årea")]
         public int AreaId { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um morador v√°lido")]
         [Display(Name = "Morador")]
         public int? MoradorId { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um visitante v√°lido")]
         [Display(Name = "Visitante")]
         public int? VisitanteId { get; set; }
 
-        [Required(ErrorMessage = "O campo CondomÌnio È obrigatÛrio")]
-        [Display(Name = "CondomÌnio")]
+        [Required(ErrorMessage = "O campo Condom√≠nio √© obrigat√≥rio")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um condom√≠nio v√°lido")]
+        [Display(Name = "Condom√≠nio")]
         public int CondominioId { get; set; }
 
-        [Display(Name = "SÌndico")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um s√≠ndico v√°lido")]
+        [Display(Name = "S√≠ndico")]
         public int? SindicoId { get; set; }
 
-        [Required(ErrorMessage = "A data/hora de inÌcio È obrigatÛria")]
-        [Display(Name = "Data de InÌcio")]
+        [Required(ErrorMessage = "A data/hora de in√≠cio √© obrigat√≥ria")]
+        [Display(Name = "Data de In√≠cio")]
         public DateTime DataInicio { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "A data/hora de fim È obrigatÛria")]
+        [Required(ErrorMessage = "A data/hora de fim √© obrigat√≥ria")]
         [Display(Name = "Data de Fim")]
         public DateTime DataFim { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "O status È obrigatÛrio")]
+        [Required(ErrorMessage = "O status √© obrigat√≥rio")]
         [StringLength(20)]
+        [RegularExpression("^(pendente|confirmado|cancelado|concluido)$", ErrorMessage = "Selecione um status v√°lido.")]
         [Display(Name = "Status")]
         public string Status { get; set; } = "pendente";
 
@@ -42,10 +48,20 @@ namespace CondosmartWeb.Models
         [Display(Name = "Criado em")]
         public DateTime? CreatedAt { get; set; }
 
-        [Display(Name = "¡rea de Lazer")]
+        [Display(Name = "√Årea de Lazer")]
         public string? NomeArea {get; set; }
 
         [Display(Name = "Nome do Morador")]
         public string? NomeMorador { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (DataFim <= DataInicio)
+            {
+                yield return new ValidationResult(
+                    "A data de fim deve ser posterior √† data de in√≠cio.",
+                    new[] { nameof(DataFim) });
+            }
+        }
     }
 }
