@@ -6,8 +6,6 @@
 }
 
 <div class="cs-auth-shell">
-
-    <!-- Painel da marca -->
     <div class="cs-auth-brand">
         <div class="cs-auth-brand-inner">
             <div class="cs-auth-logo">
@@ -19,37 +17,31 @@
             </div>
 
             <p class="cs-auth-brand-heading">
-                Tudo que seu condomínio precisa, em um só lugar.
+                Rotina de condomínio mais organizada, clara e segura.
             </p>
 
             <ul class="cs-auth-features">
                 <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#127968;</span>
-                    Controle de unidades e moradores
+                    <span class="cs-auth-feature-icon">UN</span>
+                    Controle de unidades, moradores e visitantes
                 </li>
                 <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#128178;</span>
-                    Gestão financeira e mensalidades
+                    <span class="cs-auth-feature-icon">RS</span>
+                    Reservas e áreas de lazer em poucos cliques
                 </li>
                 <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#128197;</span>
-                    Reservas de áreas de lazer
-                </li>
-                <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#128203;</span>
-                    Atas e comunicados
+                    <span class="cs-auth-feature-icon">FI</span>
+                    Mensalidades e pendências sempre visíveis
                 </li>
             </ul>
         </div>
     </div>
 
-    <!-- Painel do formulário -->
     <div class="cs-auth-form-side">
         <div class="cs-auth-form-box">
-
             <div class="cs-auth-form-header">
-                <h1 class="cs-auth-form-title">Bem-vindo de volta &#128075;</h1>
-                <p class="cs-auth-form-desc">Faça login para acessar o painel do condomínio</p>
+                <h1 class="cs-auth-form-title">Acesse sua conta</h1>
+                <p class="cs-auth-form-desc">Entre para continuar gerenciando o condomínio.</p>
             </div>
 
             <form method="post" id="loginForm">
@@ -63,27 +55,27 @@
                 }
 
                 <div class="cs-field">
-                    <label asp-for="Input.Email" class="cs-field-label">&#128231; E-mail</label>
+                    <label asp-for="Input.Email" class="cs-field-label">E-mail</label>
                     <input asp-for="Input.Email"
                            class="cs-field-input"
-                           placeholder="seu&#64;email.com"
+                           placeholder="seu@email.com"
                            autocomplete="email" />
                     <span asp-validation-for="Input.Email" class="cs-field-error"></span>
                 </div>
 
                 <div class="cs-field">
-                    <label asp-for="Input.Senha" class="cs-field-label">&#128274; Senha</label>
+                    <label asp-for="Input.Senha" class="cs-field-label">Senha</label>
                     <div class="cs-pw-wrap">
                         <input asp-for="Input.Senha"
                                id="pwLogin"
                                type="password"
                                class="cs-field-input cs-pw-input"
-                               placeholder="••••••••"
+                               placeholder="Digite sua senha"
                                autocomplete="current-password" />
                         <button type="button"
                                 class="cs-pw-toggle"
                                 onclick="csToglePw('pwLogin', this)"
-                                title="Mostrar senha">&#128065;</button>
+                                title="Mostrar senha">Ver</button>
                     </div>
                     <span asp-validation-for="Input.Senha" class="cs-field-error"></span>
                 </div>
@@ -94,17 +86,15 @@
                 </div>
 
                 <button type="submit" class="cs-auth-submit">
-                    Entrar no sistema &rarr;
+                    Entrar no sistema
                 </button>
             </form>
 
             <div class="cs-auth-footer-link">
                 Não tem uma conta? <a asp-page="./Registro">Cadastre-se gratuitamente</a>
             </div>
-
         </div>
     </div>
-
 </div>
 
 @section Scripts {
@@ -114,14 +104,13 @@
             var input = document.getElementById(id);
             if (input.type === 'password') {
                 input.type = 'text';
-                btn.innerHTML = '&#128064;';
+                btn.textContent = 'Ocultar';
                 btn.title = 'Ocultar senha';
             } else {
                 input.type = 'password';
-                btn.innerHTML = '&#128065;';
+                btn.textContent = 'Ver';
                 btn.title = 'Mostrar senha';
             }
         }
     </script>
-}
 }
