@@ -1,4 +1,4 @@
-@model IEnumerable<CondosmartWeb.Models.MoradorViewModel>
+@model CondosmartWeb.Models.PagedListViewModel<CondosmartWeb.Models.MoradorViewModel>
 @{
     ViewData["Title"] = "Moradores";
 }
@@ -17,7 +17,7 @@
 <div class="cs-card">
     <div class="cs-card-header d-flex justify-content-between align-items-center">
         <span>Lista</span>
-        <span class="text-muted small">Total: @Model.Count()</span>
+        <span class="text-muted small">Total: @Model.TotalItems</span>
     </div>
 
     <div class="cs-card-body">
@@ -30,7 +30,7 @@
             var aviso = TempData["ProvisioningWarning"]?.ToString();
 
             <div class="alert @(statusEmail == "enviado" ? "alert-success" : "alert-warning") border mb-4">
-                <strong>@mensagem</strong>
+            <strong>@mensagem</strong>
                 <div class="small mt-2">Login: @email</div>
                 <div class="small">Senha temporaria: <strong>@senhaTemporaria</strong></div>
                 <div class="small">Link de acesso: @link</div>
@@ -49,7 +49,7 @@
             </div>
         }
 
-        @if (!Model.Any())
+        @if (!Model.Items.Any())
         {
             <div class="alert alert-info text-center mb-0">
                 Nenhum morador cadastrado.
@@ -58,7 +58,7 @@
         else
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 js-data-table">
+                <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th>Nome</th>
@@ -70,7 +70,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.Items)
                         {
                             <tr>
                                 <td class="fw-semibold">@item.Nome</td>
@@ -93,6 +93,8 @@
                     </tbody>
                 </table>
             </div>
+
+            <partial name="_Pagination" model="Model" />
         }
     </div>
 </div>

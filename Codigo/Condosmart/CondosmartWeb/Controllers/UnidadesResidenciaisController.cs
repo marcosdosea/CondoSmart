@@ -5,10 +5,6 @@ using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CondosmartWeb.Controllers
@@ -18,71 +14,29 @@ namespace CondosmartWeb.Controllers
     {
         private readonly IUnidadesResidenciaisService _service;
         private readonly ICondominioService _condominioService;
+        private readonly ICepService _cepService;
         private readonly IMapper _mapper;
-        private readonly IHttpClientFactory? _httpFactory;
 
         public UnidadesResidenciaisController(
             IUnidadesResidenciaisService service,
             ICondominioService condominioService,
-            IMapper mapper,
-            IHttpClientFactory? httpFactory = null)
+            ICepService cepService,
+            IMapper mapper)
         {
             _service = service;
             _condominioService = condominioService;
+            _cepService = cepService;
             _mapper = mapper;
-            _httpFactory = httpFactory;
         }
 
-        private bool ValidateCep(UnidadeResidencialViewModel vm)
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            if (string.IsNullOrWhiteSpace(vm.Cep))
-            {
-                ModelState.AddModelError(nameof(vm.Cep), "CEP é obrigatório.");
-                return false;
-            }
-
-            var digits = new string(vm.Cep.Where(char.IsDigit).ToArray());
-            if (digits.Length != 8)
-            {
-                ModelState.AddModelError(nameof(vm.Cep), "CEP deve conter 8 dígitos.");
-                return false;
-            }
-            // se IHttpClientFactory não disponível (testes), apenas validar formato
-            if (_httpFactory == null) return true;
-
-            var client = _httpFactory.CreateClient();
-            try
-            {
-                var resp = client.GetAsync($"https://viacep.com.br/ws/{digits}/json/").Result;
-                if (!resp.IsSuccessStatusCode)
-                {
-                    ModelState.AddModelError(nameof(vm.Cep), "Não foi possível validar o CEP no serviço externo.");
-                    return false;
-                }
-
-                var content = resp.Content.ReadAsStringAsync().Result;
-                using var doc = JsonDocument.Parse(content);
-                var root = doc.RootElement;
-                if (root.TryGetProperty("erro", out var err) && err.GetBoolean())
-                {
-                    ModelState.AddModelError(nameof(vm.Cep), "CEP não encontrado.");
-                    return false;
-                }
-
-                return true;
-            }
-            catch
-            {
-                ModelState.AddModelError(nameof(vm.Cep), "Erro ao validar CEP (serviço indisponível).");
-                return false;
-            }
-        }
-
-        public IActionResult Index()
-        {
-            var lista = _service.GetAll();
+            var lista = _service.GetAll()
+                .OrderBy(u => u.Condominio!.Nome)
+                .ThenBy(u => u.Identificador)
+                .ToList();
             var vms = _mapper.Map<List<UnidadeResidencialViewModel>>(lista);
-            return View(vms);
+            return View(PagedListViewModel<UnidadeResidencialViewModel>.Create(vms, page, pageSize));
         }
 
         public IActionResult Details(int id)
@@ -102,7 +56,7 @@ namespace CondosmartWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(UnidadeResidencialViewModel vm)
+        public async Task<IActionResult> Create(UnidadeResidencialViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -110,22 +64,28 @@ namespace CondosmartWeb.Controllers
                 return View(vm);
             }
 
-            // valida CEP via ViaCEP (serviço interno)
-            if (!ValidateCep(vm))
+            if (!await _cepService.IsValidAsync(vm.Cep))
             {
+                ModelState.AddModelError(nameof(vm.Cep), "O CEP informado e invalido ou nao pode ser consultado agora.");
                 PopularDropdowns();
                 return View(vm);
             }
 
             try
             {
-                var entity = _mapper.Map<UnidadesResidenciais>(vm);
-                _service.Create(entity);
+                _service.Create(_mapper.Map<UnidadesResidenciais>(vm));
+                SetSuccess("Unidade residencial cadastrada com sucesso.");
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(nameof(vm.Identificador), ex.Message);
+                PopularDropdowns();
+                return View(vm);
+            }
+            catch
+            {
+                SetError("Nao foi possivel cadastrar a unidade agora.");
                 PopularDropdowns();
                 return View(vm);
             }
@@ -143,7 +103,7 @@ namespace CondosmartWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(UnidadeResidencialViewModel vm)
+        public async Task<IActionResult> Edit(UnidadeResidencialViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -151,21 +111,28 @@ namespace CondosmartWeb.Controllers
                 return View(vm);
             }
 
-            if (!ValidateCep(vm))
+            if (!await _cepService.IsValidAsync(vm.Cep))
             {
+                ModelState.AddModelError(nameof(vm.Cep), "O CEP informado e invalido ou nao pode ser consultado agora.");
                 PopularDropdowns();
                 return View(vm);
             }
 
             try
             {
-                var entity = _mapper.Map<UnidadesResidenciais>(vm);
-                _service.Edit(entity);
+                _service.Edit(_mapper.Map<UnidadesResidenciais>(vm));
+                SetSuccess("Unidade residencial atualizada com sucesso.");
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(nameof(vm.Identificador), ex.Message);
+                PopularDropdowns();
+                return View(vm);
+            }
+            catch
+            {
+                SetError("Nao foi possivel atualizar a unidade agora.");
                 PopularDropdowns();
                 return View(vm);
             }
@@ -184,7 +151,16 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _service.Delete(id);
+            try
+            {
+                _service.Delete(id);
+                SetSuccess("Unidade residencial removida com sucesso.");
+            }
+            catch
+            {
+                SetError("Nao foi possivel remover a unidade agora.");
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -193,7 +169,6 @@ namespace CondosmartWeb.Controllers
             var condominios = _condominioService.GetAll();
             ViewBag.Condominios = new SelectList(condominios, "Id", "Nome");
 
-            // Embutir dados de endereço dos condomínios para evitar chamadas AJAX
             var dados = condominios.Select(c => new
             {
                 id = c.Id,
@@ -208,6 +183,17 @@ namespace CondosmartWeb.Controllers
 
             ViewBag.CondominiosData = System.Text.Json.JsonSerializer.Serialize(dados);
         }
+
+        private void SetSuccess(string message)
+        {
+            if (TempData != null)
+                TempData["Sucesso"] = message;
+        }
+
+        private void SetError(string message)
+        {
+            if (TempData != null)
+                TempData["Erro"] = message;
+        }
     }
 }
-

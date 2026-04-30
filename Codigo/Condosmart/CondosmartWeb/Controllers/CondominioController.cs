@@ -12,25 +12,29 @@ namespace CondosmartWeb.Controllers
     public class CondominioController : Controller
     {
         private readonly ICondominioService _service;
+        private readonly ICnpjService _cnpjService;
         private readonly IMapper _mapper;
 
-        public CondominioController(ICondominioService service, IMapper mapper)
+        public CondominioController(ICondominioService service, ICnpjService cnpjService, IMapper mapper)
         {
             _service = service;
+            _cnpjService = cnpjService;
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var lista = _service.GetAll();
+            var lista = _service.GetAll().OrderBy(c => c.Nome).ToList();
             var vms = _mapper.Map<List<CondominioViewModel>>(lista);
-            return View(vms);
+            return View(PagedListViewModel<CondominioViewModel>.Create(vms, page, pageSize));
         }
 
         public IActionResult Details(int id)
         {
             var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+                return NotFound();
+
             return View(_mapper.Map<CondominioViewModel>(entity));
         }
 
@@ -40,67 +44,39 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CondominioViewModel vm)
         {
-            if (!ModelState.IsValid) return View(vm);
+            if (!ModelState.IsValid)
+                return View(vm);
 
-            var entity = _mapper.Map<Condominio>(vm);
-
-            // Validar CNPJ localmente e avisar se inválido
-            if (!string.IsNullOrWhiteSpace(entity.Cnpj) && !ValidarCnpjLocal(entity.Cnpj))
+            if (!_cnpjService.IsValid(vm.Cnpj))
             {
-                ModelState.AddModelError("Cnpj", "Aviso: O CNPJ informado pode ser inválido. Verifique e corrija se necessário.");
+                ModelState.AddModelError(nameof(vm.Cnpj), "O CNPJ informado e invalido.");
                 return View(vm);
             }
 
-            _service.Create(entity);
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ValidarCnpjLocal(string cnpj)
-        {
-            string cnpjLimpo = System.Text.RegularExpressions.Regex.Replace(cnpj, @"\D", "");
-
-            if (cnpjLimpo.Length != 14)
-                return false;
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(cnpjLimpo, @"^\d{14}$"))
-                return false;
-
-            if (cnpjLimpo == new string(cnpjLimpo[0], cnpjLimpo.Length))
-                return false;
-
-            int[] mult1 = new int[12] { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
-            int[] mult2 = new int[13] { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
-
-            string temp = cnpjLimpo.Substring(0, 12);
-            int soma = 0;
-
-            for (int i = 0; i < 12; i++)
-                soma += int.Parse(temp[i].ToString()) * mult1[i];
-
-            int resto = soma % 11;
-            resto = resto < 2 ? 0 : 11 - resto;
-
-            if (resto != int.Parse(cnpjLimpo[12].ToString()))
-                return false;
-
-            temp = cnpjLimpo.Substring(0, 13);
-            soma = 0;
-
-            for (int i = 0; i < 13; i++)
-                soma += int.Parse(temp[i].ToString()) * mult2[i];
-
-            resto = soma % 11;
-            resto = resto < 2 ? 0 : 11 - resto;
-
-            if (resto != int.Parse(cnpjLimpo[13].ToString()))
-                return false;
-
-            return true;
+            try
+            {
+                _service.Create(_mapper.Map<Condominio>(vm));
+                SetSuccess("Condominio cadastrado com sucesso.");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(vm);
+            }
+            catch
+            {
+                SetError("Nao foi possivel cadastrar o condominio agora.");
+                return View(vm);
+            }
         }
 
         public IActionResult Edit(int id)
         {
             var entity = _service.GetById(id);
+            if (entity == null)
+                return NotFound();
+
             return View(_mapper.Map<CondominioViewModel>(entity));
         }
 
@@ -108,22 +84,39 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CondominioViewModel vm)
         {
-            if (!ModelState.IsValid) return View(vm);
+            if (!ModelState.IsValid)
+                return View(vm);
 
-            // Validar CNPJ localmente e avisar se inválido
-            if (!string.IsNullOrWhiteSpace(vm.Cnpj) && !ValidarCnpjLocal(vm.Cnpj))
+            if (!_cnpjService.IsValid(vm.Cnpj))
             {
-                ModelState.AddModelError("Cnpj", "Aviso: O CNPJ informado pode ser inválido. Verifique e corrija se necessário.");
+                ModelState.AddModelError(nameof(vm.Cnpj), "O CNPJ informado e invalido.");
                 return View(vm);
             }
 
-            _service.Edit(_mapper.Map<Condominio>(vm));
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _service.Edit(_mapper.Map<Condominio>(vm));
+                SetSuccess("Condominio atualizado com sucesso.");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(vm);
+            }
+            catch
+            {
+                SetError("Nao foi possivel atualizar o condominio agora.");
+                return View(vm);
+            }
         }
 
         public IActionResult Delete(int id)
         {
             var entity = _service.GetById(id);
+            if (entity == null)
+                return NotFound();
+
             return View(_mapper.Map<CondominioViewModel>(entity));
         }
 
@@ -131,7 +124,16 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _service.Delete(id);
+            try
+            {
+                _service.Delete(id);
+                SetSuccess("Condominio removido com sucesso.");
+            }
+            catch
+            {
+                SetError("Nao foi possivel remover o condominio agora.");
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -139,7 +141,8 @@ namespace CondosmartWeb.Controllers
         public IActionResult GetEndereco(int id)
         {
             var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+                return NotFound();
 
             var endereco = new
             {
@@ -153,6 +156,18 @@ namespace CondosmartWeb.Controllers
             };
 
             return Json(endereco);
+        }
+
+        private void SetSuccess(string message)
+        {
+            if (TempData != null)
+                TempData["Sucesso"] = message;
+        }
+
+        private void SetError(string message)
+        {
+            if (TempData != null)
+                TempData["Erro"] = message;
         }
     }
 }

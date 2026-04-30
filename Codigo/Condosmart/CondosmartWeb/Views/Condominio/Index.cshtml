@@ -1,4 +1,4 @@
-@model IEnumerable<CondosmartWeb.Models.CondominioViewModel>
+@model CondosmartWeb.Models.PagedListViewModel<CondosmartWeb.Models.CondominioViewModel>
 @{
     ViewData["Title"] = "Condomínios";
 }
@@ -17,11 +17,11 @@
 <div class="cs-card">
     <div class="cs-card-header d-flex justify-content-between align-items-center">
         <span>Lista</span>
-        <span class="text-muted small">Total: @Model.Count()</span>
+        <span class="text-muted small">Total: @Model.TotalItems</span>
     </div>
 
     <div class="cs-card-body">
-        @if (!Model.Any())
+        @if (!Model.Items.Any())
         {
             <div class="alert alert-info text-center mb-0">
                 Nenhum condomínio cadastrado.
@@ -30,7 +30,7 @@
         else
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 js-data-table">
+                <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th>Nome</th>
@@ -42,7 +42,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.Items)
                         {
                             <tr>
                                 <td class="fw-semibold">@item.Nome</td>
@@ -65,6 +65,8 @@
                     </tbody>
                 </table>
             </div>
+
+            <partial name="_Pagination" model="Model" />
         }
     </div>
 </div>

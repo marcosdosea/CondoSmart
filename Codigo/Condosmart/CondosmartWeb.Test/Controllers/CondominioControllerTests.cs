@@ -19,6 +19,7 @@ namespace CondosmartWeb.Controllers.Tests
         {
             // Arrange
             var mockService = new Mock<ICondominioService>();
+            var mockCnpjService = new Mock<ICnpjService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new CondominioProfile())
@@ -39,7 +40,10 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new CondominioController(mockService.Object, mapper);
+            mockCnpjService.Setup(s => s.IsValid(It.IsAny<string?>()))
+                .Returns(true);
+
+            controller = new CondominioController(mockService.Object, mockCnpjService.Object, mapper);
         }
 
         [TestMethod]
@@ -52,10 +56,11 @@ namespace CondosmartWeb.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<CondominioViewModel>));
-            var lista = (List<CondominioViewModel>)viewResult.ViewData.Model;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PagedListViewModel<CondominioViewModel>));
+            var lista = (PagedListViewModel<CondominioViewModel>)viewResult.ViewData.Model;
 
-            Assert.HasCount(3, lista);
+            Assert.AreEqual(3, lista.TotalItems);
+            Assert.AreEqual(3, lista.Items.Count);
         }
 
         [TestMethod]

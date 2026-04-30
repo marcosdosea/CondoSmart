@@ -1,0 +1,38 @@
+@model CondosmartWeb.Models.IPagedListMetadata
+
+@if (Model.TotalItems > 0 && Model.TotalPages > 1)
+{
+    var routeValues = new Dictionary<string, string?>();
+    foreach (var item in ViewContext.HttpContext.Request.Query)
+    {
+        routeValues[item.Key] = item.Value.ToString();
+    }
+
+    routeValues["pageSize"] = Model.PageSize.ToString();
+
+    <nav aria-label="Paginacao" class="mt-4">
+        <ul class="pagination justify-content-end mb-0">
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                @{
+                    routeValues["page"] = (Model.Page - 1).ToString();
+                }
+                <a class="page-link" asp-all-route-data="routeValues">Anterior</a>
+            </li>
+
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                routeValues["page"] = i.ToString();
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link" asp-all-route-data="routeValues">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                @{
+                    routeValues["page"] = (Model.Page + 1).ToString();
+                }
+                <a class="page-link" asp-all-route-data="routeValues">Proxima</a>
+            </li>
+        </ul>
+    </nav>
+}

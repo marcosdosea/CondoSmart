@@ -74,6 +74,13 @@ namespace Service
             return context.Moradores.Find(id);
         }
 
+        public Morador? GetByEmail(string email)
+        {
+            return context.Moradores
+                .AsNoTracking()
+                .FirstOrDefault(m => m.Email != null && m.Email.ToLower() == email.ToLower());
+        }
+
         /// <summary>
         /// Buscar todos os moradores cadastrados
         /// </summary>

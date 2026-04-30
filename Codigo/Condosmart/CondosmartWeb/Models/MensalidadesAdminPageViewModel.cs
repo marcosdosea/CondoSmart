@@ -10,7 +10,7 @@ public class MensalidadesAdminPageViewModel
 
     public FiltroMensalidadeViewModel Filtro { get; set; } = new();
 
-    public List<MensalidadeViewModel> Mensalidades { get; set; } = new();
+    public PagedListViewModel<MensalidadeViewModel> Mensalidades { get; set; } = PagedListViewModel<MensalidadeViewModel>.Create([], 1, 10);
 
     public List<ConfiguracaoMensalidadeResumoViewModel> Configuracoes { get; set; } = new();
 
