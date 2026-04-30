@@ -55,6 +55,10 @@ namespace Service
             var morador = context.Moradores.Find(id);
             if (morador != null)
             {
+                var unidades = context.UnidadesResidenciais.Where(u => u.MoradorId == id).ToList();
+                foreach (var unidade in unidades)
+                    unidade.MoradorId = null;
+
                 context.Remove(morador);
                 context.SaveChanges();
             }

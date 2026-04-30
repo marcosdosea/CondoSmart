@@ -1,0 +1,85 @@
+@page
+@model CondosmartWeb.Areas.Identity.Pages.Account.TrocarSenhaTemporariaModel
+@{
+    ViewData["Title"] = "Trocar senha temporaria";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="cs-auth-shell">
+    <div class="cs-auth-brand">
+        <div class="cs-auth-brand-inner">
+            <div class="cs-auth-logo">
+                <div class="cs-auth-logo-badge">C</div>
+                <div>
+                    <div class="cs-auth-brand-name">CondoSmart</div>
+                    <div class="cs-auth-brand-tag">Primeiro acesso</div>
+                </div>
+            </div>
+
+            <p class="cs-auth-brand-heading">
+                Para proteger sua conta, defina uma nova senha antes de continuar.
+            </p>
+
+            <ul class="cs-auth-features">
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">01</span>
+                    A senha temporaria expira assim que voce concluir esta etapa
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">02</span>
+                    Escolha uma senha facil de lembrar e dificil de adivinhar
+                </li>
+                <li class="cs-auth-feature">
+                    <span class="cs-auth-feature-icon">03</span>
+                    Depois disso, o acesso ao sistema sera liberado normalmente
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="cs-auth-form-side">
+        <div class="cs-auth-form-box">
+            <div class="cs-auth-form-header">
+                <h1 class="cs-auth-form-title">Trocar senha temporaria</h1>
+                <p class="cs-auth-form-desc">Esta etapa e obrigatoria apenas no primeiro login.</p>
+            </div>
+
+            <form method="post">
+                @if (!ModelState.IsValid)
+                {
+                    <div class="cs-validation-alert">
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                }
+
+                <div class="cs-field">
+                    <label asp-for="Input.NovaSenha" class="cs-field-label">Nova senha</label>
+                    <input asp-for="Input.NovaSenha"
+                           class="cs-field-input"
+                           type="password"
+                           autocomplete="new-password"
+                           placeholder="Digite sua nova senha" />
+                    <span asp-validation-for="Input.NovaSenha" class="cs-field-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label asp-for="Input.ConfirmacaoSenha" class="cs-field-label">Confirmar nova senha</label>
+                    <input asp-for="Input.ConfirmacaoSenha"
+                           class="cs-field-input"
+                           type="password"
+                           autocomplete="new-password"
+                           placeholder="Repita a nova senha" />
+                    <span asp-validation-for="Input.ConfirmacaoSenha" class="cs-field-error"></span>
+                </div>
+
+                <button type="submit" class="cs-auth-submit">
+                    Salvar nova senha
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

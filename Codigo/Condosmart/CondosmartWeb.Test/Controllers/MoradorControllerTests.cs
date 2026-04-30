@@ -1,14 +1,14 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using CondosmartWeb.Controllers;
 using CondosmartWeb.Mappers;
 using CondosmartWeb.Models;
+using Core.DTO;
 using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
 
 namespace CondosmartWeb.Controllers.Tests
 {
@@ -20,41 +20,68 @@ namespace CondosmartWeb.Controllers.Tests
         [TestInitialize]
         public void Initialize()
         {
-            // Arrange
             var mockService = new Mock<IMoradorService>();
             var mockCondominioService = new Mock<ICondominioService>();
+            var mockUnidadesService = new Mock<IUnidadesResidenciaisService>();
+            var mockProvisionamentoService = new Mock<IMoradorProvisionamentoService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new MoradorProfile())
             ).CreateMapper();
 
-            mockService.Setup(s => s.GetAll())
-                .Returns(GetTestMoradores());
-
-            mockService.Setup(s => s.GetById(1))
-                .Returns(GetTargetMorador());
-
-            mockService.Setup(s => s.Edit(It.IsAny<Morador>()))
-                .Verifiable();
-
-            mockService.Setup(s => s.Create(It.IsAny<Morador>()))
-                .Returns(10);
-
-            mockService.Setup(s => s.Delete(It.IsAny<int>()))
-                .Verifiable();
+            mockService.Setup(s => s.GetAll()).Returns(GetTestMoradores());
+            mockService.Setup(s => s.GetById(1)).Returns(GetTargetMorador());
+            mockService.Setup(s => s.Edit(It.IsAny<Morador>())).Verifiable();
+            mockService.Setup(s => s.Create(It.IsAny<Morador>())).Returns(10);
+            mockService.Setup(s => s.Delete(It.IsAny<int>())).Verifiable();
 
             mockCondominioService.Setup(s => s.GetAll()).Returns(new List<Condominio>());
 
-            controller = new MoradorController(mockService.Object, mockCondominioService.Object, mapper);
+            mockUnidadesService.Setup(s => s.GetAll()).Returns(new List<UnidadesResidenciais>
+            {
+                new() { Id = 7, Identificador = "A-101", CondominioId = 1, MoradorId = 1, Condominio = new Condominio { Id = 1, Nome = "Condominio Alfa" } },
+                new() { Id = 8, Identificador = "B-202", CondominioId = 2, MoradorId = null, Condominio = new Condominio { Id = 2, Nome = "Condominio Beta" } }
+            });
+
+            mockProvisionamentoService
+                .Setup(s => s.CadastrarComAcessoAsync(It.IsAny<Morador>(), It.IsAny<int>(), It.IsAny<string>()))
+                .ReturnsAsync(new ProvisionamentoMoradorResultDTO
+                {
+                    MoradorId = 10,
+                    NomeMorador = "Joao Santos",
+                    Email = "joao@example.com",
+                    SenhaTemporaria = "Condo@123A",
+                    Condominio = "Condominio Beta",
+                    Unidade = "B-202",
+                    UrlAcesso = "https://localhost/login",
+                    EmailEnviado = true
+                });
+
+            mockProvisionamentoService
+                .Setup(s => s.AtualizarVinculoUnidadeAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
+
+            mockProvisionamentoService
+                .Setup(s => s.AtualizarContaMoradorAsync(It.IsAny<string?>(), It.IsAny<Morador>()))
+                .Returns(Task.CompletedTask);
+
+            mockProvisionamentoService
+                .Setup(s => s.RemoverAcessoAsync(It.IsAny<int>(), It.IsAny<string?>()))
+                .Returns(Task.CompletedTask);
+
+            controller = new MoradorController(
+                mockService.Object,
+                mockCondominioService.Object,
+                mockUnidadesService.Object,
+                mockProvisionamentoService.Object,
+                mapper);
         }
 
         [TestMethod]
         public void IndexTest_Valido()
         {
-            // Act
             var result = controller.Index();
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -67,10 +94,8 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void DetailsTest_Valido()
         {
-            // Act
             var result = controller.Details(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -79,25 +104,25 @@ namespace CondosmartWeb.Controllers.Tests
 
             Assert.AreEqual("Maria Silva", model.Nome);
             Assert.AreEqual("12345678901", model.Cpf);
+            Assert.AreEqual(7, model.UnidadeId);
         }
 
         [TestMethod]
         public void CreateTest_Get_Valido()
         {
-            // Act
             var result = controller.Create();
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod]
-        public void CreateTest_Post_Valid()
+        public async Task CreateTest_Post_Valid()
         {
-            // Act
-            var result = controller.Create(GetNewMoradorModel());
+            var urlMock = new Mock<IUrlHelper>();
+            urlMock.Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>())).Returns("https://localhost/login");
+            controller.Url = urlMock.Object;
 
-            // Assert
+            var result = await controller.Create(GetNewMoradorModel());
+
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
 
@@ -106,15 +131,12 @@ namespace CondosmartWeb.Controllers.Tests
         }
 
         [TestMethod]
-        public void CreateTest_Post_Invalid()
+        public async Task CreateTest_Post_Invalid()
         {
-            // Arrange
             controller.ModelState.AddModelError("Nome", "Campo requerido");
 
-            // Act
-            var result = controller.Create(GetNewMoradorModel());
+            var result = await controller.Create(GetNewMoradorModel());
 
-            // Assert
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
@@ -122,10 +144,8 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void EditTest_Get_Valid()
         {
-            // Act
             var result = controller.Edit(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -134,15 +154,14 @@ namespace CondosmartWeb.Controllers.Tests
 
             Assert.AreEqual("Maria Silva", model.Nome);
             Assert.AreEqual("12345678901", model.Cpf);
+            Assert.AreEqual(7, model.UnidadeId);
         }
 
         [TestMethod]
-        public void EditTest_Post_Valid()
+        public async Task EditTest_Post_Valid()
         {
-            // Act
-            var result = controller.Edit(GetTargetMoradorModel());
+            var result = await controller.Edit(GetTargetMoradorModel());
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
 
@@ -153,10 +172,8 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void DeleteTest_Get_Valid()
         {
-            // Act
             var result = controller.Delete(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -164,23 +181,20 @@ namespace CondosmartWeb.Controllers.Tests
             var model = (MoradorViewModel)viewResult.ViewData.Model;
 
             Assert.AreEqual("Maria Silva", model.Nome);
+            Assert.AreEqual(7, model.UnidadeId);
         }
 
         [TestMethod]
-        public void DeleteTest_Post_Valid()
+        public async Task DeleteTest_Post_Valid()
         {
-            // Act
-            var result = controller.DeleteConfirmed(1);
+            var result = await controller.DeleteConfirmed(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
 
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
-
-        // --------- Dados de Teste ---------
 
         private static Morador GetTargetMorador()
         {
@@ -197,7 +211,7 @@ namespace CondosmartWeb.Controllers.Tests
                 Numero = "123",
                 Complemento = "Apto 101",
                 Cep = "12345678",
-                Cidade = "São Paulo",
+                Cidade = "Sao Paulo",
                 Uf = "SP",
                 CondominioId = 1,
                 CreatedAt = new DateTime(2024, 1, 15)
@@ -219,9 +233,10 @@ namespace CondosmartWeb.Controllers.Tests
                 Numero = "123",
                 Complemento = "Apto 101",
                 Cep = "12345678",
-                Cidade = "São Paulo",
+                Cidade = "Sao Paulo",
                 Uf = "SP",
-                CondominioId = 1
+                CondominioId = 1,
+                UnidadeId = 7
             };
         }
 
@@ -229,7 +244,7 @@ namespace CondosmartWeb.Controllers.Tests
         {
             return new MoradorViewModel
             {
-                Nome = "João Santos",
+                Nome = "Joao Santos",
                 Cpf = "98765432101",
                 Rg = "987654321",
                 Telefone = "11912345678",
@@ -241,7 +256,8 @@ namespace CondosmartWeb.Controllers.Tests
                 Cep = "87654321",
                 Cidade = "Rio de Janeiro",
                 Uf = "RJ",
-                CondominioId = 2
+                CondominioId = 2,
+                UnidadeId = 8
             };
         }
 
@@ -249,7 +265,7 @@ namespace CondosmartWeb.Controllers.Tests
         {
             return new List<Morador>
             {
-                new Morador
+                new()
                 {
                     Id = 1,
                     Nome = "Maria Silva",
@@ -262,15 +278,15 @@ namespace CondosmartWeb.Controllers.Tests
                     Numero = "123",
                     Complemento = "Apto 101",
                     Cep = "12345678",
-                    Cidade = "São Paulo",
+                    Cidade = "Sao Paulo",
                     Uf = "SP",
                     CondominioId = 1,
                     CreatedAt = new DateTime(2024, 1, 15)
                 },
-                new Morador
+                new()
                 {
                     Id = 2,
-                    Nome = "João Santos",
+                    Nome = "Joao Santos",
                     Cpf = "98765432101",
                     Rg = "987654321",
                     Telefone = "11912345678",
@@ -285,7 +301,7 @@ namespace CondosmartWeb.Controllers.Tests
                     CondominioId = 1,
                     CreatedAt = new DateTime(2024, 2, 10)
                 },
-                new Morador
+                new()
                 {
                     Id = 3,
                     Nome = "Ana Costa",
@@ -298,7 +314,7 @@ namespace CondosmartWeb.Controllers.Tests
                     Numero = "789",
                     Complemento = "Apto 303",
                     Cep = "54321876",
-                    Cidade = "Brasília",
+                    Cidade = "Brasilia",
                     Uf = "DF",
                     CondominioId = 2,
                     CreatedAt = new DateTime(2024, 3, 5)
