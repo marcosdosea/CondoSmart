@@ -1,3 +1,12 @@
+@using Core.Identity
+@inject Microsoft.AspNetCore.Identity.SignInManager<Core.Models.UsuarioSistema> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<Core.Models.UsuarioSistema> UserManager
+@{
+	var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+	string Active(string controller) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+	var isAdmin = User.IsInRole(Perfis.Admin);
+	var isMorador = User.IsInRole(Perfis.Morador);
+}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -10,12 +19,6 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-@inject Microsoft.AspNetCore.Identity.SignInManager<Core.Models.UsuarioSistema> SignInManager
-@inject Microsoft.AspNetCore.Identity.UserManager<Core.Models.UsuarioSistema> UserManager
-@{
-	var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-	string Active(string controller) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
-}
 
 <body>
 	<div class="cs-shell">
@@ -26,7 +29,7 @@
 				<div class="cs-brand-badge"><i class="bi bi-buildings"></i></div>
 				<div>
 					<div class="cs-brand-title">CondoSmart</div>
-					<small class="cs-brand-subtitle">Gestão de condomínios</small>
+					<small class="cs-brand-subtitle">Gest&atilde;o de condom&iacute;nios</small>
 				</div>
 			</div>
 
@@ -35,46 +38,68 @@
 			</div>
 
 			<nav class="cs-nav">
-				<a class="@Active("Home")" asp-controller="Home" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-house-door"></i></span>
-					<span>Home</span>
-				</a>
-				<a class="@Active("Condominio")" asp-controller="Condominio" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-buildings"></i></span>
-					<span>Condomínios</span>
-				</a>
-				<a class="@Active("UnidadesResidenciais")" asp-controller="UnidadesResidenciais" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-houses"></i></span>
-					<span>Unidades Residenciais</span>
-				</a>
-				<a class="@Active("Sindico")" asp-controller="Sindico" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-person"></i></span>
-					<span>Síndico</span>
-				</a>
-				<a class="@Active("Morador")" asp-controller="Morador" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-people"></i></span>
-					<span>Moradores</span>
-				</a>
-				<a class="@Active("Ata")" asp-controller="Ata" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-card-text"></i></span>
-					<span>Atas</span>
-				</a>
-				<a class="@Active("Visitante")" asp-controller="Visitante" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-person-check"></i></span>
-					<span>Visitantes</span>
-				</a>
-				<a class="@Active("Reserva")" asp-controller="Reserva" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-calendar3"></i></span>
-					<span>Reservas</span>
-				</a>
-				<a class="@Active("Mensalidades")" asp-controller="Mensalidades" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-credit-card"></i></span>
-					<span>Mensalidades</span>
-				</a>
-				<a class="@Active("AreaDeLazer")" asp-controller="AreaDeLazer" asp-action="Index">
-					<span class="cs-nav-icon"><i class="bi bi-stars"></i></span>
-					<span>Áreas de Lazer</span>
-				</a>
+				@if (isAdmin)
+				{
+					<a class="@Active("Home")" asp-controller="Home" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-house-door"></i></span>
+						<span>Home</span>
+					</a>
+					<a class="@Active("Condominio")" asp-controller="Condominio" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-buildings"></i></span>
+						<span>Condom&iacute;nios</span>
+					</a>
+					<a class="@Active("UnidadesResidenciais")" asp-controller="UnidadesResidenciais" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-houses"></i></span>
+						<span>Unidades Residenciais</span>
+					</a>
+					<a class="@Active("Sindico")" asp-controller="Sindico" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-person"></i></span>
+						<span>S&iacute;ndico</span>
+					</a>
+					<a class="@Active("Morador")" asp-controller="Morador" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-people"></i></span>
+						<span>Moradores</span>
+					</a>
+					<a class="@Active("Ata")" asp-controller="Ata" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-card-text"></i></span>
+						<span>Atas</span>
+					</a>
+					<a class="@Active("Visitante")" asp-controller="Visitante" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-person-check"></i></span>
+						<span>Visitantes</span>
+					</a>
+					<a class="@Active("Reserva")" asp-controller="Reserva" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-calendar3"></i></span>
+						<span>Reservas</span>
+					</a>
+					<a class="@Active("Mensalidades")" asp-controller="Mensalidades" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-credit-card"></i></span>
+						<span>Mensalidades</span>
+					</a>
+					<a class="@Active("AreaDeLazer")" asp-controller="AreaDeLazer" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-stars"></i></span>
+						<span>&Aacute;reas de Lazer</span>
+					</a>
+				}
+				else if (isMorador)
+				{
+					<a class="@Active("MoradorDashboard")" asp-controller="MoradorDashboard" asp-action="Index">
+						<span class="cs-nav-icon"><i class="bi bi-speedometer2"></i></span>
+						<span>Meu painel</span>
+					</a>
+					<a class="@Active("MoradorDashboard")" asp-controller="MoradorDashboard" asp-action="Index" asp-fragment="meus-dados">
+						<span class="cs-nav-icon"><i class="bi bi-person-vcard"></i></span>
+						<span>Meus dados</span>
+					</a>
+					<a class="@Active("MoradorDashboard")" asp-controller="MoradorDashboard" asp-action="Index" asp-fragment="minhas-mensalidades">
+						<span class="cs-nav-icon"><i class="bi bi-receipt"></i></span>
+						<span>Minhas mensalidades</span>
+					</a>
+					<a class="@Active("MoradorDashboard")" asp-controller="MoradorDashboard" asp-action="Index" asp-fragment="comunicados">
+						<span class="cs-nav-icon"><i class="bi bi-megaphone"></i></span>
+						<span>Comunicados</span>
+					</a>
+				}
 			</nav>
 		</aside>
 
@@ -90,11 +115,22 @@
 				</div>
 
 				<div class="cs-top-actions">
-					<div class="cs-condo-select d-none d-xl-flex">
-						<span>Condomínio Jardim das Flores</span>
-						<i class="bi bi-chevron-down"></i>
-					</div>
-					<button class="cs-icon-btn cs-notification-btn" title="Notificações" aria-label="Notificações">
+					@if (isAdmin)
+					{
+						<div class="cs-condo-select d-none d-xl-flex">
+							<span>Condom&iacute;nio Jardim das Flores</span>
+							<i class="bi bi-chevron-down"></i>
+						</div>
+					}
+					else if (isMorador)
+					{
+						<div class="cs-condo-select d-none d-xl-flex">
+							<span>&Aacute;rea do morador</span>
+							<i class="bi bi-person-check"></i>
+						</div>
+					}
+
+					<button class="cs-icon-btn cs-notification-btn" title="Notifica&ccedil;&otilde;es" aria-label="Notifica&ccedil;&otilde;es">
 						<i class="bi bi-bell"></i>
 						<span>3</span>
 					</button>

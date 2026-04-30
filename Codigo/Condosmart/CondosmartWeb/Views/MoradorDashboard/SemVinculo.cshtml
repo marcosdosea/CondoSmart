@@ -1,0 +1,30 @@
+@model string
+
+@{
+    ViewData["Title"] = "Cadastro nao vinculado";
+}
+
+<section class="cs-page-heading">
+    <div>
+        <span class="cs-eyebrow">&Aacute;rea do morador</span>
+        <h2>Cadastro n&atilde;o vinculado</h2>
+        <small>Seu login foi reconhecido, mas ainda n&atilde;o encontramos um morador associado a este e-mail.</small>
+    </div>
+</section>
+
+<div class="cs-card">
+    <div class="cs-card-body">
+        <div class="d-flex align-items-start gap-3">
+            <div class="cs-kpi-icon"><i class="bi bi-person-x"></i></div>
+            <div>
+                <h4 class="mb-2">V&iacute;nculo pendente</h4>
+                <p class="text-muted mb-2">
+                    O e-mail <strong>@Model</strong> precisa estar cadastrado no registro de morador para liberar o painel.
+                </p>
+                <p class="text-muted mb-0">
+                    Entre em contato com a administra&ccedil;&atilde;o do condom&iacute;nio para concluir o v&iacute;nculo.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

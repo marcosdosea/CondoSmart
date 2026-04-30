@@ -1,11 +1,14 @@
 using AutoMapper;
 using CondosmartWeb.Models;
+using Core.Identity;
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CondosmartWeb.Controllers
 {
+    [Authorize(Roles = Perfis.Admin)]
     public class MensalidadesController : Controller
     {
         private readonly IMensalidadeService _mensalidadeService;
@@ -57,7 +60,7 @@ namespace CondosmartWeb.Controllers
             if (mensalidade.PagamentoId.HasValue || 
                 (mensalidade.Status != "pendente" && mensalidade.Status != "vencida"))
             {
-                TempData["Erro"] = "Esta mensalidade n„o pode ser paga.";
+                TempData["Erro"] = "Esta mensalidade n√£o pode ser paga.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -92,7 +95,7 @@ namespace CondosmartWeb.Controllers
             if (mensalidade.PagamentoId.HasValue || 
                 (mensalidade.Status != "pendente" && mensalidade.Status != "vencida"))
             {
-                TempData["Erro"] = "Esta mensalidade n„o pode ser paga.";
+                TempData["Erro"] = "Esta mensalidade n√£o pode ser paga.";
                 return RedirectToAction(nameof(Details), new { id = pagarVm.MensalidadeId });
             }
 
@@ -127,7 +130,7 @@ namespace CondosmartWeb.Controllers
 
             if (!mensalidade.PagamentoId.HasValue)
             {
-                TempData["Erro"] = "Esta mensalidade ainda n„o possui pagamento registrado.";
+                TempData["Erro"] = "Esta mensalidade ainda n√£o possui pagamento registrado.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
