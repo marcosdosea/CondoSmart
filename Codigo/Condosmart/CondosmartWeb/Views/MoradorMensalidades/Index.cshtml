@@ -1,0 +1,100 @@
+﻿@model CondosmartWeb.Models.MoradorMensalidadesPageViewModel
+
+@{
+    ViewData["Title"] = "Minhas mensalidades";
+}
+
+@functions {
+    private static string StatusClass(string status)
+    {
+        return status switch
+        {
+            "pago" => "text-bg-success",
+            "pendente" => "text-bg-warning",
+            "atrasado" => "text-bg-danger",
+            _ => "text-bg-secondary"
+        };
+    }
+}
+
+<section class="cs-page-heading">
+    <div>
+        <span class="cs-eyebrow">Area do morador</span>
+        <h2>Minhas mensalidades</h2>
+        <small>Acompanhe suas parcelas do condominio sem acessar areas administrativas.</small>
+    </div>
+</section>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="cs-kpi-card h-100">
+            <div class="cs-kpi-icon"><i class="bi bi-person-badge"></i></div>
+            <div>
+                <div class="cs-kpi-value">@Model.NomeMorador</div>
+                <div class="cs-kpi-label">Morador vinculado</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="cs-kpi-card h-100">
+            <div class="cs-kpi-icon"><i class="bi bi-buildings"></i></div>
+            <div>
+                <div class="cs-kpi-value">@Model.Condominio</div>
+                <div class="cs-kpi-label">Condominio</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="cs-kpi-card h-100">
+            <div class="cs-kpi-icon"><i class="bi bi-house-door"></i></div>
+            <div>
+                <div class="cs-kpi-value">@Model.Unidade</div>
+                <div class="cs-kpi-label">Unidade</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cs-card">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span>Parcelas</span>
+        <span class="text-muted small">Total: @Model.Mensalidades.Count</span>
+    </div>
+    <div class="cs-card-body">
+        @if (!Model.Mensalidades.Any())
+        {
+            <div class="alert alert-light border mb-0">Nenhuma parcela encontrada para o seu cadastro.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 js-data-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Competencia</th>
+                            <th>Valor</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th class="text-center">Acao</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Mensalidades)
+                        {
+                            <tr>
+                                <td>@item.Competencia.ToString("MM/yyyy")</td>
+                                <td>@item.ValorFinal.ToString("C")</td>
+                                <td>@item.Vencimento.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge @StatusClass(item.Status)">@item.Status</span></td>
+                                <td class="text-center">
+                                    @* TODO: implementar pagamento *@
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Pagar</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

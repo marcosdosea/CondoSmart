@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using CondosmartWeb.Models;
 using Core.Identity;
 using Core.Service;
@@ -50,9 +50,7 @@ namespace CondosmartWeb.Controllers
             var condominioId = morador.CondominioId ?? unidade?.CondominioId;
             var condominio = condominioId.HasValue ? _condominioService.GetById(condominioId.Value) : null;
 
-            var mensalidades = _mensalidadeService.GetAll()
-                .Where(m => m.MoradorId == morador.Id)
-                .OrderByDescending(m => m.Competencia)
+            var mensalidades = _mensalidadeService.GetByMorador(morador.Id)
                 .Take(12)
                 .ToList();
 
@@ -70,19 +68,19 @@ namespace CondosmartWeb.Controllers
                 Nome = morador.Nome,
                 Email = morador.Email ?? email,
                 Telefone = morador.Telefone,
-                Condominio = condominio?.Nome ?? "Condomínio não informado",
-                Unidade = unidade?.Identificador ?? "Unidade não vinculada",
-                MensalidadesPendentes = mensalidades.Count(m => !string.Equals(m.Status, "Pago", StringComparison.OrdinalIgnoreCase)),
+                Condominio = condominio?.Nome ?? "Condominio nao informado",
+                Unidade = unidade?.Identificador ?? "Unidade nao vinculada",
+                MensalidadesPendentes = mensalidades.Count(m => !string.Equals(m.Status, "pago", StringComparison.OrdinalIgnoreCase)),
                 Mensalidades = mensalidades.Select(m => new MoradorMensalidadeResumoViewModel
                 {
                     Competencia = m.Competencia.ToString("MM/yyyy", CulturaBrasil),
-                    Valor = m.Valor.ToString("C", CulturaBrasil),
+                    Valor = (m.ValorFinal > 0 ? m.ValorFinal : m.Valor).ToString("C", CulturaBrasil),
                     Vencimento = m.Vencimento.ToString("dd/MM/yyyy", CulturaBrasil),
                     Status = m.Status
                 }).ToList(),
                 Comunicados = comunicados.Select(a => new MoradorComunicadoResumoViewModel
                 {
-                    Titulo = string.IsNullOrWhiteSpace(a.Titulo) ? "Comunicado do condomínio" : a.Titulo,
+                    Titulo = string.IsNullOrWhiteSpace(a.Titulo) ? "Comunicado do condominio" : a.Titulo,
                     Data = a.DataReuniao?.ToString("dd/MM/yyyy", CulturaBrasil) ?? "Sem data",
                     Resumo = string.IsNullOrWhiteSpace(a.Temas) ? "Sem resumo informado." : a.Temas
                 }).ToList()

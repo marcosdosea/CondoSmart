@@ -5,6 +5,7 @@ using Core.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CondosmartWeb.Controllers
 {
@@ -12,149 +13,166 @@ namespace CondosmartWeb.Controllers
     public class MensalidadesController : Controller
     {
         private readonly IMensalidadeService _mensalidadeService;
-        private readonly IPagamentoService _pagamentoService;
+        private readonly ICondominioService _condominioService;
+        private readonly IUnidadesResidenciaisService _unidadesService;
         private readonly IMapper _mapper;
 
         public MensalidadesController(
             IMensalidadeService mensalidadeService,
-            IPagamentoService pagamentoService,
+            ICondominioService condominioService,
+            IUnidadesResidenciaisService unidadesService,
             IMapper mapper)
         {
             _mensalidadeService = mensalidadeService;
-            _pagamentoService = pagamentoService;
+            _condominioService = condominioService;
+            _unidadesService = unidadesService;
             _mapper = mapper;
         }
 
-        // GET: Mensalidades
-        public ActionResult Index(string? status)
+        public IActionResult Index(FiltroMensalidadeViewModel filtro)
         {
-            var lista = _mensalidadeService.GetAll();
-
-            // Aplicar filtro de status se fornecido
-            if (!string.IsNullOrEmpty(status))
-            {
-                lista = lista.Where(m => m.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
-
-            var listaVm = _mapper.Map<List<MensalidadeViewModel>>(lista);
-            return View(listaVm);
+            var viewModel = MontarPagina(filtro);
+            return View(viewModel);
         }
 
-        // GET: Mensalidades/Details/5
-        public ActionResult Details(int id)
-        {
-            var mensalidade = _mensalidadeService.GetById(id);
-            if (mensalidade == null) return NotFound();
-
-            var mensalidadeVm = _mapper.Map<MensalidadeViewModel>(mensalidade);
-            return View(mensalidadeVm);
-        }
-
-        // GET: Mensalidades/Pagar/5
-        public ActionResult Pagar(int id)
-        {
-            var mensalidade = _mensalidadeService.GetById(id);
-            if (mensalidade == null) return NotFound();
-
-            // Verificar se pode pagar
-            if (mensalidade.PagamentoId.HasValue || 
-                (mensalidade.Status != "pendente" && mensalidade.Status != "vencida"))
-            {
-                TempData["Erro"] = "Esta mensalidade não pode ser paga.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-
-            var pagarVm = new PagarMensalidadeViewModel
-            {
-                MensalidadeId = mensalidade.Id,
-                Valor = mensalidade.Valor,
-                Competencia = mensalidade.Competencia,
-                Vencimento = mensalidade.Vencimento,
-                CondominioNome = mensalidade.Condominio?.Nome,
-                UnidadeIdentificador = mensalidade.Unidade?.Identificador,
-                MoradorNome = mensalidade.Morador?.Nome
-            };
-
-            return View(pagarVm);
-        }
-
-        // POST: Mensalidades/Pagar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Pagar(PagarMensalidadeViewModel pagarVm)
+        public IActionResult SalvarConfiguracao(ConfiguracaoMensalidadeViewModel configuracaoVm)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(pagarVm);
+                if (!ModelState.IsValid)
+                    return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), configuracaoVm, null));
+
+                var configuracao = new ConfiguracaoMensalidade
+                {
+                    CondominioId = configuracaoVm.CondominioId,
+                    ValorMensalidade = configuracaoVm.ValorMensalidade,
+                    DiaVencimento = configuracaoVm.DiaVencimento,
+                    QuantidadeParcelasPadrao = configuracaoVm.QuantidadeParcelasPadrao,
+                    Ativa = configuracaoVm.Ativa
+                };
+
+                _mensalidadeService.SalvarConfiguracao(configuracao);
+                TempData["Sucesso"] = "Configuracao de mensalidade salva com sucesso.";
+                return RedirectToAction(nameof(Index), new { condominioId = configuracaoVm.CondominioId });
             }
-
-            var mensalidade = _mensalidadeService.GetById(pagarVm.MensalidadeId);
-            if (mensalidade == null) return NotFound();
-
-            // Verificar novamente se pode pagar
-            if (mensalidade.PagamentoId.HasValue || 
-                (mensalidade.Status != "pendente" && mensalidade.Status != "vencida"))
+            catch (ArgumentException ex)
             {
-                TempData["Erro"] = "Esta mensalidade não pode ser paga.";
-                return RedirectToAction(nameof(Details), new { id = pagarVm.MensalidadeId });
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), configuracaoVm, null));
             }
-
-            // Criar o pagamento
-            var pagamento = new Pagamento
-            {
-                MoradorId = mensalidade.MoradorId,
-                UnidadeId = mensalidade.UnidadeId,
-                CondominioId = mensalidade.CondominioId,
-                FormaPagamento = pagarVm.FormaPagamento,
-                Status = "pendente",
-                Valor = pagarVm.Valor,
-                DataPagamento = DateTime.Now
-            };
-
-            _pagamentoService.Create(pagamento);
-
-            // Atualizar a mensalidade
-            mensalidade.PagamentoId = pagamento.Id;
-            mensalidade.Status = "pago";
-            _mensalidadeService.Edit(mensalidade);
-
-            TempData["Sucesso"] = "Pagamento registrado com sucesso!";
-            return RedirectToAction(nameof(Comprovante), new { id = pagarVm.MensalidadeId });
         }
 
-        // GET: Mensalidades/Comprovante/5
-        public ActionResult Comprovante(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult GerarParcelas(GerarParcelasMensalidadeViewModel geracaoVm)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), null, geracaoVm));
+
+                var resultado = _mensalidadeService.GerarParcelasEmLote(
+                    geracaoVm.CondominioId,
+                    geracaoVm.AnoReferencia,
+                    geracaoVm.QuantidadeParcelas);
+
+                TempData["Sucesso"] = $"Geracao concluida: {resultado.ParcelasGeradas} parcela(s) criada(s) e {resultado.ParcelasIgnoradas} ignorada(s).";
+                return RedirectToAction(nameof(Index), new
+                {
+                    condominioId = geracaoVm.CondominioId,
+                    anoCompetencia = geracaoVm.AnoReferencia
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), null, geracaoVm));
+            }
+        }
+
+        public IActionResult Details(int id)
         {
             var mensalidade = _mensalidadeService.GetById(id);
-            if (mensalidade == null) return NotFound();
+            if (mensalidade == null)
+                return NotFound();
 
-            if (!mensalidade.PagamentoId.HasValue)
+            return View(_mapper.Map<MensalidadeViewModel>(mensalidade));
+        }
+
+        public IActionResult Pagar(int id)
+        {
+            TempData["Erro"] = "Pagamento ainda nao foi implementado nesta etapa. TODO: implementar pagamento.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Pagar(PagarMensalidadeViewModel pagarVm)
+        {
+            TempData["Erro"] = "Pagamento ainda nao foi implementado nesta etapa. TODO: implementar pagamento.";
+            return RedirectToAction(nameof(Details), new { id = pagarVm.MensalidadeId });
+        }
+
+        public IActionResult Comprovante(int id)
+        {
+            TempData["Erro"] = "Comprovante indisponivel enquanto o fluxo de pagamento nao for implementado.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        private MensalidadesAdminPageViewModel MontarPagina(
+            FiltroMensalidadeViewModel filtro,
+            ConfiguracaoMensalidadeViewModel? configuracao = null,
+            GerarParcelasMensalidadeViewModel? geracao = null)
+        {
+            filtro ??= new FiltroMensalidadeViewModel();
+
+            var mensalidades = _mensalidadeService.Filtrar(
+                filtro.CondominioId,
+                filtro.UnidadeId,
+                filtro.Status,
+                filtro.MesCompetencia,
+                filtro.AnoCompetencia);
+
+            var condominios = _condominioService.GetAll()
+                .OrderBy(c => c.Nome)
+                .ToList();
+
+            var unidades = _unidadesService.GetAll()
+                .Where(u => !filtro.CondominioId.HasValue || u.CondominioId == filtro.CondominioId.Value)
+                .OrderBy(u => u.Condominio?.Nome)
+                .ThenBy(u => u.Identificador)
+                .ToList();
+
+            var configuracoes = _mensalidadeService.GetConfiguracoes();
+
+            return new MensalidadesAdminPageViewModel
             {
-                TempData["Erro"] = "Esta mensalidade ainda não possui pagamento registrado.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-
-            var pagamento = _pagamentoService.GetById(mensalidade.PagamentoId.Value);
-            if (pagamento == null) return NotFound();
-
-            var comprovanteVm = new ComprovantePagamentoViewModel
-            {
-                MensalidadeId = mensalidade.Id,
-                Competencia = mensalidade.Competencia,
-                Vencimento = mensalidade.Vencimento,
-                ValorMensalidade = mensalidade.Valor,
-                CondominioNome = mensalidade.Condominio?.Nome,
-                UnidadeIdentificador = mensalidade.Unidade?.Identificador,
-                MoradorNome = mensalidade.Morador?.Nome,
-                PagamentoId = pagamento.Id,
-                FormaPagamento = pagamento.FormaPagamento,
-                StatusPagamento = pagamento.Status,
-                ValorPago = pagamento.Valor,
-                DataPagamento = pagamento.DataPagamento,
-                DataRegistro = pagamento.CreatedAt
+                Filtro = filtro,
+                Configuracao = configuracao ?? new ConfiguracaoMensalidadeViewModel
+                {
+                    CondominioId = filtro.CondominioId ?? 0
+                },
+                Geracao = geracao ?? new GerarParcelasMensalidadeViewModel
+                {
+                    CondominioId = filtro.CondominioId ?? 0,
+                    AnoReferencia = filtro.AnoCompetencia ?? DateTime.Today.Year
+                },
+                Mensalidades = _mapper.Map<List<MensalidadeViewModel>>(mensalidades),
+                Configuracoes = configuracoes.Select(c => new ConfiguracaoMensalidadeResumoViewModel
+                {
+                    Condominio = c.Condominio.Nome,
+                    ValorMensalidade = c.ValorMensalidade,
+                    DiaVencimento = c.DiaVencimento,
+                    QuantidadeParcelasPadrao = c.QuantidadeParcelasPadrao,
+                    Ativa = c.Ativa
+                }).ToList(),
+                Condominios = condominios.Select(c => new SelectListItem(c.Nome, c.Id.ToString())).ToList(),
+                Unidades = unidades.Select(u => new SelectListItem(
+                    $"{u.Condominio?.Nome} - {u.Identificador}",
+                    u.Id.ToString())).ToList()
             };
-
-            return View(comprovanteVm);
         }
     }
 }
