@@ -78,51 +78,51 @@ curl -X POST https://seu-dominio.com/api/cnpj/consultar \
 ## Validações Implementadas no CondominioService
 
 ### 1. Nome
-- ✅ Obrigatório
-- ✅ Máximo 150 caracteres
+- Obrigatório
+- Máximo 150 caracteres
 
 ### 2. CNPJ
-- ✅ Obrigatório
-- ✅ 14 dígitos numéricos (remove caracteres especiais automaticamente)
-- ✅ Valida algoritmo oficial de check digit
-- ✅ Rejeita sequências repetidas (ex: 00000000000000)
-- ✅ Verifica unicidade no banco de dados
+- Obrigatório
+- 14 dígitos numéricos (remove caracteres especiais automaticamente)
+- Valida algoritmo oficial de check digit
+- Rejeita sequências repetidas (ex: 00000000000000)
+- Verifica unicidade no banco de dados
 
 ### 3. Rua
-- ✅ Obrigatória
-- ✅ Máximo 150 caracteres
+- Obrigatória
+- Máximo 150 caracteres
 
 ### 4. Número
-- ✅ Obrigatório
-- ✅ Máximo 20 caracteres
+- Obrigatório
+- Máximo 20 caracteres
 
 ### 5. Bairro
-- ✅ Obrigatório
-- ✅ Máximo 100 caracteres
+- Obrigatório
+- Máximo 100 caracteres
 
 ### 6. Cidade
-- ✅ Obrigatória
-- ✅ Máximo 100 caracteres
+- Obrigatória
+- Máximo 100 caracteres
 
 ### 7. UF (Estado)
-- ✅ Obrigatório
-- ✅ Exatamente 2 caracteres
+- Obrigatório
+- Exatamente 2 caracteres
 
 ### 8. CEP
-- ✅ Obrigatório
-- ✅ 8 dígitos numéricos (remove caracteres especiais automaticamente)
+- Obrigatório
+- 8 dígitos numéricos (remove caracteres especiais automaticamente)
 
 ### 9. Email
-- ✅ Validação de formato (quando preenchido)
-- ✅ Opcional (se não preenchido, não valida)
+- Validação de formato (quando preenchido)
+- Opcional (se não preenchido, não valida)
 
 ### 10. Telefone
-- ✅ Validação de quantidade de dígitos (10 a 11)
-- ✅ Opcional (se não preenchido, não valida)
+- Validação de quantidade de dígitos (10 a 11)
+- Opcional (se não preenchido, não valida)
 
 ### 11. Unidades
-- ✅ Obrigatório
-- ✅ Deve ser maior que zero
+- Obrigatório
+- Deve ser maior que zero
 
 ---
 

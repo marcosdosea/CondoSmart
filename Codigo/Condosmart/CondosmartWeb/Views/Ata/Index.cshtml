@@ -5,12 +5,12 @@
 
 <div class="cs-page-heading">
     <div>
-        <h2 class="fw-bold mb-0">📋 Atas</h2>
+        <h2 class="fw-bold mb-0"><i class="bi bi-card-text me-2" aria-hidden="true"></i>Atas</h2>
         <small class="text-muted">Gerencie as atas de reunião cadastradas</small>
     </div>
 
     <a asp-action="Create" class="btn btn-cs-primary">
-        ➕ Nova Ata
+        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nova Ata
     </a>
 </div>
 
@@ -48,13 +48,13 @@
                                 <td>@item.DataReuniao.ToString("dd/MM/yyyy")</td>
                                 <td class="text-center">
                                     <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">🔎</a>
+                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes"><i class="bi bi-eye" aria-hidden="true"></i></a>
 
                                     <a asp-action="Edit" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-cs-outline me-1" title="Editar">✏️</a>
+                                       class="btn btn-sm btn-cs-outline me-1" title="Editar"><i class="bi bi-pencil" aria-hidden="true"></i></a>
 
                                     <a asp-action="Delete" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-danger" title="Excluir">🗑️</a>
+                                       class="btn btn-sm btn-outline-danger" title="Excluir"><i class="bi bi-trash" aria-hidden="true"></i></a>
                                 </td>
                             </tr>
                         }

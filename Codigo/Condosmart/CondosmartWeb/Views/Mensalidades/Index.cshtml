@@ -7,7 +7,7 @@
 
 <div class="cs-page-heading">
     <div>
-        <h2 class="fw-bold mb-0">&#128178; Mensalidades</h2>
+        <h2 class="fw-bold mb-0"><i class="bi bi-cash-coin me-2" aria-hidden="true"></i>Mensalidades</h2>
         <small class="text-muted">Gerencie os pagamentos de condomínio</small>
     </div>
 </div>
@@ -124,17 +124,17 @@
                                 <td>@(item.MoradorNome ?? (item.MoradorId.HasValue ? $"Morador {item.MoradorId}" : "-"))</td>
                                 <td class="text-center">
                                     <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">&#128269;</a>
+                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes"><i class="bi bi-eye" aria-hidden="true"></i></a>
 
                                     @if (item.PodePagar)
                                     {
                                         <a asp-action="Pagar" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-success" title="Pagar">&#128179; Pagar</a>
+                                           class="btn btn-sm btn-success" title="Pagar"><i class="bi bi-credit-card me-1" aria-hidden="true"></i>Pagar</a>
                                     }
                                     else if (item.PagamentoId.HasValue)
                                     {
                                         <a asp-action="Comprovante" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-info text-white" title="Ver 2ª Via">&#128196; 2ª Via</a>
+                                           class="btn btn-sm btn-info text-white" title="Ver 2ª Via"><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>2ª Via</a>
                                     }
                                 </td>
                             </tr>
