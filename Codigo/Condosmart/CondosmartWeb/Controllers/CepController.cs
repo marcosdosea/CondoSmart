@@ -2,10 +2,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Core.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CondosmartWeb.Controllers
 {
+    [Authorize(Roles = Perfis.Admin)]
     public class CepController : Controller
     {
         private readonly IHttpClientFactory _httpFactory;
@@ -20,11 +23,11 @@ namespace CondosmartWeb.Controllers
         public async Task<IActionResult> GetEndereco(string cep)
         {
             if (string.IsNullOrWhiteSpace(cep))
-                return BadRequest("CEP � obrigat�rio");
+                return BadRequest("CEP ï¿½ obrigatï¿½rio");
 
             var digits = new string(cep.Where(char.IsDigit).ToArray());
             if (digits.Length != 8)
-                return BadRequest("CEP deve conter 8 d�gitos");
+                return BadRequest("CEP deve conter 8 dï¿½gitos");
 
             var client = _httpFactory.CreateClient();
             var url = $"https://viacep.com.br/ws/{digits}/json/";
@@ -35,7 +38,7 @@ namespace CondosmartWeb.Controllers
             }
             catch
             {
-                return StatusCode(503, "Servi�o de CEP indispon�vel");
+                return StatusCode(503, "Serviï¿½o de CEP indisponï¿½vel");
             }
 
             if (!response.IsSuccessStatusCode)

@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CondosmartWeb.Models;
+using Core.Identity;
 using Core.Models;
 using Core.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Text.Json;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CondosmartWeb.Controllers
 {
+    [Authorize(Roles = Perfis.Admin)]
     public class UnidadesResidenciaisController : Controller
     {
         private readonly IUnidadesResidenciaisService _service;
