@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewData["Title"] - Condosmart</title>
+	<title>@ViewData["Title"] - CondoSmart</title>
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
@@ -11,80 +11,87 @@
 </head>
 @inject Microsoft.AspNetCore.Identity.SignInManager<Core.Models.UsuarioSistema> SignInManager
 @inject Microsoft.AspNetCore.Identity.UserManager<Core.Models.UsuarioSistema> UserManager
+@{
+	var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+	string Active(string controller) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
 
 <body>
 	<div class="cs-shell">
-
 		<div id="csOverlay" class="cs-overlay" onclick="toggleSidebar(false)"></div>
 
 		<aside id="csSidebar" class="cs-sidebar">
 			<div class="cs-brand">
 				<div class="cs-brand-badge">C</div>
 				<div>
-					<div>CONDOMÃNIO</div>
-					<small class="text-muted">CondoSmart</small>
+					<div class="cs-brand-title">CondoSmart</div>
+					<small class="cs-brand-subtitle">Gestão de condomínios</small>
 				</div>
 			</div>
 
 			<div class="cs-search">
-				<input class="form-control" placeholder="Procurar..." />
+				<input class="form-control" placeholder="Buscar no sistema" aria-label="Buscar no sistema" />
 			</div>
 
-		<nav class="cs-nav d-grid gap-2">
-			<a asp-controller="Home" asp-action="Index">
-				&#127968; Home
-			</a>
-
-			<a asp-controller="Condominio" asp-action="Index">
-				&#127970; CondomÃ­nios
-			</a>
-
-			<a asp-controller="UnidadesResidenciais" asp-action="Index">
-				&#127961; Unidades Residenciais
-			</a>
-
-			<a asp-controller="Sindico" asp-action="Index">
-				&#129333; SÃ­ndico
-			</a>
-
-			<a asp-controller="Morador" asp-action="Index">
-				&#128106; Moradores
-			</a>
-
-			<a asp-controller="Ata" asp-action="Index">
-				&#128203; Atas
-			</a>
-
-			<a asp-controller="Visitante" asp-action="Index">
-				&#128100; Visitantes
-			</a>
-
-		<a asp-controller="Reserva" asp-action="Index">
-			&#128197; Reservas
-		</a>
-		<a asp-controller="Mensalidades" asp-action="Index">
-			&#128178; Mensalidades
-		</a>
-		<a asp-controller="AreaDeLazer" asp-action="Index">
-			&#127946; Ãreas de Lazer
-		</a>
-
-		</nav>
+			<nav class="cs-nav">
+				<a class="@Active("Home")" asp-controller="Home" asp-action="Index">
+					<span class="cs-nav-icon">IN</span>
+					<span>Home</span>
+				</a>
+				<a class="@Active("Condominio")" asp-controller="Condominio" asp-action="Index">
+					<span class="cs-nav-icon">CO</span>
+					<span>Condomínios</span>
+				</a>
+				<a class="@Active("UnidadesResidenciais")" asp-controller="UnidadesResidenciais" asp-action="Index">
+					<span class="cs-nav-icon">UN</span>
+					<span>Unidades Residenciais</span>
+				</a>
+				<a class="@Active("Sindico")" asp-controller="Sindico" asp-action="Index">
+					<span class="cs-nav-icon">SI</span>
+					<span>Síndico</span>
+				</a>
+				<a class="@Active("Morador")" asp-controller="Morador" asp-action="Index">
+					<span class="cs-nav-icon">MO</span>
+					<span>Moradores</span>
+				</a>
+				<a class="@Active("Ata")" asp-controller="Ata" asp-action="Index">
+					<span class="cs-nav-icon">AT</span>
+					<span>Atas</span>
+				</a>
+				<a class="@Active("Visitante")" asp-controller="Visitante" asp-action="Index">
+					<span class="cs-nav-icon">VI</span>
+					<span>Visitantes</span>
+				</a>
+				<a class="@Active("Reserva")" asp-controller="Reserva" asp-action="Index">
+					<span class="cs-nav-icon">RE</span>
+					<span>Reservas</span>
+				</a>
+				<a class="@Active("Mensalidades")" asp-controller="Mensalidades" asp-action="Index">
+					<span class="cs-nav-icon">ME</span>
+					<span>Mensalidades</span>
+				</a>
+				<a class="@Active("AreaDeLazer")" asp-controller="AreaDeLazer" asp-action="Index">
+					<span class="cs-nav-icon">AL</span>
+					<span>Áreas de Lazer</span>
+				</a>
+			</nav>
 		</aside>
 
 		<div class="cs-main">
-
 			<header class="cs-topbar">
-				<div class="d-flex align-items-center gap-2">
-					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)">
-						&#9776;
+				<div class="d-flex align-items-center gap-3">
+					<button class="btn btn-cs-outline d-lg-none" type="button" onclick="toggleSidebar(true)" aria-label="Abrir menu">
+						Menu
 					</button>
-					<div class="title">@ViewData["Title"]</div>
+					<div>
+						<div class="title">@ViewData["Title"]</div>
+						<div class="cs-topbar-caption">Painel administrativo do condomínio</div>
+					</div>
 				</div>
 
 				<div class="cs-top-actions">
-					<button class="cs-icon-btn" title="NotificaÃ§Ãµes">&#128276;</button>
-					<button class="cs-icon-btn" title="ConfiguraÃ§Ãµes">&#9881;</button>
+					<button class="cs-icon-btn" title="Notificações" aria-label="Notificações">N</button>
+					<button class="cs-icon-btn" title="Configurações" aria-label="Configurações">C</button>
 
 					@if (SignInManager.IsSignedIn(User))
 					{
@@ -112,25 +119,25 @@
 							<span class="cs-user-name">@displayName</span>
 						</div>
 						<form method="post" asp-area="Identity" asp-page="/Account/Logout" style="display:contents">
-							<button type="submit" class="cs-icon-btn cs-logout-btn" title="Sair">&#128682;</button>
+							<button type="submit" class="cs-icon-btn cs-logout-btn" title="Sair" aria-label="Sair">S</button>
 						</form>
 					}
 					else
 					{
 						<a asp-area="Identity" asp-page="/Account/Login" class="cs-btn-entrar">
-							&#128274; Entrar
+							Entrar
 						</a>
 					}
 				</div>
 			</header>
 
-			<main class="container py-4">
+			<main class="container py-4 py-lg-5">
 				@RenderBody()
 			</main>
 
 			<footer class="text-muted py-3">
 				<div class="container">
-					&copy; 2026 - Condosmart
+					&copy; 2026 - CondoSmart
 				</div>
 			</footer>
 		</div>
@@ -144,17 +151,17 @@
 
 	<script>
 		function toggleSidebar(open) {
-		const sidebar = document.getElementById('csSidebar');
-		const overlay = document.getElementById('csOverlay');
-		if (!sidebar || !overlay) return;
+			const sidebar = document.getElementById('csSidebar');
+			const overlay = document.getElementById('csOverlay');
+			if (!sidebar || !overlay) return;
 
-		if (open) {
-		sidebar.classList.add('open');
-		overlay.classList.add('show');
-		} else {
-		sidebar.classList.remove('open');
-		overlay.classList.remove('show');
-		}
+			if (open) {
+				sidebar.classList.add('open');
+				overlay.classList.add('show');
+			} else {
+				sidebar.classList.remove('open');
+				overlay.classList.remove('show');
+			}
 		}
 	</script>
 

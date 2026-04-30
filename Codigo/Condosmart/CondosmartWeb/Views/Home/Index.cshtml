@@ -1,23 +1,39 @@
-﻿@model CondosmartWeb.Models.DashboardViewModel
+@model CondosmartWeb.Models.DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
+    var ocupacaoPercentual = Model.TotalUnidades > 0
+        ? Math.Clamp((int)Math.Round((double)Model.UnidadesOcupadas / Model.TotalUnidades * 100), 0, 100)
+        : 0;
+    var reservasPercentual = Model.TotalAreasLazer > 0
+        ? Math.Clamp((int)Math.Round((double)Model.ReservasConfirmadas / Model.TotalAreasLazer * 100), 0, 100)
+        : 0;
 }
 
-<div class="row g-3">
+<section class="cs-page-heading">
+    <div>
+        <h2>Visão geral do condomínio</h2>
+        <small>Acompanhe pagamentos, ocupação, reservas e pendências em um só painel.</small>
+    </div>
+    <a asp-controller="Mensalidades" asp-action="Index" class="btn btn-cs-primary">
+        Ver mensalidades
+    </a>
+</section>
+
+<div class="row g-3 g-xl-4">
     <div class="col-12 col-md-6 col-xl-3">
-        <div class="cs-card cs-card-body">
+        <div class="cs-card cs-card-body cs-kpi-card">
             <div class="cs-kpi">
-                <div class="cs-kpi-circle">$</div>
+                <div class="cs-kpi-circle">R$</div>
                 <div>
                     <div class="cs-kpi-value">R$ @Model.TotalRecebidoMes.ToString("N0")</div>
-                    <div class="cs-kpi-label">Total recebido no mês</div>
+                    <div class="cs-kpi-label">Recebido no mês</div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-12 col-md-6 col-xl-3">
-        <div class="cs-card cs-card-body">
+        <div class="cs-card cs-card-body cs-kpi-card">
             <div class="cs-kpi">
                 <div class="cs-kpi-circle">%</div>
                 <div>
@@ -29,9 +45,9 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-3">
-        <div class="cs-card cs-card-body">
+        <div class="cs-card cs-card-body cs-kpi-card">
             <div class="cs-kpi">
-                <div class="cs-kpi-circle">🏠</div>
+                <div class="cs-kpi-circle">EN</div>
                 <div>
                     <div class="cs-kpi-value">@Model.EntradasHoje</div>
                     <div class="cs-kpi-label">Entradas registradas hoje</div>
@@ -41,9 +57,9 @@
     </div>
 
     <div class="col-12 col-md-6 col-xl-3">
-        <div class="cs-card cs-card-body">
+        <div class="cs-card cs-card-body cs-kpi-card">
             <div class="cs-kpi">
-                <div class="cs-kpi-circle">⚠️</div>
+                <div class="cs-kpi-circle">AT</div>
                 <div>
                     <div class="cs-kpi-value">@Model.MensalidadesEmAtraso</div>
                     <div class="cs-kpi-label">Mensalidades em atraso</div>
@@ -53,39 +69,56 @@
     </div>
 </div>
 
-<div class="row g-3 mt-1">
+<div class="row g-3 g-xl-4 mt-1">
     <div class="col-12 col-lg-4">
-        <div class="cs-card">
-            <div class="cs-card-header">OCUPAÇÃO</div>
+        <div class="cs-card h-100">
+            <div class="cs-card-header">Ocupação das unidades</div>
             <div class="cs-card-body">
-                <h1 class="fw-bold mb-0">
-                    @Model.UnidadesOcupadas
-                    <small class="text-muted fs-6">de @Model.TotalUnidades unidades</small>
-                </h1>
+                <div class="d-flex justify-content-between align-items-end mb-3">
+                    <div>
+                        <div class="cs-kpi-value">@Model.UnidadesOcupadas</div>
+                        <div class="cs-kpi-label">de @Model.TotalUnidades unidades ocupadas</div>
+                    </div>
+                    <span class="badge text-bg-success">@ocupacaoPercentual%</span>
+                </div>
+                <div class="cs-progress-track">
+                    <div class="cs-progress-bar" style="width:@ocupacaoPercentual%"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-12 col-lg-4">
-        <div class="cs-card">
-            <div class="cs-card-header">MENSALIDADES EM ATRASO</div>
+        <div class="cs-card h-100">
+            <div class="cs-card-header">Pendências financeiras</div>
             <div class="cs-card-body">
-                <h1 class="fw-bold mb-0">
-                    @Model.MensalidadesEmAtraso
-                    <small class="text-muted fs-6">no total</small>
-                </h1>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="cs-kpi-value">@Model.MensalidadesEmAtraso</div>
+                        <div class="cs-kpi-label">mensalidades precisam de atenção</div>
+                    </div>
+                    <a asp-controller="Mensalidades" asp-action="Index" class="btn btn-sm btn-cs-outline">
+                        Revisar
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-12 col-lg-4">
-        <div class="cs-card">
-            <div class="cs-card-header">ESPAÇOS RESERVADOS</div>
+        <div class="cs-card h-100">
+            <div class="cs-card-header">Reservas de lazer</div>
             <div class="cs-card-body">
-                <h1 class="fw-bold mb-0">
-                    @Model.ReservasConfirmadas
-                    <small class="text-muted fs-6">de @Model.TotalAreasLazer locais</small>
-                </h1>
+                <div class="d-flex justify-content-between align-items-end mb-3">
+                    <div>
+                        <div class="cs-kpi-value">@Model.ReservasConfirmadas</div>
+                        <div class="cs-kpi-label">de @Model.TotalAreasLazer espaços cadastrados</div>
+                    </div>
+                    <span class="badge text-bg-warning">@reservasPercentual%</span>
+                </div>
+                <div class="cs-progress-track">
+                    <div class="cs-progress-bar" style="width:@reservasPercentual%"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -93,9 +126,8 @@
 
 @if (Model.MensalidadesEmAtraso > 0)
 {
-    <div class="cs-card mt-3">
-        <div class="cs-card-body" style="background: var(--cs-primary); color:#fff; border-radius: var(--cs-radius);">
-            <strong>@Model.MensalidadesEmAtraso mensalidade(s) em atraso pendente(s)</strong> ⚠️
-        </div>
+    <div class="alert alert-warning mt-4 mb-0">
+        <strong>@Model.MensalidadesEmAtraso mensalidade(s) em atraso.</strong>
+        Vale revisar a listagem financeira para manter o fluxo de caixa em dia.
     </div>
 }
