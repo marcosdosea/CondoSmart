@@ -96,6 +96,14 @@
                 <span asp-validation-for="CondominioId" class="text-danger"></span>
             </div>
 
+            <div class="col-12 col-lg-6">
+                <label asp-for="UnidadeId" class="form-label fw-semibold"></label>
+                <select asp-for="UnidadeId" class="form-select" asp-items="ViewBag.Unidades">
+                    <option value="">Selecione uma unidade</option>
+                </select>
+                <span asp-validation-for="UnidadeId" class="text-danger"></span>
+            </div>
+
             <div class="col-12 d-flex gap-2 justify-content-end mt-2">
                 <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
                 <button type="submit" class="btn btn-cs-primary">Salvar Alterações</button>

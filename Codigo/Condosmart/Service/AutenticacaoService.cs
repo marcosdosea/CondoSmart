@@ -43,7 +43,8 @@ namespace Service
             {
                 NomeCompleto = registroDTO.NomeCompleto,
                 UserName = registroDTO.Email,
-                Email = registroDTO.Email
+                Email = registroDTO.Email,
+                SenhaTemporaria = false
             };
 
             var resultado = await _userManager.CreateAsync(usuario, registroDTO.Senha);

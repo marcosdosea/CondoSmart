@@ -67,6 +67,9 @@ namespace CondosmartWeb.Areas.Identity.Pages.Account
             if (resultado.Succeeded)
             {
                 var usuario = await _userManager.FindByEmailAsync(Input.Email);
+                if (usuario is not null && usuario.SenhaTemporaria)
+                    return RedirectToPage("./TrocarSenhaTemporaria");
+
                 if (usuario is not null && await _userManager.IsInRoleAsync(usuario, Perfis.Admin))
                     return RedirectToAction("Index", "Home");
 

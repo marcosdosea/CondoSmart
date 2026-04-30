@@ -21,6 +21,34 @@
     </div>
 
     <div class="cs-card-body">
+        @if (TempData["ProvisioningMessage"] is string mensagem)
+        {
+            var statusEmail = TempData["ProvisioningStatus"]?.ToString();
+            var senhaTemporaria = TempData["ProvisioningPassword"]?.ToString();
+            var email = TempData["ProvisioningEmail"]?.ToString();
+            var link = TempData["ProvisioningLink"]?.ToString();
+            var aviso = TempData["ProvisioningWarning"]?.ToString();
+
+            <div class="alert @(statusEmail == "enviado" ? "alert-success" : "alert-warning") border mb-4">
+                <strong>@mensagem</strong>
+                <div class="small mt-2">Login: @email</div>
+                <div class="small">Senha temporaria: <strong>@senhaTemporaria</strong></div>
+                <div class="small">Link de acesso: @link</div>
+                @if (statusEmail == "enviado")
+                {
+                    <div class="small mt-2">O e-mail de boas-vindas foi enviado com sucesso.</div>
+                }
+                else
+                {
+                    <div class="small mt-2">O cadastro foi concluido, mas o e-mail nao foi enviado automaticamente.</div>
+                    @if (!string.IsNullOrWhiteSpace(aviso))
+                    {
+                        <div class="small">Motivo: @aviso</div>
+                    }
+                }
+            </div>
+        }
+
         @if (!Model.Any())
         {
             <div class="alert alert-info text-center mb-0">
