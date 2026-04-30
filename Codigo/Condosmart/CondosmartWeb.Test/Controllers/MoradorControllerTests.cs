@@ -42,6 +42,8 @@ namespace CondosmartWeb.Controllers.Tests
                 new() { Id = 7, Identificador = "A-101", CondominioId = 1, MoradorId = 1, Condominio = new Condominio { Id = 1, Nome = "Condominio Alfa" } },
                 new() { Id = 8, Identificador = "B-202", CondominioId = 2, MoradorId = null, Condominio = new Condominio { Id = 2, Nome = "Condominio Beta" } }
             });
+            mockUnidadesService.Setup(s => s.GetByMoradorId(1))
+                .Returns(new UnidadesResidenciais { Id = 7, Identificador = "A-101", CondominioId = 1, MoradorId = 1, Condominio = new Condominio { Id = 1, Nome = "Condominio Alfa" } });
 
             mockProvisionamentoService
                 .Setup(s => s.CadastrarComAcessoAsync(It.IsAny<Morador>(), It.IsAny<int>(), It.IsAny<string>()))
@@ -85,10 +87,11 @@ namespace CondosmartWeb.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<MoradorViewModel>));
-            var lista = (List<MoradorViewModel>)viewResult.ViewData.Model;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PagedListViewModel<MoradorViewModel>));
+            var lista = (PagedListViewModel<MoradorViewModel>)viewResult.ViewData.Model;
 
-            Assert.HasCount(3, lista);
+            Assert.AreEqual(3, lista.TotalItems);
+            Assert.AreEqual(3, lista.Items.Count);
         }
 
         [TestMethod]

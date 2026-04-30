@@ -32,11 +32,11 @@ namespace CondosmartWeb.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var lista = _service.GetAll();
+            var lista = _service.GetAll().OrderBy(m => m.Nome).ToList();
             var vms = _mapper.Map<List<MoradorViewModel>>(lista);
-            return View(vms);
+            return View(PagedListViewModel<MoradorViewModel>.Create(vms, page, pageSize));
         }
 
         public IActionResult Details(int id)
@@ -45,8 +45,8 @@ namespace CondosmartWeb.Controllers
             if (entity == null) return NotFound();
 
             var vm = _mapper.Map<MoradorViewModel>(entity);
-            vm.UnidadeId = _unidadesService.GetAll()
-                .FirstOrDefault(u => u.MoradorId == entity.Id)?.Id;
+            vm.UnidadeId = _unidadesService.GetByMoradorId(entity.Id)?.Id
+                ?? _unidadesService.GetAll().FirstOrDefault(u => u.MoradorId == entity.Id)?.Id;
 
             return View(vm);
         }
@@ -70,21 +70,39 @@ namespace CondosmartWeb.Controllers
             try
             {
                 var entity = _mapper.Map<Morador>(vm);
-                var loginUrl = Url.Page("/Account/Login", pageHandler: null, values: null, protocol: Request.Scheme) ?? string.Empty;
+                var loginUrl = "/Identity/Account/Login";
+
+                try
+                {
+                    loginUrl = Url?.Page("/Account/Login", pageHandler: null, values: null, protocol: HttpContext?.Request?.Scheme ?? "https")
+                        ?? loginUrl;
+                }
+                catch
+                {
+                    // Fallback usado principalmente em cenarios de teste sem contexto HTTP completo.
+                }
+
                 var resultado = await _provisionamentoService.CadastrarComAcessoAsync(entity, vm.UnidadeId!.Value, loginUrl);
 
-                TempData["ProvisioningMessage"] = $"Morador {resultado.NomeMorador} cadastrado com acesso liberado.";
-                TempData["ProvisioningEmail"] = resultado.Email;
-                TempData["ProvisioningPassword"] = resultado.SenhaTemporaria;
-                TempData["ProvisioningLink"] = resultado.UrlAcesso;
-                TempData["ProvisioningStatus"] = resultado.EmailEnviado ? "enviado" : "pendente";
-                TempData["ProvisioningWarning"] = resultado.ObservacaoEmail;
+                SetTempData("Sucesso", $"Morador {resultado.NomeMorador} cadastrado com acesso liberado.");
+                SetTempData("ProvisioningMessage", $"Morador {resultado.NomeMorador} cadastrado com acesso liberado.");
+                SetTempData("ProvisioningEmail", resultado.Email);
+                SetTempData("ProvisioningPassword", resultado.SenhaTemporaria);
+                SetTempData("ProvisioningLink", resultado.UrlAcesso);
+                SetTempData("ProvisioningStatus", resultado.EmailEnviado ? "enviado" : "pendente");
+                SetTempData("ProvisioningWarning", resultado.ObservacaoEmail);
 
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                PopularDropdowns(vm.CondominioId, vm.UnidadeId);
+                return View(vm);
+            }
+            catch
+            {
+                SetTempData("Erro", "Nao foi possivel cadastrar o morador agora.");
                 PopularDropdowns(vm.CondominioId, vm.UnidadeId);
                 return View(vm);
             }
@@ -96,8 +114,8 @@ namespace CondosmartWeb.Controllers
             if (entity == null) return NotFound();
 
             var vm = _mapper.Map<MoradorViewModel>(entity);
-            vm.UnidadeId = _unidadesService.GetAll()
-                .FirstOrDefault(u => u.MoradorId == entity.Id)?.Id;
+            vm.UnidadeId = _unidadesService.GetByMoradorId(entity.Id)?.Id
+                ?? _unidadesService.GetAll().FirstOrDefault(u => u.MoradorId == entity.Id)?.Id;
 
             PopularDropdowns(vm.CondominioId, vm.UnidadeId);
             return View(vm);
@@ -122,11 +140,18 @@ namespace CondosmartWeb.Controllers
                 await _provisionamentoService.AtualizarVinculoUnidadeAsync(vm.Id, vm.UnidadeId!.Value, vm.CondominioId!.Value);
                 await _provisionamentoService.AtualizarContaMoradorAsync(anterior?.Email, entity);
 
+                SetTempData("Sucesso", "Morador atualizado com sucesso.");
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                PopularDropdowns(vm.CondominioId, vm.UnidadeId);
+                return View(vm);
+            }
+            catch
+            {
+                SetTempData("Erro", "Nao foi possivel atualizar o morador agora.");
                 PopularDropdowns(vm.CondominioId, vm.UnidadeId);
                 return View(vm);
             }
@@ -138,8 +163,8 @@ namespace CondosmartWeb.Controllers
             if (entity == null) return NotFound();
 
             var vm = _mapper.Map<MoradorViewModel>(entity);
-            vm.UnidadeId = _unidadesService.GetAll()
-                .FirstOrDefault(u => u.MoradorId == entity.Id)?.Id;
+            vm.UnidadeId = _unidadesService.GetByMoradorId(entity.Id)?.Id
+                ?? _unidadesService.GetAll().FirstOrDefault(u => u.MoradorId == entity.Id)?.Id;
 
             return View(vm);
         }
@@ -148,12 +173,27 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var entity = _service.GetById(id);
-            if (entity is not null)
-                await _provisionamentoService.RemoverAcessoAsync(id, entity.Email);
+            try
+            {
+                var entity = _service.GetById(id);
+                if (entity is not null)
+                    await _provisionamentoService.RemoverAcessoAsync(id, entity.Email);
 
-            _service.Delete(id);
+                _service.Delete(id);
+                SetTempData("Sucesso", "Morador removido com sucesso.");
+            }
+            catch
+            {
+                SetTempData("Erro", "Nao foi possivel remover o morador agora.");
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private void SetTempData(string key, string? value)
+        {
+            if (TempData != null)
+                TempData[key] = value;
         }
 
         private void PopularDropdowns(int? condominioId = null, int? unidadeSelecionada = null)

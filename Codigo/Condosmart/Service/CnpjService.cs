@@ -20,6 +20,45 @@ namespace Service
             _httpClient = httpClient;
         }
 
+        public bool IsValid(string? cnpj)
+        {
+            if (string.IsNullOrWhiteSpace(cnpj))
+                return false;
+
+            var cnpjLimpo = Regex.Replace(cnpj, @"\D", "");
+            if (cnpjLimpo.Length != 14 || !Regex.IsMatch(cnpjLimpo, @"^\d{14}$"))
+                return false;
+
+            if (cnpjLimpo == new string(cnpjLimpo[0], cnpjLimpo.Length))
+                return false;
+
+            int[] mult1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+            int[] mult2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+            var temp = cnpjLimpo[..12];
+            var soma = 0;
+
+            for (var i = 0; i < 12; i++)
+                soma += int.Parse(temp[i].ToString()) * mult1[i];
+
+            var resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+
+            if (resto != int.Parse(cnpjLimpo[12].ToString()))
+                return false;
+
+            temp = cnpjLimpo[..13];
+            soma = 0;
+
+            for (var i = 0; i < 13; i++)
+                soma += int.Parse(temp[i].ToString()) * mult2[i];
+
+            resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+
+            return resto == int.Parse(cnpjLimpo[13].ToString());
+        }
+
         /// <summary>
         /// Consulta informações de CNPJ em uma API externa
         /// </summary>

@@ -91,6 +91,15 @@ namespace Service
                           .FirstOrDefault(u => u.Id == id);
         }
 
+        public UnidadesResidenciais? GetByMoradorId(int moradorId)
+        {
+            return context.UnidadesResidenciais
+                .AsNoTracking()
+                .Include(u => u.Morador)
+                .Include(u => u.Condominio)
+                .FirstOrDefault(u => u.MoradorId == moradorId);
+        }
+
         /// <summary>
         /// Buscar todas as unidades residenciais cadastradas
         /// </summary>

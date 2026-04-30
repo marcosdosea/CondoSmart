@@ -1,4 +1,4 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using CondosmartWeb.Controllers;
 using CondosmartWeb.Mappers;
 using CondosmartWeb.Models;
@@ -18,9 +18,9 @@ namespace CondosmartWeb.Controllers.Tests
         [TestInitialize]
         public void Initialize()
         {
-            // Arrange
             var mockService = new Mock<IUnidadesResidenciaisService>();
             mockCondominioService = new Mock<ICondominioService>();
+            var mockCepService = new Mock<ICepService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new UnidadeResidencialProfile())
@@ -44,32 +44,36 @@ namespace CondosmartWeb.Controllers.Tests
             mockCondominioService.Setup(s => s.GetAll())
                 .Returns(GetTestCondominios());
 
-            controller = new UnidadesResidenciaisController(mockService.Object, mockCondominioService.Object, mapper);
+            mockCepService.Setup(s => s.IsValidAsync(It.IsAny<string?>()))
+                .ReturnsAsync(true);
+
+            controller = new UnidadesResidenciaisController(
+                mockService.Object,
+                mockCondominioService.Object,
+                mockCepService.Object,
+                mapper);
         }
 
         [TestMethod]
         public void IndexTest_Valido()
         {
-            // Act
             var result = controller.Index();
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<UnidadeResidencialViewModel>));
-            var lista = (List<UnidadeResidencialViewModel>)viewResult.ViewData.Model;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PagedListViewModel<UnidadeResidencialViewModel>));
+            var lista = (PagedListViewModel<UnidadeResidencialViewModel>)viewResult.ViewData.Model;
 
-            Assert.HasCount(3, lista);
+            Assert.AreEqual(3, lista.TotalItems);
+            Assert.AreEqual(3, lista.Items.Count);
         }
 
         [TestMethod]
         public void DetailsTest_Valido()
         {
-            // Act
             var result = controller.Details(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -83,20 +87,15 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void CreateTest_Get_Valido()
         {
-            // Act
             var result = controller.Create();
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod]
-        public void CreateTest_Post_Valid()
+        public async Task CreateTest_Post_Valid()
         {
-            // Act
-            var result = controller.Create(GetNewUnidadeModel());
+            var result = await controller.Create(GetNewUnidadeModel());
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
 
@@ -105,15 +104,12 @@ namespace CondosmartWeb.Controllers.Tests
         }
 
         [TestMethod]
-        public void CreateTest_Post_Invalid()
+        public async Task CreateTest_Post_Invalid()
         {
-            // Arrange
             controller.ModelState.AddModelError("Identificador", "Campo requerido");
 
-            // Act
-            var result = controller.Create(GetNewUnidadeModel());
+            var result = await controller.Create(GetNewUnidadeModel());
 
-            // Assert
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
@@ -121,10 +117,8 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void EditTest_Get_Valid()
         {
-            // Act
             var result = controller.Edit(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -136,12 +130,10 @@ namespace CondosmartWeb.Controllers.Tests
         }
 
         [TestMethod]
-        public void EditTest_Post_Valid()
+        public async Task EditTest_Post_Valid()
         {
-            // Act
-            var result = controller.Edit(GetTargetUnidadeModel());
+            var result = await controller.Edit(GetTargetUnidadeModel());
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
 
@@ -152,10 +144,8 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void DeleteTest_Get_Valid()
         {
-            // Act
             var result = controller.Delete(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
 
@@ -168,18 +158,14 @@ namespace CondosmartWeb.Controllers.Tests
         [TestMethod]
         public void DeleteTest_Post_Valid()
         {
-            // Act
             var result = controller.DeleteConfirmed(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
 
             Assert.IsNull(redirect.ControllerName);
             Assert.AreEqual("Index", redirect.ActionName);
         }
-
-        // --------- Dados de Teste ---------
 
         private static UnidadesResidenciais GetTargetUnidade()
         {
@@ -190,9 +176,9 @@ namespace CondosmartWeb.Controllers.Tests
                 Rua = "Rua das Flores",
                 Numero = "100",
                 Bairro = "Centro",
-                Complemento = "Próximo ao mercado",
+                Complemento = "Proximo ao mercado",
                 Cep = "12345678",
-                Cidade = "São Paulo",
+                Cidade = "Sao Paulo",
                 Uf = "SP",
                 TelefoneResidencial = "1133334444",
                 TelefoneCelular = "11987654321",
@@ -202,12 +188,12 @@ namespace CondosmartWeb.Controllers.Tests
                 Condominio = new Condominio
                 {
                     Id = 1,
-                    Nome = "Condomínio Alfa"
+                    Nome = "Condominio Alfa"
                 },
                 Morador = new Morador
                 {
                     Id = 1,
-                    Nome = "João Silva"
+                    Nome = "Joao Silva"
                 }
             };
         }
@@ -221,9 +207,9 @@ namespace CondosmartWeb.Controllers.Tests
                 Rua = "Rua das Flores",
                 Numero = "100",
                 Bairro = "Centro",
-                Complemento = "Próximo ao mercado",
+                Complemento = "Proximo ao mercado",
                 Cep = "12345678",
-                Cidade = "São Paulo",
+                Cidade = "Sao Paulo",
                 Uf = "SP",
                 TelefoneResidencial = "1133334444",
                 TelefoneCelular = "11987654321",
@@ -239,12 +225,12 @@ namespace CondosmartWeb.Controllers.Tests
             {
                 Id = 99,
                 Identificador = "Bloco B - Apto 202",
-                Rua = "Rua das Acácias",
+                Rua = "Rua das Acacias",
                 Numero = "200",
                 Bairro = "Jardim Paulista",
-                Complemento = "Próximo ao shopping",
+                Complemento = "Proximo ao shopping",
                 Cep = "87654321",
-                Cidade = "São Paulo",
+                Cidade = "Sao Paulo",
                 Uf = "SP",
                 TelefoneResidencial = "1144445555",
                 TelefoneCelular = "11912345678",
@@ -266,7 +252,7 @@ namespace CondosmartWeb.Controllers.Tests
                     Numero = "100",
                     Bairro = "Centro",
                     Cep = "12345678",
-                    Cidade = "São Paulo",
+                    Cidade = "Sao Paulo",
                     Uf = "SP",
                     TelefoneResidencial = "1133334444",
                     TelefoneCelular = "11987654321",
@@ -274,12 +260,12 @@ namespace CondosmartWeb.Controllers.Tests
                     Condominio = new Condominio
                     {
                         Id = 1,
-                        Nome = "Condomínio Alfa"
+                        Nome = "Condominio Alfa"
                     },
                     Morador = new Morador
                     {
                         Id = 1,
-                        Nome = "João Silva"
+                        Nome = "Joao Silva"
                     }
                 },
                 new UnidadesResidenciais
@@ -290,7 +276,7 @@ namespace CondosmartWeb.Controllers.Tests
                     Numero = "100",
                     Bairro = "Centro",
                     Cep = "12345678",
-                    Cidade = "São Paulo",
+                    Cidade = "Sao Paulo",
                     Uf = "SP",
                     TelefoneResidencial = "1133335555",
                     TelefoneCelular = "11987654322",
@@ -298,7 +284,7 @@ namespace CondosmartWeb.Controllers.Tests
                     Condominio = new Condominio
                     {
                         Id = 1,
-                        Nome = "Condomínio Alfa"
+                        Nome = "Condominio Alfa"
                     },
                     Morador = new Morador
                     {
@@ -310,11 +296,11 @@ namespace CondosmartWeb.Controllers.Tests
                 {
                     Id = 3,
                     Identificador = "Bloco B - Apto 201",
-                    Rua = "Rua das Acácias",
+                    Rua = "Rua das Acacias",
                     Numero = "200",
                     Bairro = "Jardim Paulista",
                     Cep = "87654321",
-                    Cidade = "São Paulo",
+                    Cidade = "Sao Paulo",
                     Uf = "SP",
                     TelefoneResidencial = "1144446666",
                     TelefoneCelular = "11987654323",
@@ -322,7 +308,7 @@ namespace CondosmartWeb.Controllers.Tests
                     Condominio = new Condominio
                     {
                         Id = 2,
-                        Nome = "Condomínio Beta"
+                        Nome = "Condominio Beta"
                     },
                     Morador = new Morador
                     {
@@ -340,7 +326,7 @@ namespace CondosmartWeb.Controllers.Tests
                 new Condominio
                 {
                     Id = 1,
-                    Nome = "Condomínio Alfa",
+                    Nome = "Condominio Alfa",
                     Cnpj = "12345678901234",
                     Rua = "Rua A",
                     Numero = "10",
@@ -353,7 +339,7 @@ namespace CondosmartWeb.Controllers.Tests
                 new Condominio
                 {
                     Id = 2,
-                    Nome = "Condomínio Beta",
+                    Nome = "Condominio Beta",
                     Cnpj = "22345678901234",
                     Rua = "Rua B",
                     Numero = "20",

@@ -55,11 +55,16 @@ namespace CondosmartWeb.Controllers
 
                 _mensalidadeService.SalvarConfiguracao(configuracao);
                 TempData["Sucesso"] = "Configuracao de mensalidade salva com sucesso.";
-                return RedirectToAction(nameof(Index), new { condominioId = configuracaoVm.CondominioId });
+                return RedirectToAction(nameof(Index), new { condominioId = configuracaoVm.CondominioId, page = 1 });
             }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), configuracaoVm, null));
+            }
+            catch
+            {
+                TempData["Erro"] = "Nao foi possivel salvar a configuracao de mensalidade agora.";
                 return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), configuracaoVm, null));
             }
         }
@@ -82,12 +87,18 @@ namespace CondosmartWeb.Controllers
                 return RedirectToAction(nameof(Index), new
                 {
                     condominioId = geracaoVm.CondominioId,
-                    anoCompetencia = geracaoVm.AnoReferencia
+                    anoCompetencia = geracaoVm.AnoReferencia,
+                    page = 1
                 });
             }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), null, geracaoVm));
+            }
+            catch
+            {
+                TempData["Erro"] = "Nao foi possivel gerar as parcelas agora.";
                 return View("Index", MontarPagina(new FiltroMensalidadeViewModel(), null, geracaoVm));
             }
         }
@@ -159,7 +170,10 @@ namespace CondosmartWeb.Controllers
                     CondominioId = filtro.CondominioId ?? 0,
                     AnoReferencia = filtro.AnoCompetencia ?? DateTime.Today.Year
                 },
-                Mensalidades = _mapper.Map<List<MensalidadeViewModel>>(mensalidades),
+                Mensalidades = PagedListViewModel<MensalidadeViewModel>.Create(
+                    _mapper.Map<List<MensalidadeViewModel>>(mensalidades),
+                    filtro.Page,
+                    filtro.PageSize),
                 Configuracoes = configuracoes.Select(c => new ConfiguracaoMensalidadeResumoViewModel
                 {
                     Condominio = c.Condominio.Nome,

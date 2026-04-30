@@ -5,6 +5,7 @@ using Core.Models;
 using Core.Service;
 using Core.Settings;
 using CondosmartWeb.Middleware;
+using CondosmartWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,7 @@ namespace Condosmart
             builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
             builder.Services.AddScoped<ICondominioService, CondominioService>();
             builder.Services.AddScoped<ICnpjService, CnpjService>();
+            builder.Services.AddScoped<ICepService, CepService>();
             builder.Services.AddScoped<ISindicoService, SindicoService>();
             builder.Services.AddScoped<IMoradorService, MoradorService>();
             builder.Services.AddScoped<IMoradorProvisionamentoService, MoradorProvisionamentoService>();
@@ -74,6 +76,8 @@ namespace Condosmart
             builder.Services.AddScoped<IAreaDeLazerService, AreaDeLazerService>();
             builder.Services.AddScoped<IPagamentoService, PagamentoService>();
             builder.Services.AddScoped<IMensalidadeService, MensalidadeService>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            builder.Services.AddScoped<IMoradorDashboardService, MoradorDashboardService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddHttpClient<ICnpjService, CnpjService>();

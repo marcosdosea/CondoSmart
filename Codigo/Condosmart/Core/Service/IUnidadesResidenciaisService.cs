@@ -8,6 +8,7 @@ namespace Core.Service
         void Edit(UnidadesResidenciais unidadesResidenciais);
         void Delete(int id);
         UnidadesResidenciais? GetById(int id);
+        UnidadesResidenciais? GetByMoradorId(int moradorId);
         List<UnidadesResidenciais> GetAll();
     }
 }

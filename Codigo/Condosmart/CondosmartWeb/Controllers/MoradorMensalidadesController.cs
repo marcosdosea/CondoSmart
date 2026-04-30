@@ -36,14 +36,12 @@ namespace CondosmartWeb.Controllers
             if (string.IsNullOrWhiteSpace(email))
                 return Forbid();
 
-            var morador = _moradorService.GetAll()
-                .FirstOrDefault(m => string.Equals(m.Email, email, StringComparison.OrdinalIgnoreCase));
+            var morador = _moradorService.GetByEmail(email);
 
             if (morador is null)
                 return RedirectToAction("Index", "MoradorDashboard");
 
-            var unidade = _unidadesService.GetAll()
-                .FirstOrDefault(u => u.MoradorId == morador.Id);
+            var unidade = _unidadesService.GetByMoradorId(morador.Id);
 
             var condominioId = morador.CondominioId ?? unidade?.CondominioId;
             var condominio = condominioId.HasValue ? _condominioService.GetById(condominioId.Value) : null;

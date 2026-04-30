@@ -1,7 +1,5 @@
-﻿using System.Globalization;
-using CondosmartWeb.Models;
 using Core.Identity;
-using Core.Service;
+using CondosmartWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,26 +8,11 @@ namespace CondosmartWeb.Controllers
     [Authorize(Roles = Perfis.Morador)]
     public class MoradorDashboardController : Controller
     {
-        private static readonly CultureInfo CulturaBrasil = new("pt-BR");
+        private readonly IMoradorDashboardService _dashboardService;
 
-        private readonly IMoradorService _moradorService;
-        private readonly ICondominioService _condominioService;
-        private readonly IUnidadesResidenciaisService _unidadesService;
-        private readonly IMensalidadeService _mensalidadeService;
-        private readonly IAtaService _ataService;
-
-        public MoradorDashboardController(
-            IMoradorService moradorService,
-            ICondominioService condominioService,
-            IUnidadesResidenciaisService unidadesService,
-            IMensalidadeService mensalidadeService,
-            IAtaService ataService)
+        public MoradorDashboardController(IMoradorDashboardService dashboardService)
         {
-            _moradorService = moradorService;
-            _condominioService = condominioService;
-            _unidadesService = unidadesService;
-            _mensalidadeService = mensalidadeService;
-            _ataService = ataService;
+            _dashboardService = dashboardService;
         }
 
         public IActionResult Index()
@@ -38,53 +21,9 @@ namespace CondosmartWeb.Controllers
             if (string.IsNullOrWhiteSpace(email))
                 return Forbid();
 
-            var morador = _moradorService.GetAll()
-                .FirstOrDefault(m => string.Equals(m.Email, email, StringComparison.OrdinalIgnoreCase));
-
-            if (morador is null)
+            var viewModel = _dashboardService.Build(email);
+            if (viewModel is null)
                 return View("SemVinculo", email);
-
-            var unidade = _unidadesService.GetAll()
-                .FirstOrDefault(u => u.MoradorId == morador.Id);
-
-            var condominioId = morador.CondominioId ?? unidade?.CondominioId;
-            var condominio = condominioId.HasValue ? _condominioService.GetById(condominioId.Value) : null;
-
-            var mensalidades = _mensalidadeService.GetByMorador(morador.Id)
-                .Take(12)
-                .ToList();
-
-            var comunicados = condominioId.HasValue
-                ? _ataService.GetAll()
-                    .Where(a => a.CondominioId == condominioId.Value)
-                    .OrderByDescending(a => a.DataReuniao)
-                    .Take(5)
-                    .ToList()
-                : new List<Core.Models.Ata>();
-
-            var viewModel = new MoradorDashboardViewModel
-            {
-                MoradorId = morador.Id,
-                Nome = morador.Nome,
-                Email = morador.Email ?? email,
-                Telefone = morador.Telefone,
-                Condominio = condominio?.Nome ?? "Condominio nao informado",
-                Unidade = unidade?.Identificador ?? "Unidade nao vinculada",
-                MensalidadesPendentes = mensalidades.Count(m => !string.Equals(m.Status, "pago", StringComparison.OrdinalIgnoreCase)),
-                Mensalidades = mensalidades.Select(m => new MoradorMensalidadeResumoViewModel
-                {
-                    Competencia = m.Competencia.ToString("MM/yyyy", CulturaBrasil),
-                    Valor = (m.ValorFinal > 0 ? m.ValorFinal : m.Valor).ToString("C", CulturaBrasil),
-                    Vencimento = m.Vencimento.ToString("dd/MM/yyyy", CulturaBrasil),
-                    Status = m.Status
-                }).ToList(),
-                Comunicados = comunicados.Select(a => new MoradorComunicadoResumoViewModel
-                {
-                    Titulo = string.IsNullOrWhiteSpace(a.Titulo) ? "Comunicado do condominio" : a.Titulo,
-                    Data = a.DataReuniao?.ToString("dd/MM/yyyy", CulturaBrasil) ?? "Sem data",
-                    Resumo = string.IsNullOrWhiteSpace(a.Temas) ? "Sem resumo informado." : a.Temas
-                }).ToList()
-            };
 
             return View(viewModel);
         }
