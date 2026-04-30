@@ -6,11 +6,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h2 class="fw-bold mb-0">&#128179; Pagar Mensalidade</h2>
+        <h2 class="fw-bold mb-0"><i class="bi bi-credit-card me-2" aria-hidden="true"></i>Pagar Mensalidade</h2>
         <small class="text-muted">Confirme o pagamento da mensalidade</small>
     </div>
     <a asp-action="Index" class="btn btn-cs-outline">
-        &#11013; Voltar
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Voltar
     </a>
 </div>
 
@@ -18,22 +18,22 @@
     <div class="col-md-8 mx-auto">
         <div class="cs-card">
             <div class="cs-card-header">
-                Confirmação de Pagamento
+                Confirmaï¿½ï¿½o de Pagamento
             </div>
 
             <div class="cs-card-body">
                 <!-- Resumo da Mensalidade -->
                 <div class="alert alert-info">
-                    <h5 class="alert-heading mb-3">&#128203; Dados da Mensalidade</h5>
+                    <h5 class="alert-heading mb-3"><i class="bi bi-card-checklist me-2" aria-hidden="true"></i>Dados da Mensalidade</h5>
                     <div class="row">
                         <div class="col-md-6 mb-2">
-                            <strong>Competência:</strong> @Model.Competencia.ToString("MMMM/yyyy")
+                            <strong>Competï¿½ncia:</strong> @Model.Competencia.ToString("MMMM/yyyy")
                         </div>
                         <div class="col-md-6 mb-2">
                             <strong>Vencimento:</strong> @Model.Vencimento.ToString("dd/MM/yyyy")
                         </div>
                         <div class="col-md-6 mb-2">
-                            <strong>Condomínio:</strong> @(Model.CondominioNome ?? "-")
+                            <strong>Condomï¿½nio:</strong> @(Model.CondominioNome ?? "-")
                         </div>
                         <div class="col-md-6 mb-2">
                             <strong>Unidade:</strong> @(Model.UnidadeIdentificador ?? "-")
@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-                <!-- Formulário de Pagamento -->
+                <!-- Formulï¿½rio de Pagamento -->
                 <form asp-action="Pagar" method="post">
                     <input type="hidden" asp-for="MensalidadeId" />
                     <input type="hidden" asp-for="Valor" />
@@ -61,18 +61,18 @@
                         <label asp-for="FormaPagamento" class="form-label fw-semibold"></label>
                         <select asp-for="FormaPagamento" class="form-select form-select-lg">
                             <option value="">Selecione a forma de pagamento...</option>
-                            <option value="pix">&#128176; PIX</option>
-                            <option value="cartao_credito">&#128179; Cartão de Crédito</option>
-                            <option value="cartao_debito">&#128179; Cartão de Débito</option>
-                            <option value="boleto">&#128196; Boleto Bancário</option>
-                            <option value="dinheiro">&#128181; Dinheiro</option>
+                            <option value="pix">PIX</option>
+                            <option value="cartao_credito">Cartï¿½o de Crï¿½dito</option>
+                            <option value="cartao_debito">Cartï¿½o de Dï¿½bito</option>
+                            <option value="boleto">Boleto Bancï¿½rio</option>
+                            <option value="dinheiro">Dinheiro</option>
                         </select>
                         <span asp-validation-for="FormaPagamento" class="text-danger small"></span>
                     </div>
 
                     <div class="alert alert-warning">
-                        <strong>&#9888; Atenção:</strong> Ao confirmar o pagamento, será gerado um registro de pagamento com status pendente. 
-                        O pagamento será processado conforme a forma selecionada.
+                        <strong><i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>Atenï¿½ï¿½o:</strong> Ao confirmar o pagamento, serï¿½ gerado um registro de pagamento com status pendente.
+                        O pagamento serï¿½ processado conforme a forma selecionada.
                     </div>
 
                     <div class="d-flex gap-2 justify-content-end">
@@ -80,7 +80,7 @@
                             Cancelar
                         </a>
                         <button type="submit" class="btn btn-success btn-lg">
-                            &#9989; Confirmar Pagamento
+                            <i class="bi bi-check2-circle me-1" aria-hidden="true"></i>Confirmar Pagamento
                         </button>
                     </div>
                 </form>
