@@ -6,8 +6,6 @@
 }
 
 <div class="cs-auth-shell">
-
-    <!-- Painel da marca -->
     <div class="cs-auth-brand">
         <div class="cs-auth-brand-inner">
             <div class="cs-auth-logo">
@@ -19,41 +17,34 @@
             </div>
 
             <p class="cs-auth-brand-heading">
-                Comece agora a gerenciar seu condomínio com inteligência.
+                Comece com uma base simples para administrar melhor o condomínio.
             </p>
 
             <ul class="cs-auth-features">
                 <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#9989;</span>
-                    Cadastro rápido e gratuito
+                    <span class="cs-auth-feature-icon">01</span>
+                    Cadastro rápido para liberar o acesso
                 </li>
                 <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#128274;</span>
-                    Dados protegidos com criptografia
+                    <span class="cs-auth-feature-icon">02</span>
+                    Interface pensada para tarefas administrativas
                 </li>
                 <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#128241;</span>
-                    Acesse de qualquer dispositivo
-                </li>
-                <li class="cs-auth-feature">
-                    <span class="cs-auth-feature-icon">&#128202;</span>
-                    Relatórios e dashboards em tempo real
+                    <span class="cs-auth-feature-icon">03</span>
+                    Dados organizados por módulo do condomínio
                 </li>
             </ul>
         </div>
     </div>
 
-    <!-- Painel do formulário -->
     <div class="cs-auth-form-side">
         <div class="cs-auth-form-box">
-
             <div class="cs-auth-form-header">
-                <h1 class="cs-auth-form-title">Crie sua conta &#127881;</h1>
-                <p class="cs-auth-form-desc">Preencha os dados abaixo para começar</p>
+                <h1 class="cs-auth-form-title">Crie sua conta</h1>
+                <p class="cs-auth-form-desc">Preencha os dados abaixo para começar.</p>
             </div>
 
             <form method="post" id="registroForm">
-
                 @if (!ModelState.IsValid)
                 {
                     <div class="cs-validation-alert">
@@ -62,7 +53,7 @@
                 }
 
                 <div class="cs-field">
-                    <label asp-for="Input.NomeCompleto" class="cs-field-label">&#128100; Nome Completo</label>
+                    <label asp-for="Input.NomeCompleto" class="cs-field-label">Nome completo</label>
                     <input asp-for="Input.NomeCompleto"
                            class="cs-field-input"
                            placeholder="Seu nome completo"
@@ -71,16 +62,16 @@
                 </div>
 
                 <div class="cs-field">
-                    <label asp-for="Input.Email" class="cs-field-label">&#128231; E-mail</label>
+                    <label asp-for="Input.Email" class="cs-field-label">E-mail</label>
                     <input asp-for="Input.Email"
                            class="cs-field-input"
-                           placeholder="seu&#64;email.com"
+                           placeholder="seu@email.com"
                            autocomplete="email" />
                     <span asp-validation-for="Input.Email" class="cs-field-error"></span>
                 </div>
 
                 <div class="cs-field">
-                    <label asp-for="Input.Senha" class="cs-field-label">&#128273; Senha</label>
+                    <label asp-for="Input.Senha" class="cs-field-label">Senha</label>
                     <div class="cs-pw-wrap">
                         <input asp-for="Input.Senha"
                                id="pwRegistro"
@@ -92,7 +83,10 @@
                         <button type="button"
                                 class="cs-pw-toggle"
                                 onclick="csToglePw('pwRegistro', this)"
-                                title="Mostrar senha">&#128065;</button>
+                                data-label="senha"
+                                title="Mostrar senha"
+                                aria-label="Mostrar senha"
+                                aria-pressed="false">Ver</button>
                     </div>
                     <div class="cs-pw-strength">
                         <div class="cs-pw-strength-bar" id="pwStrengthBar"></div>
@@ -101,7 +95,7 @@
                 </div>
 
                 <div class="cs-field">
-                    <label asp-for="Input.ConfirmacaoSenha" class="cs-field-label">&#128273; Confirmar Senha</label>
+                    <label asp-for="Input.ConfirmacaoSenha" class="cs-field-label">Confirmar senha</label>
                     <div class="cs-pw-wrap">
                         <input asp-for="Input.ConfirmacaoSenha"
                                id="pwConfirm"
@@ -112,23 +106,24 @@
                         <button type="button"
                                 class="cs-pw-toggle"
                                 onclick="csToglePw('pwConfirm', this)"
-                                title="Mostrar senha">&#128065;</button>
+                                data-label="confirmação de senha"
+                                title="Mostrar confirmação de senha"
+                                aria-label="Mostrar confirmação de senha"
+                                aria-pressed="false">Ver</button>
                     </div>
                     <span asp-validation-for="Input.ConfirmacaoSenha" class="cs-field-error"></span>
                 </div>
 
                 <button type="submit" class="cs-auth-submit">
-                    Criar minha conta &rarr;
+                    Criar minha conta
                 </button>
             </form>
 
             <div class="cs-auth-footer-link">
                 Já tem uma conta? <a asp-page="./Login">Faça login</a>
             </div>
-
         </div>
     </div>
-
 </div>
 
 @section Scripts {
@@ -136,14 +131,20 @@
     <script>
         function csToglePw(id, btn) {
             var input = document.getElementById(id);
+            var label = btn.getAttribute('data-label') || 'senha';
+
             if (input.type === 'password') {
                 input.type = 'text';
-                btn.innerHTML = '&#128064;';
-                btn.title = 'Ocultar senha';
+                btn.textContent = 'Ocultar';
+                btn.title = 'Ocultar ' + label;
+                btn.setAttribute('aria-label', 'Ocultar ' + label);
+                btn.setAttribute('aria-pressed', 'true');
             } else {
                 input.type = 'password';
-                btn.innerHTML = '&#128065;';
-                btn.title = 'Mostrar senha';
+                btn.textContent = 'Ver';
+                btn.title = 'Mostrar ' + label;
+                btn.setAttribute('aria-label', 'Mostrar ' + label);
+                btn.setAttribute('aria-pressed', 'false');
             }
         }
 
@@ -157,7 +158,7 @@
             if (/[^A-Za-z0-9]/.test(val)) score++;
 
             var widths = ['0%', '20%', '40%', '65%', '85%', '100%'];
-            var colors = ['transparent', '#e63946', '#f4a261', '#f4d03f', '#2a9d8f', '#17bebb'];
+            var colors = ['transparent', '#cf3f4a', '#d69e2e', '#e0b946', '#168f75', '#0f735d'];
             bar.style.width = widths[score];
             bar.style.background = colors[score];
         }
