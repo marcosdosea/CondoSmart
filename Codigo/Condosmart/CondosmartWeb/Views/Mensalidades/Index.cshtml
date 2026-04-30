@@ -1,79 +1,208 @@
-@model IEnumerable<CondosmartWeb.Models.MensalidadeViewModel>
+﻿@model CondosmartWeb.Models.MensalidadesAdminPageViewModel
 
 @{
     ViewData["Title"] = "Mensalidades";
-    var statusFiltro = Context.Request.Query["status"].ToString();
+}
+
+@functions {
+    private static string StatusClass(string status)
+    {
+        return status switch
+        {
+            "pago" => "text-bg-success",
+            "pendente" => "text-bg-warning",
+            "atrasado" => "text-bg-danger",
+            _ => "text-bg-secondary"
+        };
+    }
 }
 
 <div class="cs-page-heading">
     <div>
         <h2 class="fw-bold mb-0"><i class="bi bi-cash-coin me-2" aria-hidden="true"></i>Mensalidades</h2>
-        <small class="text-muted">Gerencie os pagamentos de condomínio</small>
+        <small class="text-muted">Configure valores por condominio, gere parcelas e acompanhe as cobrancas.</small>
+    </div>
+</div>
+
+@if (TempData["Sucesso"] is string sucesso)
+{
+    <div class="alert alert-success">@sucesso</div>
+}
+
+@if (TempData["Erro"] is string erro)
+{
+    <div class="alert alert-danger">@erro</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <div asp-validation-summary="ModelOnly"></div>
+    </div>
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-6">
+        <div class="cs-card h-100">
+            <div class="cs-card-header">Configuracao por condominio</div>
+            <div class="cs-card-body">
+                <form asp-action="SalvarConfiguracao" method="post" class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Configuracao.CondominioId" class="form-label fw-semibold">Condominio</label>
+                        <select asp-for="Configuracao.CondominioId" class="form-select" asp-items="Model.Condominios">
+                            <option value="">Selecione um condominio</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Configuracao.ValorMensalidade" class="form-label fw-semibold">Valor da mensalidade</label>
+                        <input asp-for="Configuracao.ValorMensalidade" class="form-control" type="number" step="0.01" min="0.01" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Configuracao.DiaVencimento" class="form-label fw-semibold">Dia do vencimento</label>
+                        <input asp-for="Configuracao.DiaVencimento" class="form-control" type="number" min="1" max="28" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Configuracao.QuantidadeParcelasPadrao" class="form-label fw-semibold">Parcelas padrao</label>
+                        <input asp-for="Configuracao.QuantidadeParcelasPadrao" class="form-control" type="number" min="1" max="12" />
+                    </div>
+                    <div class="col-12 form-check ms-1">
+                        <input asp-for="Configuracao.Ativa" class="form-check-input" />
+                        <label asp-for="Configuracao.Ativa" class="form-check-label">Configuracao ativa</label>
+                    </div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-cs-primary">Salvar configuracao</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="cs-card h-100">
+            <div class="cs-card-header">Geracao em lote</div>
+            <div class="cs-card-body">
+                <form asp-action="GerarParcelas" method="post" class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Geracao.CondominioId" class="form-label fw-semibold">Condominio</label>
+                        <select asp-for="Geracao.CondominioId" class="form-select" asp-items="Model.Condominios">
+                            <option value="">Selecione um condominio</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Geracao.AnoReferencia" class="form-label fw-semibold">Ano de referencia</label>
+                        <input asp-for="Geracao.AnoReferencia" class="form-control" type="number" min="2000" max="2100" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Geracao.QuantidadeParcelas" class="form-label fw-semibold">Quantidade de parcelas</label>
+                        <input asp-for="Geracao.QuantidadeParcelas" class="form-control" type="number" min="1" max="12" />
+                    </div>
+                    <div class="col-12">
+                        <div class="alert alert-light border mb-0">
+                            Gera automaticamente as parcelas para todas as unidades com morador vinculado no condominio selecionado.
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-outline-primary">Gerar parcelas</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cs-card mb-4">
+    <div class="cs-card-header">Filtros</div>
+    <div class="cs-card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label asp-for="Filtro.CondominioId" class="form-label fw-semibold">Condominio</label>
+                <select asp-for="Filtro.CondominioId" class="form-select" asp-items="Model.Condominios">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Filtro.UnidadeId" class="form-label fw-semibold">Unidade</label>
+                <select asp-for="Filtro.UnidadeId" class="form-select" asp-items="Model.Unidades">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Filtro.Status" class="form-label fw-semibold">Status</label>
+                <select asp-for="Filtro.Status" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="atrasado">Atrasado</option>
+                    <option value="pago">Pago</option>
+                    <option value="cancelada">Cancelada</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Filtro.MesCompetencia" class="form-label fw-semibold">Mes</label>
+                <input asp-for="Filtro.MesCompetencia" class="form-control" type="number" min="1" max="12" />
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Filtro.AnoCompetencia" class="form-label fw-semibold">Ano</label>
+                <input asp-for="Filtro.AnoCompetencia" class="form-control" type="number" min="2000" max="2100" />
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="btn btn-cs-outline">Limpar</a>
+                <button type="submit" class="btn btn-cs-primary">Filtrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="cs-card mb-4">
+    <div class="cs-card-header">Configuracoes ativas</div>
+    <div class="cs-card-body">
+        @if (!Model.Configuracoes.Any())
+        {
+            <div class="alert alert-light border mb-0">Nenhuma configuracao cadastrada.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Condominio</th>
+                            <th>Valor</th>
+                            <th>Dia de vencimento</th>
+                            <th>Parcelas padrao</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Configuracoes)
+                        {
+                            <tr>
+                                <td>@item.Condominio</td>
+                                <td>@item.ValorMensalidade.ToString("C")</td>
+                                <td>@item.DiaVencimento</td>
+                                <td>@item.QuantidadeParcelasPadrao</td>
+                                <td>
+                                    <span class="badge @(item.Ativa ? "text-bg-success" : "text-bg-secondary")">
+                                        @(item.Ativa ? "Ativa" : "Inativa")
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
     </div>
 </div>
 
 <div class="cs-card">
     <div class="cs-card-header d-flex justify-content-between align-items-center">
-        <span>Lista de Mensalidades</span>
-        <span class="text-muted small">Total: @Model.Count()</span>
+        <span>Parcelas geradas</span>
+        <span class="text-muted small">Total: @Model.Mensalidades.Count</span>
     </div>
-
     <div class="cs-card-body">
-        <!-- Filtro de Status -->
-        <form method="get" class="mb-3">
-            <div class="row g-2 align-items-end">
-                <div class="col-md-3">
-                    <label for="status" class="form-label small">Filtrar por Status:</label>
-                    <select name="status" id="status" class="form-select" onchange="this.form.submit()">
-                        <option value="">Todos</option>
-                        @if (statusFiltro == "pendente")
-                        {
-                            <option value="pendente" selected>Pendente</option>
-                        }
-                        else
-                        {
-                            <option value="pendente">Pendente</option>
-                        }
-                        @if (statusFiltro == "vencida")
-                        {
-                            <option value="vencida" selected>Vencida</option>
-                        }
-                        else
-                        {
-                            <option value="vencida">Vencida</option>
-                        }
-                        @if (statusFiltro == "pago")
-                        {
-                            <option value="pago" selected>Pago</option>
-                        }
-                        else
-                        {
-                            <option value="pago">Pago</option>
-                        }
-                        @if (statusFiltro == "cancelada")
-                        {
-                            <option value="cancelada" selected>Cancelada</option>
-                        }
-                        else
-                        {
-                            <option value="cancelada">Cancelada</option>
-                        }
-                    </select>
-                </div>
-                @if (!string.IsNullOrEmpty(statusFiltro))
-                {
-                    <div class="col-auto">
-                        <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary">Limpar Filtro</a>
-                    </div>
-                }
-            </div>
-        </form>
-
-        @if (!Model.Any())
+        @if (!Model.Mensalidades.Any())
         {
-            <div class="alert alert-info text-center mb-0">
-                Nenhuma mensalidade encontrada.
-            </div>
+            <div class="alert alert-info mb-0">Nenhuma mensalidade encontrada para os filtros informados.</div>
         }
         else
         {
@@ -81,61 +210,33 @@
                 <table class="table table-hover align-middle mb-0 js-data-table">
                     <thead class="table-light">
                         <tr>
-                            <th>Id</th>
-                            <th>Competência</th>
-                            <th>Vencimento</th>
-                            <th>Valor</th>
-                            <th>Status</th>
-                            <th>Condomínio</th>
-                            <th>Unidade</th>
                             <th>Morador</th>
-                            <th class="text-center">Ações</th>
+                            <th>Unidade</th>
+                            <th>Competencia</th>
+                            <th>Valor original</th>
+                            <th>Valor final</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th class="text-center">Acoes</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.Mensalidades)
                         {
                             <tr>
-                                <td>@item.Id</td>
+                                <td>@(item.MoradorNome ?? "-")</td>
+                                <td>@(item.UnidadeIdentificador ?? "-")</td>
                                 <td>@item.Competencia.ToString("MM/yyyy")</td>
-                                <td>
-                                    @item.Vencimento.ToString("dd/MM/yyyy")
-                                    @if (item.EstaVencida)
-                                    {
-                                        <span class="badge bg-danger ms-1">Vencida</span>
-                                    }
-                                </td>
-                                <td>@item.Valor.ToString("C")</td>
-                                <td>
-                                    @{
-                                        var statusClass = item.Status switch
-                                        {
-                                            "pago" => "badge bg-success",
-                                            "pendente" => "badge bg-warning text-dark",
-                                            "vencida" => "badge bg-danger",
-                                            "cancelada" => "badge bg-secondary",
-                                            _ => "badge bg-secondary"
-                                        };
-                                    }
-                                    <span class="@statusClass">@item.Status.ToUpper()</span>
-                                </td>
-                                <td>@(item.CondominioNome ?? $"Condomínio {item.CondominioId}")</td>
-                                <td>@(item.UnidadeIdentificador ?? $"Unidade {item.UnidadeId}")</td>
-                                <td>@(item.MoradorNome ?? (item.MoradorId.HasValue ? $"Morador {item.MoradorId}" : "-"))</td>
+                                <td>@item.ValorOriginal.ToString("C")</td>
+                                <td>@item.ValorFinal.ToString("C")</td>
+                                <td>@item.Vencimento.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge @StatusClass(item.Status)">@item.Status</span></td>
                                 <td class="text-center">
-                                    <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes"><i class="bi bi-eye" aria-hidden="true"></i></a>
-
-                                    @if (item.PodePagar)
-                                    {
-                                        <a asp-action="Pagar" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-success" title="Pagar"><i class="bi bi-credit-card me-1" aria-hidden="true"></i>Pagar</a>
-                                    }
-                                    else if (item.PagamentoId.HasValue)
-                                    {
-                                        <a asp-action="Comprovante" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-info text-white" title="Ver 2ª Via"><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>2ª Via</a>
-                                    }
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-cs-outline">
+                                        <i class="bi bi-eye" aria-hidden="true"></i>
+                                    </a>
+                                    @* TODO: implementar pagamento *@
+                                    <button type="button" class="btn btn-sm btn-outline-secondary ms-1" disabled>Pagar</button>
                                 </td>
                             </tr>
                         }
