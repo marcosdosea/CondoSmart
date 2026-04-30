@@ -1,23 +1,23 @@
-@model IEnumerable<CondosmartWeb.Models.ReservaViewModel>
+@model IEnumerable<CondosmartWeb.Models.PagamentoViewModel>
 
 @{
-    ViewData["Title"] = "Reservas";
+    ViewData["Title"] = "Pagamentos";
 }
 
 <div class="cs-page-heading">
     <div>
-        <h2 class="fw-bold mb-0">📅 Reservas</h2>
-        <small class="text-muted">Gerencie as reservas de áreas comuns</small>
+        <h2 class="fw-bold mb-0">Pagamentos</h2>
+        <small class="text-muted">Acompanhe os pagamentos registrados no condomínio</small>
     </div>
 
     <a asp-action="Create" class="btn btn-cs-primary">
-        ➕ Nova Reserva
+        Novo Pagamento
     </a>
 </div>
 
 <div class="cs-card">
     <div class="cs-card-header d-flex justify-content-between align-items-center">
-        <span>Lista de Reservas</span>
+        <span>Lista de Pagamentos</span>
         <span class="text-muted small">Total: @Model.Count()</span>
     </div>
 
@@ -25,7 +25,7 @@
         @if (!Model.Any())
         {
             <div class="alert alert-info text-center mb-0">
-                Nenhuma reserva cadastrada.
+                Nenhum pagamento cadastrado.
             </div>
         }
         else
@@ -34,12 +34,13 @@
                 <table class="table table-hover align-middle mb-0 js-data-table">
                     <thead class="table-light">
                         <tr>
-                            <th>Área</th>
                             <th>Condomínio</th>
                             <th>Morador</th>
-                            <th>Data Início</th>
-                            <th>Data Fim</th>
+                            <th>Unidade</th>
+                            <th>Forma</th>
+                            <th>Valor</th>
                             <th>Status</th>
+                            <th>Data</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -47,32 +48,33 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td class="fw-semibold">@item.AreaId</td>
                                 <td>@item.CondominioId</td>
-                                <td>@item.MoradorId</td>
-                                <td>@item.DataInicio.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>@item.DataFim.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@(item.MoradorId?.ToString() ?? "-")</td>
+                                <td>@(item.UnidadeId?.ToString() ?? "-")</td>
+                                <td class="fw-semibold">@item.FormaPagamento</td>
+                                <td>@item.Valor.ToString("C")</td>
                                 <td>
                                     @{
                                         var statusClass = item.Status switch
                                         {
-                                            "Confirmada" => "badge bg-success",
-                                            "Pendente" => "badge bg-warning",
-                                            "Cancelada" => "badge bg-danger",
+                                            "pago" => "badge bg-success",
+                                            "pendente" => "badge bg-warning text-dark",
+                                            "cancelado" => "badge bg-danger",
                                             _ => "badge bg-secondary"
                                         };
                                     }
                                     <span class="@statusClass">@item.Status</span>
                                 </td>
+                                <td>@(item.DataPagamento?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
                                 <td class="text-center">
                                     <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">🔎</a>
+                                       class="btn btn-sm btn-cs-outline me-1" title="Detalhes">Detalhes</a>
 
                                     <a asp-action="Edit" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-cs-outline me-1" title="Editar">✏️</a>
+                                       class="btn btn-sm btn-cs-outline me-1" title="Editar">Editar</a>
 
                                     <a asp-action="Delete" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-danger" title="Excluir">🗑️</a>
+                                       class="btn btn-sm btn-outline-danger" title="Excluir">Excluir</a>
                                 </td>
                             </tr>
                         }

@@ -83,7 +83,10 @@
                         <button type="button"
                                 class="cs-pw-toggle"
                                 onclick="csToglePw('pwRegistro', this)"
-                                title="Mostrar senha">Ver</button>
+                                data-label="senha"
+                                title="Mostrar senha"
+                                aria-label="Mostrar senha"
+                                aria-pressed="false">Ver</button>
                     </div>
                     <div class="cs-pw-strength">
                         <div class="cs-pw-strength-bar" id="pwStrengthBar"></div>
@@ -103,7 +106,10 @@
                         <button type="button"
                                 class="cs-pw-toggle"
                                 onclick="csToglePw('pwConfirm', this)"
-                                title="Mostrar senha">Ver</button>
+                                data-label="confirmação de senha"
+                                title="Mostrar confirmação de senha"
+                                aria-label="Mostrar confirmação de senha"
+                                aria-pressed="false">Ver</button>
                     </div>
                     <span asp-validation-for="Input.ConfirmacaoSenha" class="cs-field-error"></span>
                 </div>
@@ -125,14 +131,20 @@
     <script>
         function csToglePw(id, btn) {
             var input = document.getElementById(id);
+            var label = btn.getAttribute('data-label') || 'senha';
+
             if (input.type === 'password') {
                 input.type = 'text';
                 btn.textContent = 'Ocultar';
-                btn.title = 'Ocultar senha';
+                btn.title = 'Ocultar ' + label;
+                btn.setAttribute('aria-label', 'Ocultar ' + label);
+                btn.setAttribute('aria-pressed', 'true');
             } else {
                 input.type = 'password';
                 btn.textContent = 'Ver';
-                btn.title = 'Mostrar senha';
+                btn.title = 'Mostrar ' + label;
+                btn.setAttribute('aria-label', 'Mostrar ' + label);
+                btn.setAttribute('aria-pressed', 'false');
             }
         }
 
