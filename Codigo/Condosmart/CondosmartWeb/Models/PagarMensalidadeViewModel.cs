@@ -8,9 +8,10 @@ public class PagarMensalidadeViewModel
 
     [Display(Name = "Forma de Pagamento")]
     [Required(ErrorMessage = "Selecione a forma de pagamento")]
+    [RegularExpression("^(pix|cartao_credito|cartao_debito|boleto|dinheiro)$", ErrorMessage = "Selecione uma forma de pagamento v√°lida.")]
     public string FormaPagamento { get; set; } = null!;
 
-    // Dados da mensalidade para exibiÁ„o
+    // Dados da mensalidade para exibi√ß√£o
     public decimal Valor { get; set; }
     public DateTime Competencia { get; set; }
     public DateTime Vencimento { get; set; }

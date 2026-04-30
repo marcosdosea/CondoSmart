@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace CondosmartWeb.Models
 {
@@ -17,18 +17,22 @@ namespace CondosmartWeb.Models
 		[Required(ErrorMessage = "A data do chamado é obrigatória")]
 		public DateTime DataChamado { get; set; } = DateTime.Now;
 
+		[Range(1, int.MaxValue, ErrorMessage = "Informe um morador válido")]
 		[Display(Name = "Morador")]
 		public int? MoradorId { get; set; }
 
+		[Range(1, int.MaxValue, ErrorMessage = "Informe um síndico válido")]
 		[Display(Name = "Síndico")]
 		public int? SindicoId { get; set; }
 
 		[Required(ErrorMessage = "O condomínio é obrigatório")]
+		[Range(1, int.MaxValue, ErrorMessage = "Informe um condomínio válido")]
 		[Display(Name = "Condomínio")]
 		public int CondominioId { get; set; }
 
 		[Required(ErrorMessage = "O status é obrigatório")]
 		[StringLength(30, ErrorMessage = "O status não pode exceder 30 caracteres.")]
+		[RegularExpression("^(aberto|em_andamento|resolvido|cancelado)$", ErrorMessage = "Selecione um status válido.")]
 		[Display(Name = "Status")]
 		public string Status { get; set; } = "aberto";
 
