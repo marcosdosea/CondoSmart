@@ -61,6 +61,20 @@ namespace Condosmart.Controllers
                 ReservasConfirmadas   = reservas.Count(r => r.Status == "confirmado" &&
                                                              r.DataFim.Date >= hoje),
                 TotalAreasLazer       = areas.Count,
+                MensalidadesAbertas   = mensalidades
+                    .Where(m => m.Status != "pago")
+                    .OrderBy(m => m.Vencimento)
+                    .Take(5)
+                    .Select(m => new DashboardMensalidadeItemViewModel
+                    {
+                        Id = m.Id,
+                        Unidade = m.Unidade?.Identificador ?? $"Unidade {m.UnidadeId}",
+                        Morador = m.Morador?.Nome ?? "-",
+                        Vencimento = m.Vencimento,
+                        Valor = m.Valor,
+                        Status = m.Status
+                    })
+                    .ToList(),
             };
 
             return View(vm);
