@@ -1009,3 +1009,577 @@ footer {
         display: none;
     }
 }
+
+/* =========================
+   Mockup fidelity pass
+   Cleaner SaaS/admin look based on the approved reference
+   ========================= */
+
+:root {
+    --cs-bg: #f7faf9;
+    --cs-bg-soft: #eef6f3;
+    --cs-sidebar: #00384a;
+    --cs-sidebar-2: #013c49;
+    --cs-primary: #009879;
+    --cs-primary-600: #008369;
+    --cs-primary-700: #006f5a;
+    --cs-accent: #f2a22c;
+    --cs-text: #101b1c;
+    --cs-muted: #657173;
+    --cs-border: #e0e7e6;
+    --cs-shadow-sm: 0 6px 20px rgba(16, 27, 28, .07);
+    --cs-shadow: 0 18px 42px rgba(16, 27, 28, .12);
+    --cs-sidebar-w: 244px;
+}
+
+body {
+    background: #fff;
+    color: var(--cs-text);
+    font-size: 14px;
+}
+
+.cs-shell {
+    background: #fff;
+}
+
+.cs-sidebar {
+    width: var(--cs-sidebar-w);
+    min-width: var(--cs-sidebar-w);
+    padding: 18px 8px;
+    background:
+        radial-gradient(circle at 18% 0%, rgba(0, 152, 121, .22), transparent 16rem),
+        linear-gradient(180deg, #00384a 0%, #013540 100%);
+    border-right: 0;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 12px 36px rgba(0, 56, 74, .22);
+}
+
+.cs-brand {
+    gap: 12px;
+    padding: 0 18px 24px;
+}
+
+.cs-brand-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #28d1b2;
+    font-size: 2rem;
+}
+
+.cs-brand-title {
+    font-size: 1.18rem;
+    letter-spacing: -.03em;
+}
+
+.cs-brand-title::after {
+    content: "Smart";
+    color: #18c7ac;
+}
+
+.cs-brand-title {
+    font-size: 0;
+}
+
+.cs-brand-title::before {
+    content: "Condo";
+    color: #fff;
+    font-size: 1.18rem;
+}
+
+.cs-brand-title::after {
+    font-size: 1.18rem;
+}
+
+.cs-brand-subtitle {
+    color: rgba(255, 255, 255, .78);
+    font-size: .76rem;
+}
+
+.cs-search {
+    display: none;
+}
+
+.cs-nav {
+    gap: 7px;
+    padding: 0 4px;
+}
+
+.cs-nav a {
+    min-height: 44px;
+    padding: 11px 18px;
+    border-radius: 7px;
+    color: rgba(255, 255, 255, .88);
+    font-size: .88rem;
+    font-weight: 800;
+}
+
+.cs-nav a::after {
+    display: none;
+}
+
+.cs-nav a:hover,
+.cs-nav a.active {
+    background: linear-gradient(135deg, #12b49d, #008f78);
+    color: #fff;
+    transform: none;
+    box-shadow: 0 10px 22px rgba(0, 152, 121, .22);
+}
+
+.cs-nav-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 0;
+    background: transparent;
+    color: currentColor;
+    font-size: 1.05rem;
+}
+
+.cs-main {
+    background: #fff;
+}
+
+.cs-topbar {
+    min-height: 56px;
+    padding: 0 22px;
+    background: rgba(255, 255, 255, .96);
+    border-bottom: 1px solid #e8eeee;
+    box-shadow: 0 2px 12px rgba(16, 27, 28, .04);
+}
+
+.cs-menu-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #233235;
+    font-size: 1.35rem;
+}
+
+.cs-menu-btn:hover {
+    background: #f1f6f4;
+}
+
+.cs-topbar .title {
+    font-size: .92rem;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.cs-condo-select {
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 18px;
+    border-left: 1px solid #e5eceb;
+    border-right: 1px solid #e5eceb;
+    color: #2e3b3d;
+    font-size: .84rem;
+    font-weight: 700;
+}
+
+.cs-icon-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #253335;
+    font-size: 1rem;
+}
+
+.cs-icon-btn:hover {
+    background: #f3f7f6;
+    box-shadow: none;
+    transform: none;
+}
+
+.cs-notification-btn span {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    width: 16px;
+    height: 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #f04444;
+    color: #fff;
+    font-size: .62rem;
+    font-weight: 900;
+}
+
+.cs-user-chip {
+    gap: 10px;
+    max-width: 230px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.cs-user-avatar {
+    width: 34px;
+    height: 34px;
+    background: var(--cs-primary);
+    color: #fff;
+}
+
+.cs-user-name {
+    font-size: .88rem;
+    font-weight: 900;
+}
+
+.cs-logout-btn {
+    color: #ef4444;
+}
+
+main.container {
+    max-width: none;
+    padding: 22px 28px 30px !important;
+}
+
+.cs-page-heading {
+    margin-bottom: 22px;
+}
+
+.cs-dashboard-hero h2,
+.cs-page-heading h2 {
+    font-size: clamp(1.5rem, 2vw, 1.82rem);
+    font-weight: 900;
+    letter-spacing: -.035em;
+}
+
+.cs-page-heading small {
+    color: #5f6d6f;
+    font-size: .88rem;
+    font-weight: 500;
+}
+
+.btn {
+    border-radius: 7px;
+    font-size: .84rem;
+}
+
+.btn-cs-primary,
+.cs-auth-submit,
+.cs-btn-entrar {
+    background: linear-gradient(135deg, #00a887, #008f75);
+    border: 0;
+    box-shadow: 0 10px 22px rgba(0, 152, 121, .22);
+}
+
+.btn-cs-primary {
+    border-radius: 999px;
+    padding: .72rem 1.35rem;
+}
+
+.btn-cs-outline {
+    border-color: #b8dbd4;
+    background: #fff;
+    color: #007a65;
+}
+
+.cs-card {
+    border: 1px solid #e1e8e7;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(16, 27, 28, .055);
+}
+
+.cs-card-header {
+    padding: 15px 18px;
+    background: #fff;
+    color: #152123;
+    font-size: .98rem;
+    font-weight: 900;
+}
+
+.cs-card-body {
+    padding: 14px 16px;
+}
+
+.cs-kpi-card {
+    min-height: 104px;
+    border-radius: 8px;
+}
+
+.cs-kpi-card::after {
+    display: none;
+}
+
+.cs-kpi {
+    align-items: center;
+    gap: 14px;
+}
+
+.cs-kpi-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #e8f8ee;
+    color: #008f75;
+    font-size: 1.25rem;
+}
+
+.cs-kpi-circle .bi {
+    font-size: 1.3rem;
+}
+
+.cs-kpi-value {
+    font-size: clamp(1.22rem, 1.5vw, 1.52rem);
+    letter-spacing: -.035em;
+}
+
+.cs-kpi-label {
+    color: #59686a;
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.cs-dashboard-table-card {
+    max-width: 860px;
+}
+
+.cs-dashboard-table-card .cs-card-body {
+    padding: 0;
+}
+
+.cs-dashboard-table th {
+    color: #0b6272;
+    font-size: .72rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.cs-dashboard-table td {
+    color: #4b585b;
+    font-size: .8rem;
+}
+
+.cs-dashboard-table > :not(caption) > * > * {
+    padding: .72rem .95rem;
+}
+
+.cs-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: .25rem .55rem;
+    border-radius: 7px;
+    font-size: .68rem;
+    font-weight: 800;
+}
+
+.cs-status-danger {
+    background: #ffe1e1;
+    color: #c71928;
+}
+
+.cs-status-warning {
+    background: #fff1d8;
+    color: #a75d00;
+}
+
+.btn-cs-table {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: .3rem .65rem;
+    border: 1px solid #d6e1df;
+    background: #fff;
+    color: #2f3a3c;
+    box-shadow: none;
+}
+
+.cs-progress-track {
+    height: 8px;
+    background: #e9f3ef;
+}
+
+footer {
+    background: #fff;
+}
+
+.cs-auth-shell {
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 44px 24px;
+    background: #fff;
+}
+
+.cs-auth-brand {
+    width: 310px;
+    min-height: 430px;
+    align-self: stretch;
+    padding: 34px 28px;
+    border: 1px solid #e1e8e7;
+    border-radius: 10px 0 0 10px;
+    background: #fff;
+    color: var(--cs-text);
+    box-shadow: 0 10px 28px rgba(16, 27, 28, .08);
+}
+
+.cs-auth-brand::before,
+.cs-auth-brand::after {
+    display: none;
+}
+
+.cs-auth-logo {
+    margin-bottom: 28px;
+}
+
+.cs-auth-logo-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #00a887;
+    font-size: 2rem;
+}
+
+.cs-auth-logo-badge::before {
+    content: "\F1DD";
+    font-family: "bootstrap-icons";
+    font-size: 2rem;
+}
+
+.cs-auth-logo-badge {
+    font-size: 0;
+}
+
+.cs-auth-brand-name {
+    color: #143034;
+    font-size: 1.45rem;
+}
+
+.cs-auth-brand-name::after {
+    content: "Smart";
+    color: #009879;
+}
+
+.cs-auth-brand-name {
+    font-size: 0;
+}
+
+.cs-auth-brand-name::before {
+    content: "Condo";
+    color: #143034;
+    font-size: 1.45rem;
+}
+
+.cs-auth-brand-name::after {
+    font-size: 1.45rem;
+}
+
+.cs-auth-brand-tag,
+.cs-auth-brand-heading {
+    color: #657173;
+}
+
+.cs-auth-brand-heading {
+    font-size: .92rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.55;
+}
+
+.cs-auth-features {
+    display: none;
+}
+
+.cs-auth-form-side {
+    flex: 0 1 380px;
+    padding: 0;
+}
+
+.cs-auth-form-box {
+    max-width: 380px;
+    min-height: 430px;
+    padding: 30px 28px;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 10px 28px rgba(16, 27, 28, .08);
+}
+
+.cs-auth-form-title {
+    font-size: 1.05rem;
+    letter-spacing: 0;
+}
+
+.cs-auth-form-desc {
+    font-size: .82rem;
+}
+
+.cs-field {
+    margin-bottom: 13px;
+}
+
+.cs-field-label {
+    font-size: .76rem;
+    font-weight: 700;
+}
+
+.cs-field-input {
+    min-height: 38px;
+    border-radius: 5px;
+    font-size: .82rem;
+}
+
+.cs-auth-submit {
+    min-height: 40px;
+    border-radius: 5px;
+}
+
+.cs-auth-footer-link,
+.cs-check-row label {
+    font-size: .78rem;
+}
+
+@media (max-width: 992px) {
+    .cs-menu-btn {
+        display: grid;
+    }
+
+    .cs-sidebar {
+        border-radius: 0 12px 12px 0;
+    }
+
+    main.container {
+        padding: 18px 16px 28px !important;
+    }
+}
+
+@media (min-width: 993px) {
+    .cs-overlay {
+        display: none !important;
+    }
+}
+
+@media (max-width: 880px) {
+    .cs-auth-shell {
+        display: block;
+        padding: 20px 14px;
+    }
+
+    .cs-auth-brand,
+    .cs-auth-form-box {
+        width: 100%;
+        max-width: 440px;
+        min-height: auto;
+        margin: 0 auto;
+        border-radius: 10px;
+    }
+
+    .cs-auth-brand {
+        margin-bottom: 12px;
+    }
+}

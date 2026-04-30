@@ -7,12 +7,14 @@
     var reservasPercentual = Model.TotalAreasLazer > 0
         ? Math.Clamp((int)Math.Round((double)Model.ReservasConfirmadas / Model.TotalAreasLazer * 100), 0, 100)
         : 0;
+    var primeiroNome = User.Identity?.Name?.Split('@')[0];
+    primeiroNome = string.IsNullOrWhiteSpace(primeiroNome) ? "Administrador" : primeiroNome;
 }
 
-<section class="cs-page-heading">
+<section class="cs-page-heading cs-dashboard-hero">
     <div>
-        <h2>Visão geral do condomínio</h2>
-        <small>Acompanhe pagamentos, ocupação, reservas e pendências em um só painel.</small>
+        <h2>Olá, @primeiroNome!</h2>
+        <small>Veja o resumo da gestão do condomínio.</small>
     </div>
     <a asp-controller="Mensalidades" asp-action="Index" class="btn btn-cs-primary">
         Ver mensalidades
@@ -26,7 +28,7 @@
                 <div class="cs-kpi-circle">R$</div>
                 <div>
                     <div class="cs-kpi-value">R$ @Model.TotalRecebidoMes.ToString("N0")</div>
-                    <div class="cs-kpi-label">Recebido no mês</div>
+                    <div class="cs-kpi-label">Mensalidades recebidas</div>
                 </div>
             </div>
         </div>
@@ -38,7 +40,7 @@
                 <div class="cs-kpi-circle">%</div>
                 <div>
                     <div class="cs-kpi-value">@Model.TaxaInadimplencia%</div>
-                    <div class="cs-kpi-label">Taxa de inadimplência</div>
+                    <div class="cs-kpi-label">Inadimplência atual</div>
                 </div>
             </div>
         </div>
@@ -50,7 +52,7 @@
                 <div class="cs-kpi-circle">EN</div>
                 <div>
                     <div class="cs-kpi-value">@Model.EntradasHoje</div>
-                    <div class="cs-kpi-label">Entradas registradas hoje</div>
+                    <div class="cs-kpi-label">Visitantes hoje</div>
                 </div>
             </div>
         </div>
@@ -62,10 +64,63 @@
                 <div class="cs-kpi-circle">AT</div>
                 <div>
                     <div class="cs-kpi-value">@Model.MensalidadesEmAtraso</div>
-                    <div class="cs-kpi-label">Mensalidades em atraso</div>
+                    <div class="cs-kpi-label">Mensalidades em aberto</div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="cs-card cs-dashboard-table-card mt-3 mt-xl-4">
+    <div class="cs-card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-card-checklist me-2"></i>Mensalidades em Aberto</span>
+        <a asp-controller="Mensalidades" asp-action="Index" class="btn btn-sm btn-cs-outline">Ver todas</a>
+    </div>
+    <div class="cs-card-body">
+        @if (!Model.MensalidadesAbertas.Any())
+        {
+            <div class="alert alert-info mb-0">Nenhuma mensalidade em aberto no momento.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table cs-dashboard-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Unidade</th>
+                            <th>Morador</th>
+                            <th>Vencimento</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.MensalidadesAbertas)
+                        {
+                            var status = item.Status ?? "";
+                            var statusClass = status.Equals("atrasado", StringComparison.OrdinalIgnoreCase) || status.Equals("vencida", StringComparison.OrdinalIgnoreCase)
+                                ? "cs-status cs-status-danger"
+                                : "cs-status cs-status-warning";
+
+                            <tr>
+                                <td>@item.Unidade</td>
+                                <td>@item.Morador</td>
+                                <td>@item.Vencimento.ToString("dd/MM/yyyy")</td>
+                                <td>@item.Valor.ToString("C")</td>
+                                <td><span class="@statusClass">@item.Status</span></td>
+                                <td class="text-end">
+                                    <a asp-controller="Mensalidades" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-cs-table">
+                                        <i class="bi bi-eye"></i>
+                                        Ver
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
     </div>
 </div>
 
