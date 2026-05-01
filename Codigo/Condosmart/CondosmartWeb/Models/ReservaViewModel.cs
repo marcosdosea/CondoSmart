@@ -1,55 +1,53 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CondosmartWeb.Models
 {
     public class ReservaViewModel : IValidatableObject
     {
-        [Display(Name = "Código")]
+        [Display(Name = "Codigo")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O campo Área é obrigatório")]
-        [Range(1, int.MaxValue, ErrorMessage = "Selecione uma área válida")]
-        [Display(Name = "Área")]
+        [Required(ErrorMessage = "O campo Area e obrigatorio")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione uma area valida")]
+        [Display(Name = "Area")]
         public int AreaId { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Selecione um morador válido")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um morador valido")]
         [Display(Name = "Morador")]
         public int? MoradorId { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Selecione um visitante válido")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um visitante valido")]
         [Display(Name = "Visitante")]
         public int? VisitanteId { get; set; }
 
-        [Required(ErrorMessage = "O campo Condomínio é obrigatório")]
-        [Range(1, int.MaxValue, ErrorMessage = "Selecione um condomínio válido")]
-        [Display(Name = "Condomínio")]
+        [Required(ErrorMessage = "O campo Condominio e obrigatorio")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um condominio valido")]
+        [Display(Name = "Condominio")]
         public int CondominioId { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Selecione um síndico válido")]
-        [Display(Name = "Síndico")]
+        [Range(1, int.MaxValue, ErrorMessage = "Selecione um sindico valido")]
+        [Display(Name = "Sindico")]
         public int? SindicoId { get; set; }
 
-        [Required(ErrorMessage = "A data/hora de início é obrigatória")]
-        [Display(Name = "Data de Início")]
+        [Required(ErrorMessage = "A data/hora de inicio e obrigatoria")]
+        [Display(Name = "Data de Inicio")]
         public DateTime DataInicio { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "A data/hora de fim é obrigatória")]
+        [Required(ErrorMessage = "A data/hora de fim e obrigatoria")]
         [Display(Name = "Data de Fim")]
         public DateTime DataFim { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "O status é obrigatório")]
+        [Required(ErrorMessage = "O status e obrigatorio")]
         [StringLength(20)]
-        [RegularExpression("^(pendente|confirmado|cancelado|concluido)$", ErrorMessage = "Selecione um status válido.")]
+        [RegularExpression("^(pendente|confirmado|cancelado|concluido)$", ErrorMessage = "Selecione um status valido.")]
         [Display(Name = "Status")]
         public string Status { get; set; } = "pendente";
 
-        // Opcional: exibir quando foi criado
         [Display(Name = "Criado em")]
         public DateTime? CreatedAt { get; set; }
 
-        [Display(Name = "Área de Lazer")]
-        public string? NomeArea {get; set; }
+        [Display(Name = "Area de Lazer")]
+        public string? NomeArea { get; set; }
 
         [Display(Name = "Nome do Morador")]
         public string? NomeMorador { get; set; }
@@ -59,7 +57,7 @@ namespace CondosmartWeb.Models
             if (DataFim <= DataInicio)
             {
                 yield return new ValidationResult(
-                    "A data de fim deve ser posterior à data de início.",
+                    "A data de fim deve ser posterior a data de inicio.",
                     new[] { nameof(DataFim) });
             }
         }

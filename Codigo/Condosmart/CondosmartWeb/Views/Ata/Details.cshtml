@@ -30,9 +30,19 @@
             </div>
 
             <div class="col-12">
-                <div class="text-muted small">Conteúdo</div>
-                <div class="fw-semibold" style="white-space: pre-wrap;">@Model.Conteudo</div>
+                <div class="text-muted small">Conteudo</div>
+                <div id="ataMarkdownDetalhes" class="fw-semibold cs-markdown-preview border rounded-4 p-3 bg-light" data-markdown="@Model.Conteudo"></div>
             </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ArquivoCaminho))
+            {
+                <div class="col-12">
+                    <div class="text-muted small">Arquivo anexado</div>
+                    <a href="@Model.ArquivoCaminho" target="_blank" rel="noopener" class="btn btn-cs-outline btn-sm mt-1">
+                        <i class="bi bi-file-earmark-arrow-down me-2" aria-hidden="true"></i>@(Model.ArquivoNomeOriginal ?? "Baixar arquivo")
+                    </a>
+                </div>
+            }
 
             @if (Model.CreatedAt.HasValue)
             {
@@ -44,3 +54,17 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const container = document.getElementById('ataMarkdownDetalhes');
+            if (!container || !window.marked) return;
+
+            const markdown = container.dataset.markdown || '';
+            container.innerHTML = markdown.trim()
+                ? window.marked.parse(markdown)
+                : 'Nenhuma observacao registrada para esta ata.';
+        })();
+    </script>
+}

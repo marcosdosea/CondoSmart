@@ -51,7 +51,7 @@ namespace Service
             if (!resultado.Succeeded)
                 return resultado;
 
-            var perfilResultado = await _userManager.AddToRoleAsync(usuario, Perfis.Admin);
+            var perfilResultado = await _userManager.AddToRoleAsync(usuario, Perfis.Morador);
             return perfilResultado.Succeeded ? resultado : perfilResultado;
         }
 
@@ -66,7 +66,7 @@ namespace Service
 
             var perfisAtuais = await _userManager.GetRolesAsync(usuario);
             if (perfisAtuais.Count == 0)
-                await _userManager.AddToRoleAsync(usuario, Perfis.Admin);
+                await _userManager.AddToRoleAsync(usuario, Perfis.Morador);
         }
 
         private async Task GarantirPerfisAsync()

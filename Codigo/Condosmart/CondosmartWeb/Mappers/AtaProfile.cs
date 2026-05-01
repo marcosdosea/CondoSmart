@@ -13,6 +13,8 @@ namespace CondosmartWeb.Mappers
                     src.DataReuniao.HasValue ? src.DataReuniao.Value.ToDateTime(TimeOnly.MinValue) : DateTime.Now));
 
             CreateMap<AtaViewModel, Ata>()
+                .ForMember(dest => dest.ArquivoNomeOriginal, opt => opt.Ignore())
+                .ForMember(dest => dest.ArquivoCaminho, opt => opt.Ignore())
                 .ForMember(dest => dest.DataReuniao, opt => opt.MapFrom(src => 
                     DateOnly.FromDateTime(src.DataReuniao)));
         }

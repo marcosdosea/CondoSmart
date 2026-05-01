@@ -1,5 +1,6 @@
 using AutoMapper;
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Core.Identity;
 using Core.Models;
 using Core.Service;
@@ -15,22 +16,29 @@ namespace CondosmartWeb.Controllers
         private readonly IMensalidadeService _mensalidadeService;
         private readonly ICondominioService _condominioService;
         private readonly IUnidadesResidenciaisService _unidadesService;
+        private readonly ICondominioContextService _condominioContextService;
+        private readonly INotificacaoService _notificacaoService;
         private readonly IMapper _mapper;
 
         public MensalidadesController(
             IMensalidadeService mensalidadeService,
             ICondominioService condominioService,
             IUnidadesResidenciaisService unidadesService,
+            ICondominioContextService condominioContextService,
+            INotificacaoService notificacaoService,
             IMapper mapper)
         {
             _mensalidadeService = mensalidadeService;
             _condominioService = condominioService;
             _unidadesService = unidadesService;
+            _condominioContextService = condominioContextService;
+            _notificacaoService = notificacaoService;
             _mapper = mapper;
         }
 
         public IActionResult Index(FiltroMensalidadeViewModel filtro)
         {
+            filtro.CondominioId ??= _condominioContextService.GetCondominioAtualId();
             var viewModel = MontarPagina(filtro);
             return View(viewModel);
         }
@@ -55,6 +63,7 @@ namespace CondosmartWeb.Controllers
 
                 _mensalidadeService.SalvarConfiguracao(configuracao);
                 TempData["Sucesso"] = "Configuracao de mensalidade salva com sucesso.";
+                RegistrarNotificacao(configuracaoVm.CondominioId, "Configuracao de mensalidade", "As configuracoes de mensalidade do condominio foram atualizadas.");
                 return RedirectToAction(nameof(Index), new { condominioId = configuracaoVm.CondominioId, page = 1 });
             }
             catch (ArgumentException ex)
@@ -84,6 +93,7 @@ namespace CondosmartWeb.Controllers
                     geracaoVm.QuantidadeParcelas);
 
                 TempData["Sucesso"] = $"Geracao concluida: {resultado.ParcelasGeradas} parcela(s) criada(s) e {resultado.ParcelasIgnoradas} ignorada(s).";
+                RegistrarNotificacao(geracaoVm.CondominioId, "Parcelas geradas", $"Foram geradas {resultado.ParcelasGeradas} parcelas para o ano de {geracaoVm.AnoReferencia}.");
                 return RedirectToAction(nameof(Index), new
                 {
                     condominioId = geracaoVm.CondominioId,
@@ -138,6 +148,7 @@ namespace CondosmartWeb.Controllers
             GerarParcelasMensalidadeViewModel? geracao = null)
         {
             filtro ??= new FiltroMensalidadeViewModel();
+            filtro.CondominioId ??= _condominioContextService.GetCondominioAtualId();
 
             var mensalidades = _mensalidadeService.Filtrar(
                 filtro.CondominioId,
@@ -187,6 +198,21 @@ namespace CondosmartWeb.Controllers
                     $"{u.Condominio?.Nome} - {u.Identificador}",
                     u.Id.ToString())).ToList()
             };
+        }
+
+        private void RegistrarNotificacao(int condominioId, string titulo, string mensagem)
+        {
+            if (condominioId <= 0)
+                return;
+
+            _notificacaoService.Criar(
+                User.Identity?.Name ?? "sistema",
+                User.Identity?.Name ?? "Sistema",
+                titulo,
+                mensagem,
+                "info",
+                condominioId,
+                Url.Action(nameof(Index), new { condominioId }) ?? "/Mensalidades");
         }
     }
 }

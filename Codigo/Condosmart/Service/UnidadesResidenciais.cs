@@ -135,12 +135,11 @@ namespace Service
             if (!string.IsNullOrWhiteSpace(unidade.Cep) && unidade.Cep.Length != 8)
                 throw new ArgumentException("CEP deve ter 8 caracteres (somente números).");
 
-            // Telefones são opcionais, mas se informados validamos comprimento mínimo simples
-            if (!string.IsNullOrWhiteSpace(unidade.TelefoneResidencial) && unidade.TelefoneResidencial.Length < 8)
-                throw new ArgumentException("Telefone residencial inválido.");
+            if (!string.IsNullOrWhiteSpace(unidade.TelefoneResidencial) && unidade.TelefoneResidencial.Length != 11)
+                throw new ArgumentException("Telefone residencial invalido. Informe exatamente 11 digitos.");
 
-            if (!string.IsNullOrWhiteSpace(unidade.TelefoneCelular) && unidade.TelefoneCelular.Length < 8)
-                throw new ArgumentException("Telefone celular inválido.");
+            if (!string.IsNullOrWhiteSpace(unidade.TelefoneCelular) && unidade.TelefoneCelular.Length != 11)
+                throw new ArgumentException("Telefone celular invalido. Informe exatamente 11 digitos.");
         }
     }
 }

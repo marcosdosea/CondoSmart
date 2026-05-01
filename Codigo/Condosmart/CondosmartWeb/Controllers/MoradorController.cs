@@ -1,5 +1,6 @@
 using AutoMapper;
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Core.Identity;
 using Core.Models;
 using Core.Service;
@@ -16,6 +17,8 @@ namespace CondosmartWeb.Controllers
         private readonly ICondominioService _condominioService;
         private readonly IUnidadesResidenciaisService _unidadesService;
         private readonly IMoradorProvisionamentoService _provisionamentoService;
+        private readonly ICondominioContextService _condominioContextService;
+        private readonly INotificacaoService _notificacaoService;
         private readonly IMapper _mapper;
 
         public MoradorController(
@@ -23,18 +26,26 @@ namespace CondosmartWeb.Controllers
             ICondominioService condominioService,
             IUnidadesResidenciaisService unidadesService,
             IMoradorProvisionamentoService provisionamentoService,
+            ICondominioContextService condominioContextService,
+            INotificacaoService notificacaoService,
             IMapper mapper)
         {
             _service = service;
             _condominioService = condominioService;
             _unidadesService = unidadesService;
             _provisionamentoService = provisionamentoService;
+            _condominioContextService = condominioContextService;
+            _notificacaoService = notificacaoService;
             _mapper = mapper;
         }
 
         public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var lista = _service.GetAll().OrderBy(m => m.Nome).ToList();
+            var condominioAtualId = _condominioContextService.GetCondominioAtualId();
+            var lista = _service.GetAll()
+                .Where(m => !condominioAtualId.HasValue || m.CondominioId == condominioAtualId.Value)
+                .OrderBy(m => m.Nome)
+                .ToList();
             var vms = _mapper.Map<List<MoradorViewModel>>(lista);
             return View(PagedListViewModel<MoradorViewModel>.Create(vms, page, pageSize));
         }
@@ -53,8 +64,13 @@ namespace CondosmartWeb.Controllers
 
         public IActionResult Create()
         {
-            PopularDropdowns();
-            return View();
+            var condominioId = _condominioContextService.GetCondominioAtualId();
+            var vm = new MoradorViewModel
+            {
+                CondominioId = condominioId
+            };
+            PopularDropdowns(condominioId, vm.UnidadeId);
+            return View(vm);
         }
 
         [HttpPost]
@@ -91,6 +107,10 @@ namespace CondosmartWeb.Controllers
                 SetTempData("ProvisioningLink", resultado.UrlAcesso);
                 SetTempData("ProvisioningStatus", resultado.EmailEnviado ? "enviado" : "pendente");
                 SetTempData("ProvisioningWarning", resultado.ObservacaoEmail);
+                RegistrarNotificacao(
+                    entity.CondominioId ?? vm.CondominioId ?? 0,
+                    "Morador cadastrado",
+                    $"O morador {resultado.NomeMorador} foi cadastrado com acesso ao sistema.");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -141,6 +161,10 @@ namespace CondosmartWeb.Controllers
                 await _provisionamentoService.AtualizarContaMoradorAsync(anterior?.Email, entity);
 
                 SetTempData("Sucesso", "Morador atualizado com sucesso.");
+                RegistrarNotificacao(
+                    entity.CondominioId ?? vm.CondominioId ?? 0,
+                    "Morador atualizado",
+                    $"O cadastro do morador {entity.Nome} foi atualizado.");
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
@@ -177,7 +201,13 @@ namespace CondosmartWeb.Controllers
             {
                 var entity = _service.GetById(id);
                 if (entity is not null)
+                {
                     await _provisionamentoService.RemoverAcessoAsync(id, entity.Email);
+                    RegistrarNotificacao(
+                        entity.CondominioId ?? 0,
+                        "Morador removido",
+                        $"O morador {entity.Nome} foi removido do sistema.");
+                }
 
                 _service.Delete(id);
                 SetTempData("Sucesso", "Morador removido com sucesso.");
@@ -198,6 +228,8 @@ namespace CondosmartWeb.Controllers
 
         private void PopularDropdowns(int? condominioId = null, int? unidadeSelecionada = null)
         {
+            condominioId ??= _condominioContextService.GetCondominioAtualId();
+
             var condominios = _condominioService.GetAll()
                 .OrderBy(c => c.Nome)
                 .ToList();
@@ -217,6 +249,21 @@ namespace CondosmartWeb.Controllers
 
             ViewBag.Condominios = new SelectList(condominios, "Id", "Nome", condominioId);
             ViewBag.Unidades = new SelectList(unidades, "Id", "Nome", unidadeSelecionada);
+        }
+
+        private void RegistrarNotificacao(int condominioId, string titulo, string mensagem)
+        {
+            if (condominioId <= 0)
+                return;
+
+            _notificacaoService.Criar(
+                User.Identity?.Name ?? "sistema",
+                User.Identity?.Name ?? "Sistema",
+                titulo,
+                mensagem,
+                "info",
+                condominioId,
+                Url.Action(nameof(Index)) ?? "/Morador");
         }
     }
 }

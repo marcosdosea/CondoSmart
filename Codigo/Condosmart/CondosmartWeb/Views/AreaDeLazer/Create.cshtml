@@ -10,7 +10,7 @@
     </div>
 
     <div class="cs-card-body">
-        <form asp-action="Create" method="post" class="row g-3">
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="col-12 col-lg-8">
@@ -49,6 +49,13 @@
                     <option value="">Selecione um síndico (opcional)</option>
                 </select>
                 <span asp-validation-for="SindicoId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="ImagemArquivo" class="form-label fw-semibold"></label>
+                <input asp-for="ImagemArquivo" class="form-control" type="file" accept=".png,.jpg,.jpeg,.webp" />
+                <small class="text-muted">Adicione uma imagem para ilustrar a area de lazer no sistema.</small>
+                <span asp-validation-for="ImagemArquivo" class="text-danger"></span>
             </div>
 
             <div class="col-12 d-flex gap-2 justify-content-end mt-2">

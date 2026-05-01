@@ -29,8 +29,9 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="CondominioId" class="form-label fw-semibold"></label>
-                <input asp-for="CondominioId" class="form-control" type="number" readonly />
-                <small class="text-muted">ID do condomínio (não pode ser alterado)</small>
+                <select asp-for="CondominioId" class="form-select" asp-items="ViewBag.Condominios">
+                    <option value="">Selecione o condominio...</option>
+                </select>
                 <span asp-validation-for="CondominioId" class="text-danger"></span>
             </div>
 
@@ -47,13 +48,17 @@
 
             <div class="col-12 col-lg-6">
                 <label asp-for="MoradorId" class="form-label fw-semibold"></label>
-                <input asp-for="MoradorId" class="form-control" type="number" placeholder="Opcional" />
+                <select asp-for="MoradorId" class="form-select" asp-items="ViewBag.Moradores">
+                    <option value="">Selecione o morador...</option>
+                </select>
                 <span asp-validation-for="MoradorId" class="text-danger"></span>
             </div>
 
             <div class="col-12 col-lg-6">
                 <label asp-for="SindicoId" class="form-label fw-semibold"></label>
-                <input asp-for="SindicoId" class="form-control" type="number" placeholder="Opcional" />
+                <select asp-for="SindicoId" class="form-select" asp-items="ViewBag.Sindicos">
+                    <option value="">Selecione o sindico...</option>
+                </select>
                 <span asp-validation-for="SindicoId" class="text-danger"></span>
             </div>
 

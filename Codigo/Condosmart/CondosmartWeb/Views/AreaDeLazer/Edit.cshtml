@@ -10,7 +10,7 @@
     </div>
 
     <div class="cs-card-body">
-        <form asp-action="Edit" method="post" class="row g-3">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <input type="hidden" asp-for="Id" />
@@ -51,6 +51,19 @@
                     <option value="">Selecione um síndico (opcional)</option>
                 </select>
                 <span asp-validation-for="SindicoId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="ImagemArquivo" class="form-label fw-semibold"></label>
+                <input asp-for="ImagemArquivo" class="form-control" type="file" accept=".png,.jpg,.jpeg,.webp" />
+                @if (!string.IsNullOrWhiteSpace(Model.ImagemCaminho))
+                {
+                    <div class="mt-3">
+                        <img src="@Model.ImagemCaminho" alt="Imagem atual da area de lazer" class="img-fluid rounded-4 border" style="max-height: 220px;" />
+                    </div>
+                }
+                <small class="text-muted">Se enviar uma nova imagem, ela substituira a atual.</small>
+                <span asp-validation-for="ImagemArquivo" class="text-danger"></span>
             </div>
 
             <div class="col-12 d-flex gap-2 justify-content-end mt-2">

@@ -8,7 +8,11 @@ namespace CondosmartWeb.Profiles
     {
         public AreaDeLazerProfile()
         {
-            CreateMap<AreaDeLazer, AreaDeLazerViewModel>().ReverseMap();
+            CreateMap<AreaDeLazer, AreaDeLazerViewModel>();
+
+            CreateMap<AreaDeLazerViewModel, AreaDeLazer>()
+                .ForMember(dest => dest.ImagemNomeOriginal, opt => opt.Ignore())
+                .ForMember(dest => dest.ImagemCaminho, opt => opt.Ignore());
         }
     }
 }
