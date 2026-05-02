@@ -558,8 +558,11 @@ footer {
 .dt-container .dt-search input,
 .dt-container .dt-length select {
     border: 1px solid var(--cs-border);
-    border-radius: 999px;
-    padding: 7px 12px;
+    border-radius: 14px;
+    padding: 7px 36px 7px 12px;
+    min-height: 42px;
+    line-height: 1.2;
+    background-position: right .8rem center;
 }
 
 .dt-container .dt-search input:focus,
@@ -582,6 +585,55 @@ footer {
     background-color: var(--cs-primary);
     border-color: var(--cs-primary);
     color: #fff;
+}
+
+.dt-container .dt-layout-row {
+    gap: 14px;
+    align-items: center;
+}
+
+.dt-container .dt-length,
+.dt-container .dt-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cs-condo-select {
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 10px;
+    border-radius: 14px;
+    border: 1px solid var(--cs-border);
+    background: #fff;
+}
+
+.cs-condo-select select {
+    min-width: 230px;
+    border: 0;
+    box-shadow: none !important;
+    padding-right: 28px;
+}
+
+.cs-condo-select i {
+    color: var(--cs-muted);
+}
+
+.cs-notification-btn span {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    min-width: 19px;
+    height: 19px;
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--cs-danger);
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 800;
 }
 
 /* =========================
@@ -1582,4 +1634,36 @@ footer {
     .cs-auth-brand {
         margin-bottom: 12px;
     }
+}
+
+.dt-container .dt-length select {
+    min-width: 86px;
+    padding: .45rem 2rem .45rem .85rem;
+    border-radius: 14px;
+    appearance: auto;
+    background-color: #fff;
+}
+
+.dt-container .dt-length label,
+.dt-container .dt-search label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.cs-condo-select span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+}
+
+.cs-markdown-preview {
+    min-height: 80px;
+    color: var(--cs-text);
+    line-height: 1.6;
+}
+
+.cs-markdown-preview > :last-child {
+    margin-bottom: 0;
 }

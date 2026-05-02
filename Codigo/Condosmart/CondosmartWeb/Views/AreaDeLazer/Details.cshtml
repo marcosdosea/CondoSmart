@@ -38,6 +38,14 @@
                 <div class="fw-semibold" style="white-space: pre-wrap;">@Model.Descricao</div>
             </div>
 
+            @if (!string.IsNullOrWhiteSpace(Model.ImagemCaminho))
+            {
+                <div class="col-12">
+                    <div class="text-muted small">Imagem</div>
+                    <img src="@Model.ImagemCaminho" alt="Imagem da area de lazer @Model.Nome" class="img-fluid rounded-4 border mt-2" style="max-height: 280px;" />
+                </div>
+            }
+
             <div class="col-12 col-lg-6">
                 <div class="text-muted small">Condomínio</div>
                 <div class="fw-semibold">@Model.CondominioId</div>

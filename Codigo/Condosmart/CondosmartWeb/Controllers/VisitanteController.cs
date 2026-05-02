@@ -1,5 +1,6 @@
 using AutoMapper;
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Core.Identity;
 using Core.Models;
 using Core.Service;
@@ -13,19 +14,31 @@ namespace CondosmartWeb.Controllers
     {
         private readonly IVisitanteService _visitanteService;
         private readonly IMoradorService _moradorService;
+        private readonly ICondominioContextService _condominioContextService;
+        private readonly INotificacaoService _notificacaoService;
         private readonly IMapper _mapper;
 
-        public VisitanteController(IVisitanteService visitanteService, IMoradorService moradorService, IMapper mapper)
+        public VisitanteController(
+            IVisitanteService visitanteService,
+            IMoradorService moradorService,
+            ICondominioContextService condominioContextService,
+            INotificacaoService notificacaoService,
+            IMapper mapper)
         {
             _visitanteService = visitanteService;
             _moradorService = moradorService;
+            _condominioContextService = condominioContextService;
+            _notificacaoService = notificacaoService;
             _mapper = mapper;
         }
 
         // GET: Visitante
         public ActionResult Index()
         {
-            var visitantes = _visitanteService.GetAll();
+            var condominioAtualId = _condominioContextService.GetCondominioAtualId();
+            var visitantes = _visitanteService.GetAll()
+                .Where(v => !condominioAtualId.HasValue || (v.Morador != null && v.Morador.CondominioId == condominioAtualId.Value))
+                .ToList();
             var listaDeVisitantes = _mapper.Map<List<VisitanteViewModel>>(visitantes);
             return View(listaDeVisitantes);
         }
@@ -43,7 +56,7 @@ namespace CondosmartWeb.Controllers
         {
             var viewModel = new VisitanteViewModel
             {
-                MoradoresDisponiveis = _moradorService.GetAll()
+                MoradoresDisponiveis = ListarMoradoresDoContexto()
             };
             return View(viewModel);
         }
@@ -57,10 +70,12 @@ namespace CondosmartWeb.Controllers
             {
                 var visitante = _mapper.Map<Visitantes>(visitanteViewModel);
                 _visitanteService.Create(visitante);
+                TempData["Sucesso"] = "Visitante cadastrado com sucesso.";
+                RegistrarNotificacao(visitanteViewModel.MoradorId, "Visitante cadastrado", $"O visitante {visitanteViewModel.Nome} foi cadastrado.");
                 return RedirectToAction(nameof(Index));
             }
             
-            visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
+            visitanteViewModel.MoradoresDisponiveis = ListarMoradoresDoContexto();
             return View(visitanteViewModel);
         }
 
@@ -69,7 +84,7 @@ namespace CondosmartWeb.Controllers
         {
             var visitante = _visitanteService.GetById(id);
             var visitanteVM = _mapper.Map<VisitanteViewModel>(visitante);
-            visitanteVM.MoradoresDisponiveis = _moradorService.GetAll();
+            visitanteVM.MoradoresDisponiveis = ListarMoradoresDoContexto();
             return View(visitanteVM);
         }
 
@@ -87,10 +102,12 @@ namespace CondosmartWeb.Controllers
             {
                 var visitante = _mapper.Map<Visitantes>(visitanteViewModel);
                 _visitanteService.Edit(visitante);
+                TempData["Sucesso"] = "Visitante atualizado com sucesso.";
+                RegistrarNotificacao(visitanteViewModel.MoradorId, "Visitante atualizado", $"O visitante {visitanteViewModel.Nome} foi atualizado.");
                 return RedirectToAction(nameof(Index));
             }
             
-            visitanteViewModel.MoradoresDisponiveis = _moradorService.GetAll();
+            visitanteViewModel.MoradoresDisponiveis = ListarMoradoresDoContexto();
             return View(visitanteViewModel);
         }
 
@@ -107,8 +124,45 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            _visitanteService.Delete(id);
+            try
+            {
+                var visitante = _visitanteService.GetById(id);
+                _visitanteService.Delete(id);
+                TempData["Sucesso"] = "Visitante removido com sucesso.";
+                if (visitante != null)
+                    RegistrarNotificacao(visitante.MoradorId, "Visitante removido", $"O visitante {visitante.Nome} foi removido.");
+            }
+            catch
+            {
+                TempData["Erro"] = "Nao foi possivel remover o visitante agora.";
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        private List<Morador> ListarMoradoresDoContexto()
+        {
+            var condominioAtualId = _condominioContextService.GetCondominioAtualId();
+            return _moradorService.GetAll()
+                .Where(m => !condominioAtualId.HasValue || m.CondominioId == condominioAtualId.Value)
+                .OrderBy(m => m.Nome)
+                .ToList();
+        }
+
+        private void RegistrarNotificacao(int? moradorId, string titulo, string mensagem)
+        {
+            var condominioId = _condominioContextService.GetCondominioAtualId();
+            if (moradorId.HasValue)
+                condominioId = _moradorService.GetById(moradorId.Value)?.CondominioId ?? condominioId;
+
+            _notificacaoService.Criar(
+                User.Identity?.Name ?? "sistema",
+                User.Identity?.Name ?? "Sistema",
+                titulo,
+                mensagem,
+                "info",
+                condominioId,
+                Url.Action(nameof(Index)) ?? "/Visitante");
         }
     }
 }

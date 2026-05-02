@@ -1,29 +1,29 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CondosmartWeb.Models
 {
     public class SindicoViewModel
     {
-        [Display(Name = "Código")]
+        [Display(Name = "Codigo")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O CPF é obrigatório")]
-        [StringLength(11, MinimumLength = 11, ErrorMessage = "CPF deve ter 11 caracteres.")]
-        [RegularExpression("^[0-9]{11}$", ErrorMessage = "CPF deve conter somente números (11 dígitos).")]
-        [Display(Name = "CPF")]
-        public string Cpf { get; set; } = null!;
-
-        [Required(ErrorMessage = "O campo Nome é obrigatório")]
-        [StringLength(80, ErrorMessage = "O nome não pode exceder 80 caracteres.")]
+        [Required(ErrorMessage = "O nome e obrigatorio")]
+        [StringLength(80, ErrorMessage = "O nome nao pode exceder 80 caracteres.")]
         [Display(Name = "Nome")]
-        public string Nome { get; set; } = null!;
+        public string Nome { get; set; } = string.Empty;
 
-        [StringLength(11, MinimumLength = 8, ErrorMessage = "Telefone deve ter entre 8 e 11 dígitos.")]
-        [RegularExpression("^[0-9]{8,11}$", ErrorMessage = "Telefone deve conter somente números (8 a 11 dígitos).")]
+        [Required(ErrorMessage = "O CPF e obrigatorio")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "CPF deve conter 11 digitos.")]
+        [RegularExpression("^[0-9]{11}$", ErrorMessage = "CPF deve conter somente numeros (11 digitos).")]
+        [Display(Name = "CPF")]
+        public string? Cpf { get; set; }
+
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "Telefone deve ter 11 digitos.")]
+        [RegularExpression("^[0-9]{11}$", ErrorMessage = "Telefone deve conter exatamente 11 numeros.")]
         [Display(Name = "Telefone")]
         public string? Telefone { get; set; }
 
-        [EmailAddress(ErrorMessage = "Informe um e-mail válido.")]
+        [EmailAddress(ErrorMessage = "Informe um e-mail valido.")]
         [StringLength(80)]
         [Display(Name = "E-mail")]
         public string? Email { get; set; }
@@ -37,7 +37,7 @@ namespace CondosmartWeb.Models
         public string? Bairro { get; set; }
 
         [StringLength(10)]
-        [Display(Name = "Número")]
+        [Display(Name = "Numero")]
         public string? Numero { get; set; }
 
         [StringLength(40)]
@@ -45,7 +45,7 @@ namespace CondosmartWeb.Models
         public string? Complemento { get; set; }
 
         [StringLength(8)]
-        [RegularExpression("^[0-9]{8}$", ErrorMessage = "CEP deve conter somente números (8 dígitos).")]
+        [RegularExpression("^[0-9]{8}$", ErrorMessage = "CEP deve conter somente numeros (8 digitos).")]
         [Display(Name = "CEP")]
         public string? Cep { get; set; }
 

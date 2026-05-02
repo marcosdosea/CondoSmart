@@ -112,6 +112,9 @@ namespace Service
             if (!string.IsNullOrWhiteSpace(morador.Cep) && morador.Cep.Length != 8)
                 throw new ArgumentException("CEP deve ter 8 caracteres (somente números).");
 
+            if (!string.IsNullOrWhiteSpace(morador.Telefone) && morador.Telefone.Length != 11)
+                throw new ArgumentException("O telefone deve conter exatamente 11 dígitos.");
+
             if (!string.IsNullOrWhiteSpace(morador.Uf) && morador.Uf.Length != 2)
                 throw new ArgumentException("UF deve ter 2 caracteres.");
         }

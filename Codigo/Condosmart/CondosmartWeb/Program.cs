@@ -22,6 +22,7 @@ namespace Condosmart
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor();
 
             var connectionString = builder.Configuration.GetConnectionString("CondosmartConnection");
             if (string.IsNullOrEmpty(connectionString))
@@ -78,6 +79,10 @@ namespace Condosmart
             builder.Services.AddScoped<IMensalidadeService, MensalidadeService>();
             builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             builder.Services.AddScoped<IMoradorDashboardService, MoradorDashboardService>();
+            builder.Services.AddScoped<ICondominioContextService, CondominioContextService>();
+            builder.Services.AddScoped<IArquivoUploadService, ArquivoUploadService>();
+            builder.Services.AddScoped<INotificacaoService, NotificacaoService>();
+            builder.Services.AddScoped<IAdminBootstrapService, AdminBootstrapService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddHttpClient<ICnpjService, CnpjService>();
@@ -91,6 +96,9 @@ namespace Condosmart
             });
 
             var app = builder.Build();
+
+            if (TryHandleAdminSeedCommand(args, app))
+                return;
 
             if (!app.Environment.IsDevelopment())
             {
@@ -114,6 +122,41 @@ namespace Condosmart
             app.MapRazorPages();
 
             app.Run();
+        }
+
+        private static bool TryHandleAdminSeedCommand(string[] args, WebApplication app)
+        {
+            if (!args.Contains("--seed-admin", StringComparer.OrdinalIgnoreCase))
+                return false;
+
+            var nome = GetArgumentValue(args, "--name") ?? "Administrador CondoSmart";
+            var email = GetArgumentValue(args, "--email");
+            var senha = GetArgumentValue(args, "--password");
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
+            {
+                Console.WriteLine("Uso: dotnet run --project CondosmartWeb.csproj -- --seed-admin --name \"Nome\" --email admin@dominio.com --password \"SenhaForte123\"");
+                return true;
+            }
+
+            using var scope = app.Services.CreateScope();
+            var bootstrapService = scope.ServiceProvider.GetRequiredService<IAdminBootstrapService>();
+            var criado = bootstrapService.CriarAdminAsync(nome, email, senha).GetAwaiter().GetResult();
+
+            Console.WriteLine(criado
+                ? $"Admin criado com sucesso para {email}."
+                : $"Nao foi possivel criar o admin para {email}. Verifique se ele ja existe ou se a senha atende aos requisitos.");
+
+            return true;
+        }
+
+        private static string? GetArgumentValue(string[] args, string option)
+        {
+            var index = Array.FindIndex(args, arg => string.Equals(arg, option, StringComparison.OrdinalIgnoreCase));
+            if (index < 0 || index == args.Length - 1)
+                return null;
+
+            return args[index + 1];
         }
     }
 }

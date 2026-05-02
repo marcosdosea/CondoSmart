@@ -4,16 +4,19 @@ using Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Core.Migrations
+namespace Core.Migrations.Condosmart
 {
     [DbContext(typeof(CondosmartContext))]
-    partial class CondosmartContextModelSnapshot : ModelSnapshot
+    [Migration("20260501034106_AddNotificacoesEAquivos")]
+    partial class AddNotificacoesEAquivos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -68,6 +68,9 @@ namespace Service
             if (string.IsNullOrWhiteSpace(visitante.Telefone))
                 throw new ArgumentException("O telefone do visitante é obrigatório.");
 
+            if (visitante.Telefone.Trim().Length != 11)
+                throw new ArgumentException("O telefone do visitante deve conter exatamente 11 dígitos.");
+
             if (!visitante.MoradorId.HasValue || visitante.MoradorId <= 0)
                 throw new ArgumentException("O morador que está sendo visitado é obrigatório.");
 

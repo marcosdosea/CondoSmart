@@ -10,7 +10,7 @@
     </div>
 
     <div class="cs-card-body">
-        <form asp-action="Edit" method="post" class="row g-3">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <input type="hidden" asp-for="Id" />
@@ -36,7 +36,15 @@
             <div class="col-12">
                 <label asp-for="Conteudo" class="form-label fw-semibold"></label>
                 <textarea asp-for="Conteudo" class="form-control" rows="6"></textarea>
+                <small class="text-muted">Voce pode usar Markdown simples para formatar as observacoes da ata.</small>
                 <span asp-validation-for="Conteudo" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <div class="border rounded-4 p-3 bg-light">
+                    <div class="small text-muted text-uppercase fw-bold mb-2">Previa do Markdown</div>
+                    <div id="ataMarkdownPreview" class="cs-markdown-preview">A previa sera exibida aqui conforme voce digita.</div>
+                </div>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -55,6 +63,21 @@
                 <span asp-validation-for="SindicoId" class="text-danger"></span>
             </div>
 
+            <div class="col-12">
+                <label asp-for="ArquivoAta" class="form-label fw-semibold"></label>
+                <input asp-for="ArquivoAta" class="form-control" type="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" />
+                @if (!string.IsNullOrWhiteSpace(Model.ArquivoCaminho))
+                {
+                    <div class="mt-2">
+                        <a href="@Model.ArquivoCaminho" target="_blank" rel="noopener" class="btn btn-cs-outline btn-sm">
+                            <i class="bi bi-file-earmark-arrow-down me-2" aria-hidden="true"></i>Abrir anexo atual
+                        </a>
+                    </div>
+                }
+                <small class="text-muted">Se enviar um novo arquivo, ele substituira o atual.</small>
+                <span asp-validation-for="ArquivoAta" class="text-danger"></span>
+            </div>
+
             <div class="col-12 d-flex gap-2 justify-content-end mt-2">
                 <a asp-action="Index" class="btn btn-cs-outline">Cancelar</a>
                 <button type="submit" class="btn btn-cs-primary">Salvar Alterações</button>
@@ -65,4 +88,19 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const input = document.getElementById('Conteudo');
+            const preview = document.getElementById('ataMarkdownPreview');
+            if (!input || !preview || !window.marked) return;
+
+            const render = () => {
+                const value = input.value.trim();
+                preview.innerHTML = value ? window.marked.parse(value) : 'A previa sera exibida aqui conforme voce digita.';
+            };
+
+            input.addEventListener('input', render);
+            render();
+        })();
+    </script>
 }

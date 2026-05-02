@@ -95,6 +95,9 @@ namespace Service
             if (!string.IsNullOrWhiteSpace(sindico.Cpf) && sindico.Cpf.Length != 11)
                 throw new ArgumentException("O CPF deve conter 11 caracteres (somente números).");
 
+            if (!string.IsNullOrWhiteSpace(sindico.Telefone) && sindico.Telefone.Length != 11)
+                throw new ArgumentException("O telefone do síndico deve conter exatamente 11 dígitos.");
+
             if (!string.IsNullOrWhiteSpace(sindico.Uf) && sindico.Uf.Length != 2)
                 throw new ArgumentException("UF deve ter 2 caracteres.");
 

@@ -228,8 +228,8 @@ namespace Service
             {
                 string telefoneLimpo = Regex.Replace(telefone, @"\D", "");
 
-                if (telefoneLimpo.Length < 10 || telefoneLimpo.Length > 11)
-                    throw new ArgumentException("O telefone deve conter entre 10 e 11 dígitos numéricos.");
+                if (telefoneLimpo.Length != 11)
+                    throw new ArgumentException("O telefone deve conter exatamente 11 dígitos numéricos.");
             }
         }
 

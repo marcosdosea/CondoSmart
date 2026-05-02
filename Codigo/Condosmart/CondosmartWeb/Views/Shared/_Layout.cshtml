@@ -1,4 +1,7 @@
 @using Core.Identity
+@using CondosmartWeb.Services
+@inject ICondominioContextService CondominioContextService
+@inject Core.Service.INotificacaoService NotificacaoService
 @inject Microsoft.AspNetCore.Identity.SignInManager<Core.Models.UsuarioSistema> SignInManager
 @inject Microsoft.AspNetCore.Identity.UserManager<Core.Models.UsuarioSistema> UserManager
 @{
@@ -6,6 +9,12 @@
 	string Active(string controller) => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
 	var isAdmin = User.IsInRole(Perfis.Admin);
 	var isMorador = User.IsInRole(Perfis.Morador);
+	var condominioAtualId = CondominioContextService.GetCondominioAtualId();
+	var condominioAtualNome = CondominioContextService.GetCondominioAtualNome();
+	var condominiosDisponiveis = isAdmin ? CondominioContextService.GetCondominiosDisponiveis() : new List<Core.Models.Condominio>();
+	var notificacoes = NotificacaoService.ListarRecentes(condominioAtualId, 20);
+	var notificacoesCount = NotificacaoService.Contar(condominioAtualId);
+	var currentUrl = Context.Request.Path + Context.Request.QueryString;
 }
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -117,22 +126,42 @@
 				<div class="cs-top-actions">
 					@if (isAdmin)
 					{
-						<div class="cs-condo-select d-none d-xl-flex">
-							<span>Condom&iacute;nio Jardim das Flores</span>
-							<i class="bi bi-chevron-down"></i>
-						</div>
+						<form asp-controller="ContextoCondominio" asp-action="Selecionar" method="post" class="d-none d-xl-flex align-items-center">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="returnUrl" value="@currentUrl" />
+							<div class="cs-condo-select">
+								<select class="form-select form-select-sm border-0 bg-transparent fw-semibold"
+										name="condominioId"
+										onchange="this.form.submit()"
+										aria-label="Selecionar condomínio">
+									@foreach (var condominio in condominiosDisponiveis)
+									{
+										<option value="@condominio.Id" selected="@(condominioAtualId == condominio.Id)">
+											@condominio.Nome
+										</option>
+									}
+								</select>
+								<i class="bi bi-chevron-down"></i>
+							</div>
+						</form>
 					}
 					else if (isMorador)
 					{
-						<div class="cs-condo-select d-none d-xl-flex">
-							<span>&Aacute;rea do morador</span>
-							<i class="bi bi-person-check"></i>
+						<div class="cs-condo-select d-none d-xl-flex pe-2">
+							<span>@condominioAtualNome</span>
 						</div>
 					}
 
-					<button class="cs-icon-btn cs-notification-btn" title="Notifica&ccedil;&otilde;es" aria-label="Notifica&ccedil;&otilde;es">
+					<button class="cs-icon-btn cs-notification-btn"
+							title="Notifica&ccedil;&otilde;es"
+							aria-label="Notifica&ccedil;&otilde;es"
+							data-bs-toggle="modal"
+							data-bs-target="#notificacoesModal">
 						<i class="bi bi-bell"></i>
-						<span>3</span>
+						@if (notificacoesCount > 0)
+						{
+							<span>@Math.Min(notificacoesCount, 99)</span>
+						}
 					</button>
 
 					@if (SignInManager.IsSignedIn(User))
@@ -192,7 +221,9 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/js/cep-validation.js" asp-append-version="true"></script>
 
 	<script>
 		function toggleSidebar(open) {
@@ -209,6 +240,65 @@
 			}
 		}
 	</script>
+
+	<div class="modal fade" id="notificacoesModal" tabindex="-1" aria-labelledby="notificacoesModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="notificacoesModalLabel">Notificacoes recentes</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+				</div>
+				<div class="modal-body">
+					@if (!notificacoes.Any())
+					{
+						<div class="alert alert-light border mb-0">Nenhuma notificacao encontrada para o contexto atual.</div>
+					}
+					else
+					{
+						<div class="d-flex flex-column gap-3">
+							@foreach (var notificacao in notificacoes)
+							{
+								<div class="border rounded-4 p-3">
+									<div class="d-flex justify-content-between align-items-start gap-3">
+										<div>
+											<div class="fw-semibold">@notificacao.Titulo</div>
+											<div class="small text-muted">
+												@notificacao.UsuarioNome
+												@if (!string.IsNullOrWhiteSpace(notificacao.Condominio?.Nome))
+												{
+													<text> • @notificacao.Condominio.Nome</text>
+												}
+												<text> • @notificacao.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</text>
+											</div>
+											<div class="mt-2">@notificacao.Mensagem</div>
+											@if (!string.IsNullOrWhiteSpace(notificacao.UrlDestino))
+											{
+												<a href="@notificacao.UrlDestino" class="btn btn-link btn-sm ps-0">Abrir</a>
+											}
+										</div>
+										<form asp-controller="Notificacoes" asp-action="Remover" method="post">
+											@Html.AntiForgeryToken()
+											<input type="hidden" name="id" value="@notificacao.Id" />
+											<input type="hidden" name="returnUrl" value="@currentUrl" />
+											<button type="submit" class="btn btn-sm btn-outline-danger">Limpar</button>
+										</form>
+									</div>
+								</div>
+							}
+						</div>
+					}
+				</div>
+				<div class="modal-footer justify-content-between">
+					<span class="text-muted small">As notificacoes acompanham o condominio atualmente selecionado.</span>
+					<form asp-controller="Notificacoes" asp-action="LimparTodas" method="post">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="returnUrl" value="@currentUrl" />
+						<button type="submit" class="btn btn-outline-danger">Limpar todas</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	@await RenderSectionAsync("Scripts", required: false)
 </body>

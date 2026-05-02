@@ -1,5 +1,6 @@
 using AutoMapper;
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Core.Identity;
 using Core.Models;
 using Core.Service;
@@ -16,20 +17,35 @@ namespace CondosmartWeb.Controllers
         private readonly ICondominioService _condominioService;
         private readonly IAreaDeLazerService _areaService;
         private readonly IMoradorService _moradorService;
+        private readonly ICondominioContextService _condominioContextService;
+        private readonly INotificacaoService _notificacaoService;
         private readonly IMapper _mapper;
 
-        public ReservaController(IReservaService service, ICondominioService condominioService, IAreaDeLazerService areaService, IMoradorService moradorService, IMapper mapper)
+        public ReservaController(
+            IReservaService service,
+            ICondominioService condominioService,
+            IAreaDeLazerService areaService,
+            IMoradorService moradorService,
+            ICondominioContextService condominioContextService,
+            INotificacaoService notificacaoService,
+            IMapper mapper)
         {
             _service = service;
             _condominioService = condominioService;
             _areaService = areaService;
             _moradorService = moradorService;
+            _condominioContextService = condominioContextService;
+            _notificacaoService = notificacaoService;
             _mapper = mapper;
         }
 
         public ActionResult Index()
         {
-            var lista = _service.GetAll();
+            var condominioAtualId = _condominioContextService.GetCondominioAtualId();
+            var lista = _service.GetAll()
+                .Where(r => !condominioAtualId.HasValue || r.CondominioId == condominioAtualId.Value)
+                .OrderByDescending(r => r.DataInicio)
+                .ToList();
             var listaVm = _mapper.Map<List<ReservaViewModel>>(lista);
             return View(listaVm);
         }
@@ -37,14 +53,23 @@ namespace CondosmartWeb.Controllers
         public ActionResult Details(int id)
         {
             var entity = _service.GetById(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+                return NotFound();
+
             return View(_mapper.Map<ReservaViewModel>(entity));
         }
 
         public ActionResult Create()
         {
-            CarregarListas();
-            return View(new ReservaViewModel());
+            var vm = new ReservaViewModel
+            {
+                CondominioId = _condominioContextService.GetCondominioAtualId() ?? 0,
+                Status = "pendente",
+                DataInicio = DateTime.Now,
+                DataFim = DateTime.Now.AddHours(1)
+            };
+            CarregarListas(vm.CondominioId, vm.AreaId, vm.MoradorId);
+            return View(vm);
         }
 
         [HttpPost]
@@ -57,6 +82,8 @@ namespace CondosmartWeb.Controllers
                 {
                     var reserva = _mapper.Map<Reserva>(reservaVm);
                     _service.Create(reserva);
+                    TempData["Sucesso"] = "Reserva cadastrada com sucesso.";
+                    RegistrarNotificacao(reserva.CondominioId, "Reserva cadastrada", $"Uma reserva foi criada para a area #{reserva.AreaId}.");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ArgumentException ex)
@@ -65,21 +92,23 @@ namespace CondosmartWeb.Controllers
                 }
                 catch (Exception ex)
                 {
+                    TempData["Erro"] = "Nao foi possivel salvar a reserva agora.";
                     ModelState.AddModelError(string.Empty, "Erro ao salvar a reserva: " + ex.Message);
                 }
             }
 
-            CarregarListas();
+            CarregarListas(reservaVm.CondominioId, reservaVm.AreaId, reservaVm.MoradorId);
             return View(reservaVm);
         }
 
         public ActionResult Edit(int id)
         {
             var item = _service.GetById(id);
-            if (item == null) return NotFound();
+            if (item == null)
+                return NotFound();
 
             var itemVm = _mapper.Map<ReservaViewModel>(item);
-            CarregarListas(); // Preenche os dropdowns com os dados atuais selecionados
+            CarregarListas(itemVm.CondominioId, itemVm.AreaId, itemVm.MoradorId);
             return View(itemVm);
         }
 
@@ -87,7 +116,8 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, ReservaViewModel reservaVm)
         {
-            if (id != reservaVm.Id) return NotFound();
+            if (id != reservaVm.Id)
+                return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -95,6 +125,8 @@ namespace CondosmartWeb.Controllers
                 {
                     var reserva = _mapper.Map<Reserva>(reservaVm);
                     _service.Edit(reserva);
+                    TempData["Sucesso"] = "Reserva atualizada com sucesso.";
+                    RegistrarNotificacao(reserva.CondominioId, "Reserva atualizada", $"A reserva #{reserva.Id} foi atualizada para o status {reserva.Status}.");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ArgumentException ex)
@@ -103,18 +135,20 @@ namespace CondosmartWeb.Controllers
                 }
                 catch (Exception ex)
                 {
+                    TempData["Erro"] = "Nao foi possivel salvar a reserva agora.";
                     ModelState.AddModelError(string.Empty, "Erro ao salvar a reserva: " + ex.Message);
                 }
             }
 
-            CarregarListas();
+            CarregarListas(reservaVm.CondominioId, reservaVm.AreaId, reservaVm.MoradorId);
             return View(reservaVm);
         }
 
         public ActionResult Delete(int id)
         {
             var item = _service.GetById(id);
-            if (item == null) return NotFound();
+            if (item == null)
+                return NotFound();
             var itemVm = _mapper.Map<ReservaViewModel>(item);
             return View(itemVm);
         }
@@ -123,16 +157,66 @@ namespace CondosmartWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            _service.Delete(id);
+            try
+            {
+                var item = _service.GetById(id);
+                _service.Delete(id);
+                TempData["Sucesso"] = "Reserva removida com sucesso.";
+                if (item != null)
+                    RegistrarNotificacao(item.CondominioId, "Reserva removida", $"A reserva #{item.Id} foi removida.");
+            }
+            catch
+            {
+                TempData["Erro"] = "Nao foi possivel remover a reserva agora.";
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        private void CarregarListas()
+        private void CarregarListas(int? condominioSelecionado = null, int? areaSelecionada = null, int? moradorSelecionado = null)
         {
-            ViewBag.Areas = new SelectList(_areaService.GetAll(), "Id", "Nome");
-            ViewBag.Moradores = new SelectList(_moradorService.GetAll(), "Id", "Nome");
-            ViewBag.Condominios = new SelectList(_condominioService.GetAll(), "Id", "Nome");
+            condominioSelecionado = condominioSelecionado > 0 ? condominioSelecionado : _condominioContextService.GetCondominioAtualId();
+
+            ViewBag.Areas = new SelectList(
+                _areaService.GetAll()
+                    .Where(a => !condominioSelecionado.HasValue || a.CondominioId == condominioSelecionado.Value)
+                    .OrderBy(a => a.Nome)
+                    .ToList(),
+                "Id",
+                "Nome",
+                areaSelecionada);
+
+            ViewBag.Moradores = new SelectList(
+                _moradorService.GetAll()
+                    .Where(m => !condominioSelecionado.HasValue || m.CondominioId == condominioSelecionado.Value)
+                    .OrderBy(m => m.Nome)
+                    .ToList(),
+                "Id",
+                "Nome",
+                moradorSelecionado);
+
+            ViewBag.Condominios = new SelectList(
+                _condominioService.GetAll().OrderBy(c => c.Nome).ToList(),
+                "Id",
+                "Nome",
+                condominioSelecionado);
+
             ViewBag.StatusList = new SelectList(new[] { "pendente", "confirmado", "cancelado", "concluido" });
+        }
+
+        private void RegistrarNotificacao(int condominioId, string titulo, string mensagem)
+        {
+            if (condominioId <= 0)
+                return;
+
+            _notificacaoService.Criar(
+                User.Identity?.Name ?? "sistema",
+                User.Identity?.Name ?? "Sistema",
+                titulo,
+                mensagem,
+                "info",
+                condominioId,
+                Url.Action(nameof(Index)) ?? "/Reserva");
         }
     }
 }

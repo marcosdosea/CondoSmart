@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CondosmartWeb.Models
 {
@@ -59,8 +59,8 @@ namespace CondosmartWeb.Models
         [Display(Name = "E-mail")]
         public string? Email { get; set; }
 
-        [StringLength(11, MinimumLength = 8, ErrorMessage = "Telefone deve ter entre 8 e 11 digitos.")]
-        [RegularExpression("^[0-9]{8,11}$", ErrorMessage = "Telefone deve conter somente numeros (8 a 11 digitos).")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "Telefone deve ter 11 digitos.")]
+        [RegularExpression("^[0-9]{11}$", ErrorMessage = "Telefone deve conter exatamente 11 numeros.")]
         [Display(Name = "Telefone")]
         public string? Telefone { get; set; }
 
