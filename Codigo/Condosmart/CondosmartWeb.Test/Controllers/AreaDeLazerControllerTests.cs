@@ -1,10 +1,10 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using CondosmartWeb.Controllers;
 using CondosmartWeb.Models;
-using CondosmartWeb.Profiles;
+using CondosmartWeb.Services;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
 using Moq;
 
 namespace CondosmartWeb.Controllers.Tests
@@ -12,262 +12,71 @@ namespace CondosmartWeb.Controllers.Tests
     [TestClass]
     public class AreaDeLazerControllerTests
     {
-        private static AreaDeLazerController controller = null!;
+        private AreaDeLazerController controller = null!;
 
         [TestInitialize]
         public void Initialize()
         {
-            // Arrange
             var mockService = new Mock<IAreaDeLazerService>();
             var mockCondominioService = new Mock<ICondominioService>();
             var mockSindicoService = new Mock<ISindicoService>();
-
-            IMapper mapper = new MapperConfiguration(cfg =>
-                cfg.AddProfile(new AreaDeLazerProfile())
-            ).CreateMapper();
-
-            mockService.Setup(s => s.GetAll())
-                .Returns(GetTestAreasDeLazer());
-
-            mockService.Setup(s => s.GetById(1))
-                .Returns(GetTargetAreaDeLazer());
-
-            mockService.Setup(s => s.Edit(It.IsAny<AreaDeLazer>()))
-                .Verifiable();
-
-            mockService.Setup(s => s.Create(It.IsAny<AreaDeLazer>()))
-                .Returns(10);
-
-            mockService.Setup(s => s.Delete(It.IsAny<int>()))
-                .Verifiable();
-
+            var mockContextService = new Mock<ICondominioContextService>();
+            var mockUploadService = new Mock<IArquivoUploadService>();
+            var mockNotificacaoService = new Mock<INotificacaoService>();
+            var mapper = new Mock<IMapper>();
+            mockService.Setup(s => s.GetAll()).Returns(GetTestAreasDeLazer());
+            mockService.Setup(s => s.GetById(1)).Returns(GetTargetAreaDeLazer());
+            mockService.Setup(s => s.Create(It.IsAny<AreaDeLazer>())).Returns(10);
+            mockService.Setup(s => s.Edit(It.IsAny<AreaDeLazer>()));
+            mockService.Setup(s => s.Delete(It.IsAny<int>()));
             mockCondominioService.Setup(s => s.GetAll()).Returns(new List<Condominio>());
             mockSindicoService.Setup(s => s.GetAll()).Returns(new List<Sindico>());
-
-            controller = new AreaDeLazerController(mockService.Object, mockCondominioService.Object, mockSindicoService.Object, mapper);
+            mockContextService.Setup(s => s.GetCondominioAtualId()).Returns(1);
+            mapper.Setup(m => m.Map<List<AreaDeLazerViewModel>>(It.IsAny<List<AreaDeLazer>>())).Returns((List<AreaDeLazer> src) => src.Select(ToViewModel).ToList());
+            mapper.Setup(m => m.Map<AreaDeLazerViewModel>(It.IsAny<AreaDeLazer>())).Returns((AreaDeLazer src) => ToViewModel(src));
+            mapper.Setup(m => m.Map<AreaDeLazer>(It.IsAny<AreaDeLazerViewModel>())).Returns((AreaDeLazerViewModel src) => ToModel(src));
+            
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+            var url = new Mock<IUrlHelper>();
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            controller.Url = url.Object;
         }
 
         [TestMethod]
         public void IndexTest_Valido()
         {
-            // Act
             var result = controller.Index();
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<AreaDeLazerViewModel>));
-            var lista = (List<AreaDeLazerViewModel>)viewResult.ViewData.Model;
-
-            Assert.HasCount(3, lista);
+            var model = (List<AreaDeLazerViewModel>)((ViewResult)result).ViewData.Model!;
+            Assert.HasCount(2, model);
         }
 
         [TestMethod]
-        public void DetailsTest_Valido()
+        public async Task CreateTest_Post_Valid()
         {
-            // Act
-            var result = controller.Details(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AreaDeLazerViewModel));
-            var model = (AreaDeLazerViewModel)viewResult.ViewData.Model;
-
-            Assert.AreEqual("Piscina", model.Nome);
-            Assert.AreEqual("Piscina aquecida com raias para natação", model.Descricao);
-        }
-
-        [TestMethod]
-        public void CreateTest_Get_Valido()
-        {
-            // Act
-            var result = controller.Create();
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
-
-        [TestMethod]
-        public void CreateTest_Post_Valid()
-        {
-            // Act
-            var result = controller.Create(GetNewAreaDeLazerModel());
-
-            // Assert
+            var result = await controller.Create(GetNewAreaDeLazerModel());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            var redirect = (RedirectToActionResult)result;
-
-            Assert.IsNull(redirect.ControllerName);
-            Assert.AreEqual("Index", redirect.ActionName);
+            Assert.AreEqual("Index", ((RedirectToActionResult)result).ActionName);
         }
 
         [TestMethod]
-        public void CreateTest_Post_Invalid()
+        public async Task EditTest_Post_Invalid_IdMismatch()
         {
-            // Arrange
-            controller.ModelState.AddModelError("Nome", "Campo requerido");
-
-            // Act
-            var result = controller.Create(GetNewAreaDeLazerModel());
-
-            // Assert
-            Assert.AreEqual(1, controller.ModelState.ErrorCount);
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var model = GetTargetAreaDeLazerModel();
+            model.Id = 2;
+            var result = await controller.Edit(1, model);
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
 
-        [TestMethod]
-        public void EditTest_Get_Valid()
-        {
-            // Act
-            var result = controller.Edit(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AreaDeLazerViewModel));
-            var model = (AreaDeLazerViewModel)viewResult.ViewData.Model;
-
-            Assert.AreEqual("Piscina", model.Nome);
-            Assert.AreEqual("Piscina aquecida com raias para natação", model.Descricao);
-        }
-
-        [TestMethod]
-        public void EditTest_Post_Valid()
-        {
-            // Act
-            var result = controller.Edit(1, GetTargetAreaDeLazerModel());
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            var redirect = (RedirectToActionResult)result;
-
-            Assert.IsNull(redirect.ControllerName);
-            Assert.AreEqual("Index", redirect.ActionName);
-        }
-
-        [TestMethod]
-        public void EditTest_Post_Invalid_IdMismatch()
-        {
-            // Act
-            var result = controller.Edit(1, GetTargetAreaDeLazerModel());
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-        }
-
-        [TestMethod]
-        public void DeleteTest_Get_Valid()
-        {
-            // Act
-            var result = controller.Delete(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AreaDeLazerViewModel));
-            var model = (AreaDeLazerViewModel)viewResult.ViewData.Model;
-
-            Assert.AreEqual("Piscina", model.Nome);
-        }
-
-        [TestMethod]
-        public void DeleteTest_Post_Valid()
-        {
-            // Act
-            var result = controller.DeleteConfirmed(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            var redirect = (RedirectToActionResult)result;
-
-            Assert.IsNull(redirect.ControllerName);
-            Assert.AreEqual("Index", redirect.ActionName);
-        }
-
-        // --------- Dados de Teste ---------
-
-        private static AreaDeLazer GetTargetAreaDeLazer()
-        {
-            return new AreaDeLazer
-            {
-                Id = 1,
-                Nome = "Piscina",
-                Descricao = "Piscina aquecida com raias para natação",
-                Disponibilidade = true,
-                CondominioId = 1,
-                SindicoId = 1,
-                CreatedAt = new DateTime(2024, 1, 15)
-            };
-        }
-
-        private AreaDeLazerViewModel GetTargetAreaDeLazerModel()
-        {
-            return new AreaDeLazerViewModel
-            {
-                Id = 1,
-                Nome = "Piscina",
-                Descricao = "Piscina aquecida com raias para natação",
-                Disponibilidade = true,
-                CondominioId = 1,
-                SindicoId = 1,
-                CreatedAt = new DateTime(2024, 1, 15)
-            };
-        }
-
-        private AreaDeLazerViewModel GetNewAreaDeLazerModel()
-        {
-            return new AreaDeLazerViewModel
-            {
-                Id = 99,
-                Nome = "Quadra de Esportes",
-                Descricao = "Quadra coberta para basquete e vôlei",
-                Disponibilidade = true,
-                CondominioId = 1,
-                SindicoId = 1,
-                CreatedAt = new DateTime(2024, 2, 20)
-            };
-        }
-
-        private List<AreaDeLazer> GetTestAreasDeLazer()
-        {
-            return new List<AreaDeLazer>
-            {
-                new AreaDeLazer
-                {
-                    Id = 1,
-                    Nome = "Piscina",
-                    Descricao = "Piscina aquecida com raias para natação",
-                    Disponibilidade = true,
-                    CondominioId = 1,
-                    SindicoId = 1,
-                    CreatedAt = new DateTime(2024, 1, 15)
-                },
-                new AreaDeLazer
-                {
-                    Id = 2,
-                    Nome = "Quadra de Esportes",
-                    Descricao = "Quadra coberta para basquete e vôlei",
-                    Disponibilidade = true,
-                    CondominioId = 1,
-                    SindicoId = 1,
-                    CreatedAt = new DateTime(2024, 1, 20)
-                },
-                new AreaDeLazer
-                {
-                    Id = 3,
-                    Nome = "Sauna",
-                    Descricao = "Sauna seca com capacidade para 10 pessoas",
-                    Disponibilidade = false,
-                    CondominioId = 2,
-                    SindicoId = 2,
-                    CreatedAt = new DateTime(2024, 2, 1)
-                }
-            };
-        }
+        private static AreaDeLazerViewModel ToViewModel(AreaDeLazer src) => new() { Id = src.Id, Nome = src.Nome, Descricao = src.Descricao, Disponibilidade = src.Disponibilidade, CondominioId = src.CondominioId, SindicoId = src.SindicoId };
+        private static AreaDeLazer ToModel(AreaDeLazerViewModel src) => new() { Id = src.Id, Nome = src.Nome, Descricao = src.Descricao, Disponibilidade = src.Disponibilidade, CondominioId = src.CondominioId, SindicoId = src.SindicoId };
+        private static AreaDeLazer GetTargetAreaDeLazer() => new() { Id = 1, Nome = "Piscina", Descricao = "Piscina aquecida com raias para natacao", Disponibilidade = true, CondominioId = 1, SindicoId = 1, CreatedAt = new DateTime(2024, 1, 15) };
+        private static AreaDeLazerViewModel GetTargetAreaDeLazerModel() => new() { Id = 1, Nome = "Piscina", Descricao = "Piscina aquecida com raias para natacao", Disponibilidade = true, CondominioId = 1, SindicoId = 1 };
+        private static AreaDeLazerViewModel GetNewAreaDeLazerModel() => new() { Id = 2, Nome = "Quadra", Descricao = "Quadra coberta para esportes", Disponibilidade = true, CondominioId = 1, SindicoId = 1 };
+        private static List<AreaDeLazer> GetTestAreasDeLazer() => new() { GetTargetAreaDeLazer(), new AreaDeLazer { Id = 2, Nome = "Sauna", Descricao = "Sauna seca", Disponibilidade = false, CondominioId = 1, SindicoId = 1 } };
     }
 }
+

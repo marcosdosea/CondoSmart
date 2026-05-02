@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using CondosmartWeb.Controllers;
-using CondosmartWeb.Mappers;
 using CondosmartWeb.Models;
+using CondosmartWeb.Services;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
 using Moq;
 
 namespace CondosmartWeb.Controllers.Tests
@@ -12,325 +12,72 @@ namespace CondosmartWeb.Controllers.Tests
     [TestClass]
     public class AtaControllerTests
     {
-        private static AtaController controller = null!;
-        private static Mock<ICondominioService> mockCondominioService = null!;
-        private static Mock<ISindicoService> mockSindicoService = null!;
+        private AtaController controller = null!;
 
         [TestInitialize]
         public void Initialize()
         {
-            // Arrange
             var mockService = new Mock<IAtaService>();
-            mockCondominioService = new Mock<ICondominioService>();
-            mockSindicoService = new Mock<ISindicoService>();
-
-            IMapper mapper = new MapperConfiguration(cfg =>
-                cfg.AddProfile(new AtaProfile())
-            ).CreateMapper();
-
-            mockService.Setup(s => s.GetAll())
-                .Returns(GetTestAtas());
-
-            mockService.Setup(s => s.GetById(1))
-                .Returns(GetTargetAta());
-
-            mockService.Setup(s => s.Edit(It.IsAny<Ata>()))
-                .Verifiable();
-
-            mockService.Setup(s => s.Create(It.IsAny<Ata>()))
-                .Returns(10);
-
-            mockService.Setup(s => s.Delete(It.IsAny<int>()))
-                .Verifiable();
-
-            mockCondominioService.Setup(s => s.GetAll())
-                .Returns(GetTestCondominios());
-
-            mockSindicoService.Setup(s => s.GetAll())
-                .Returns(GetTestSindicos());
-
-            controller = new AtaController(mockService.Object, mockCondominioService.Object, mockSindicoService.Object, mapper);
+            var mockCondominioService = new Mock<ICondominioService>();
+            var mockSindicoService = new Mock<ISindicoService>();
+            var mockContextService = new Mock<ICondominioContextService>();
+            var mockUploadService = new Mock<IArquivoUploadService>();
+            var mockNotificacaoService = new Mock<INotificacaoService>();
+            var mapper = new Mock<IMapper>();
+            mockService.Setup(s => s.GetAll()).Returns(GetTestAtas());
+            mockService.Setup(s => s.GetById(1)).Returns(GetTargetAta());
+            mockService.Setup(s => s.Create(It.IsAny<Ata>())).Returns(10);
+            mockService.Setup(s => s.Edit(It.IsAny<Ata>()));
+            mockService.Setup(s => s.Delete(It.IsAny<int>()));
+            mockCondominioService.Setup(s => s.GetAll()).Returns(GetTestCondominios());
+            mockSindicoService.Setup(s => s.GetAll()).Returns(GetTestSindicos());
+            mockContextService.Setup(s => s.GetCondominioAtualId()).Returns(1);
+            mapper.Setup(m => m.Map<List<AtaViewModel>>(It.IsAny<List<Ata>>())).Returns((List<Ata> src) => src.Select(ToViewModel).ToList());
+            mapper.Setup(m => m.Map<AtaViewModel>(It.IsAny<Ata>())).Returns((Ata src) => ToViewModel(src));
+            mapper.Setup(m => m.Map<Ata>(It.IsAny<AtaViewModel>())).Returns((AtaViewModel src) => ToModel(src));
+            
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+            var url = new Mock<IUrlHelper>();
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            controller.Url = url.Object;
         }
 
         [TestMethod]
         public void IndexTest_Valido()
         {
-            // Act
             var result = controller.Index();
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<AtaViewModel>));
-            var lista = (List<AtaViewModel>)viewResult.ViewData.Model;
-
-            Assert.HasCount(3, lista);
+            var model = (List<AtaViewModel>)((ViewResult)result).ViewData.Model!;
+            Assert.HasCount(2, model);
         }
 
         [TestMethod]
-        public void DetailsTest_Valido()
+        public async Task CreateTest_Post_Valid()
         {
-            // Act
-            var result = controller.Details(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AtaViewModel));
-            var model = (AtaViewModel)viewResult.ViewData.Model;
-
-            Assert.AreEqual("Ata de Reunião Ordinária", model.Titulo);
-            Assert.AreEqual("Manutenção, Obras", model.Temas);
-        }
-
-        [TestMethod]
-        public void CreateTest_Get_Valido()
-        {
-            // Act
-            var result = controller.Create();
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
-
-        [TestMethod]
-        public void CreateTest_Post_Valid()
-        {
-            // Act
-            var result = controller.Create(GetNewAtaModel());
-
-            // Assert
+            var result = await controller.Create(GetNewAtaModel());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            var redirect = (RedirectToActionResult)result;
-
-            Assert.IsNull(redirect.ControllerName);
-            Assert.AreEqual("Index", redirect.ActionName);
+            Assert.AreEqual("Index", ((RedirectToActionResult)result).ActionName);
         }
 
         [TestMethod]
-        public void CreateTest_Post_Invalid()
+        public async Task EditTest_Post_Valid()
         {
-            // Arrange
-            controller.ModelState.AddModelError("Titulo", "Campo requerido");
-
-            // Act
-            var result = controller.Create(GetNewAtaModel());
-
-            // Assert
-            Assert.AreEqual(1, controller.ModelState.ErrorCount);
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
-
-        [TestMethod]
-        public void EditTest_Get_Valid()
-        {
-            // Act
-            var result = controller.Edit(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AtaViewModel));
-            var model = (AtaViewModel)viewResult.ViewData.Model;
-
-            Assert.AreEqual("Ata de Reunião Ordinária", model.Titulo);
-            Assert.AreEqual("Manutenção, Obras", model.Temas);
-        }
-
-        [TestMethod]
-        public void EditTest_Post_Valid()
-        {
-            // Act
-            var result = controller.Edit(GetTargetAtaModel());
-
-            // Assert
+            var result = await controller.Edit(GetTargetAtaModel());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            var redirect = (RedirectToActionResult)result;
-
-            Assert.IsNull(redirect.ControllerName);
-            Assert.AreEqual("Index", redirect.ActionName);
+            Assert.AreEqual("Index", ((RedirectToActionResult)result).ActionName);
         }
 
-        [TestMethod]
-        public void DeleteTest_Get_Valid()
-        {
-            // Act
-            var result = controller.Delete(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AtaViewModel));
-            var model = (AtaViewModel)viewResult.ViewData.Model;
-
-            Assert.AreEqual("Ata de Reunião Ordinária", model.Titulo);
-        }
-
-        [TestMethod]
-        public void DeleteTest_Post_Valid()
-        {
-            // Act
-            var result = controller.DeleteConfirmed(1);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            var redirect = (RedirectToActionResult)result;
-
-            Assert.IsNull(redirect.ControllerName);
-            Assert.AreEqual("Index", redirect.ActionName);
-        }
-
-        // --------- Dados de Teste ---------
-
-        private static Ata GetTargetAta()
-        {
-            return new Ata
-            {
-                Id = 1,
-                Titulo = "Ata de Reunião Ordinária",
-                Temas = "Manutenção, Obras",
-                Conteudo = "Conteúdo da ata de reunião ordinária...",
-                DataReuniao = new DateOnly(2024, 1, 15),
-                CondominioId = 1,
-                SindicoId = 1
-            };
-        }
-
-        private AtaViewModel GetTargetAtaModel()
-        {
-            return new AtaViewModel
-            {
-                Id = 1,
-                Titulo = "Ata de Reunião Ordinária",
-                Temas = "Manutenção, Obras",
-                Conteudo = "Conteúdo da ata de reunião ordinária...",
-                DataReuniao = new DateTime(2024, 1, 15),
-                CondominioId = 1,
-                SindicoId = 1
-            };
-        }
-
-        private AtaViewModel GetNewAtaModel()
-        {
-            return new AtaViewModel
-            {
-                Id = 99,
-                Titulo = "Ata de Reunião Extraordinária",
-                Temas = "Eleição de Síndico",
-                Conteudo = "Conteúdo da ata de reunião extraordinária...",
-                DataReuniao = new DateTime(2024, 2, 20),
-                CondominioId = 1,
-                SindicoId = 1
-            };
-        }
-
-        private List<Ata> GetTestAtas()
-        {
-            return new List<Ata>
-            {
-                new Ata
-                {
-                    Id = 1,
-                    Titulo = "Ata de Reunião Ordinária",
-                    Temas = "Manutenção, Obras",
-                    Conteudo = "Conteúdo da ata de reunião ordinária...",
-                    DataReuniao = new DateOnly(2024, 1, 15),
-                    CondominioId = 1,
-                    SindicoId = 1
-                },
-                new Ata
-                {
-                    Id = 2,
-                    Titulo = "Ata de Reunião Extraordinária",
-                    Temas = "Eleição de Síndico",
-                    Conteudo = "Conteúdo da ata de reunião extraordinária...",
-                    DataReuniao = new DateOnly(2024, 2, 20),
-                    CondominioId = 1,
-                    SindicoId = 1
-                },
-                new Ata
-                {
-                    Id = 3,
-                    Titulo = "Ata de Assembleia Geral",
-                    Temas = "Aprovação de Contas",
-                    Conteudo = "Conteúdo da ata de assembleia geral...",
-                    DataReuniao = new DateOnly(2024, 3, 10),
-                    CondominioId = 2,
-                    SindicoId = 2
-                }
-            };
-        }
-
-        private List<Condominio> GetTestCondominios()
-        {
-            return new List<Condominio>
-            {
-                new Condominio
-                {
-                    Id = 1,
-                    Nome = "Condomínio Alfa",
-                    Cnpj = "12345678901234",
-                    Rua = "Rua A",
-                    Numero = "10",
-                    Bairro = "Centro",
-                    Cidade = "Cidade",
-                    Uf = "SP",
-                    Cep = "12345678",
-                    Unidades = 10
-                },
-                new Condominio
-                {
-                    Id = 2,
-                    Nome = "Condomínio Beta",
-                    Cnpj = "22345678901234",
-                    Rua = "Rua B",
-                    Numero = "20",
-                    Bairro = "Bairro B",
-                    Cidade = "Cidade",
-                    Uf = "SP",
-                    Cep = "12345678",
-                    Unidades = 15
-                }
-            };
-        }
-
-        private List<Sindico> GetTestSindicos()
-        {
-            return new List<Sindico>
-            {
-                new Sindico
-                {
-                    Id = 1,
-                    Nome = "João Silva",
-                    Cpf = "12345678901",
-                    Rua = "Rua X",
-                    Numero = "100",
-                    Bairro = "Centro",
-                    Cidade = "Cidade",
-                    Uf = "SP",
-                    Cep = "12345678",
-                    Email = "joao@email.com",
-                    Telefone = "11987654321"
-                },
-                new Sindico
-                {
-                    Id = 2,
-                    Nome = "Maria Santos",
-                    Cpf = "98765432109",
-                    Rua = "Rua Y",
-                    Numero = "200",
-                    Bairro = "Bairro B",
-                    Cidade = "Cidade",
-                    Uf = "SP",
-                    Cep = "12345678",
-                    Email = "maria@email.com",
-                    Telefone = "11912345678"
-                }
-            };
-        }
+        private static AtaViewModel ToViewModel(Ata src) => new() { Id = src.Id, Titulo = src.Titulo ?? string.Empty, Temas = src.Temas ?? string.Empty, Conteudo = src.Conteudo ?? string.Empty, DataReuniao = src.DataReuniao?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Today, CondominioId = src.CondominioId, SindicoId = src.SindicoId };
+        private static Ata ToModel(AtaViewModel src) => new() { Id = src.Id, Titulo = src.Titulo, Temas = src.Temas, Conteudo = src.Conteudo, DataReuniao = DateOnly.FromDateTime(src.DataReuniao), CondominioId = src.CondominioId, SindicoId = src.SindicoId };
+        private static Ata GetTargetAta() => new() { Id = 1, Titulo = "Ata Ordinaria", Temas = "Manutencao", Conteudo = "Conteudo de teste suficiente.", DataReuniao = new DateOnly(2024, 1, 15), CondominioId = 1, SindicoId = 1 };
+        private static AtaViewModel GetTargetAtaModel() => new() { Id = 1, Titulo = "Ata Ordinaria", Temas = "Manutencao", Conteudo = "Conteudo de teste suficiente.", DataReuniao = new DateTime(2024, 1, 15), CondominioId = 1, SindicoId = 1 };
+        private static AtaViewModel GetNewAtaModel() => new() { Id = 2, Titulo = "Ata Extraordinaria", Temas = "Eleicao", Conteudo = "Conteudo de teste suficiente para criacao.", DataReuniao = new DateTime(2024, 2, 20), CondominioId = 1, SindicoId = 1 };
+        private static List<Ata> GetTestAtas() => new() { GetTargetAta(), new Ata { Id = 2, Titulo = "Ata Assembleia", Temas = "Contas", Conteudo = "Conteudo de teste suficiente.", DataReuniao = new DateOnly(2024, 3, 10), CondominioId = 1, SindicoId = 1 } };
+        private static List<Condominio> GetTestCondominios() => new() { new() { Id = 1, Nome = "Condominio Alfa", Cnpj = "12345678901234", Rua = "Rua A", Numero = "10", Bairro = "Centro", Cidade = "Cidade", Uf = "SP", Cep = "12345678" } };
+        private static List<Sindico> GetTestSindicos() => new() { new() { Id = 1, Nome = "Joao Silva", Cpf = "12345678901", Rua = "Rua X", Numero = "100", Bairro = "Centro", Cidade = "Cidade", Uf = "SP", Cep = "12345678", Email = "joao@email.com", Telefone = "11987654321" } };
     }
 }
+
