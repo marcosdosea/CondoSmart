@@ -1,10 +1,14 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CondosmartWeb.Controllers;
 using CondosmartWeb.Models;
 using CondosmartWeb.Services;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Security.Claims;
 using Moq;
 
 namespace CondosmartWeb.Controllers.Tests
@@ -35,13 +39,22 @@ namespace CondosmartWeb.Controllers.Tests
             mapper.Setup(m => m.Map<List<AreaDeLazerViewModel>>(It.IsAny<List<AreaDeLazer>>())).Returns((List<AreaDeLazer> src) => src.Select(ToViewModel).ToList());
             mapper.Setup(m => m.Map<AreaDeLazerViewModel>(It.IsAny<AreaDeLazer>())).Returns((AreaDeLazer src) => ToViewModel(src));
             mapper.Setup(m => m.Map<AreaDeLazer>(It.IsAny<AreaDeLazerViewModel>())).Returns((AreaDeLazerViewModel src) => ToModel(src));
-            
+
+            controller = new AreaDeLazerController(
+                mockService.Object,
+                mockCondominioService.Object,
+                mockSindicoService.Object,
+                mockContextService.Object,
+                mockUploadService.Object,
+                mockNotificacaoService.Object,
+                mapper.Object);
+
             var httpContext = new DefaultHttpContext();
-            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "teste@condo.com") }, "TestAuth"));
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             var url = new Mock<IUrlHelper>();
-            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns("/teste");
             controller.Url = url.Object;
         }
 
@@ -51,7 +64,7 @@ namespace CondosmartWeb.Controllers.Tests
             var result = controller.Index();
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var model = (List<AreaDeLazerViewModel>)((ViewResult)result).ViewData.Model!;
-            Assert.HasCount(2, model);
+            Assert.AreEqual(2, model.Count);
         }
 
         [TestMethod]
@@ -71,6 +84,43 @@ namespace CondosmartWeb.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
 
+        [TestMethod]
+        public void DetailsTest_ComIdValido_RetornaView()
+        {
+            // Arrange & Act
+            var result = controller.Details(1);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var viewResult = (ViewResult)result;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AreaDeLazerViewModel));
+            var model = (AreaDeLazerViewModel)viewResult.ViewData.Model;
+            Assert.AreEqual(1, model.Id);
+            Assert.AreEqual("Piscina", model.Nome);
+        }
+
+        [TestMethod]
+        public void DetailsTest_ComIdInvalido_RetornaNotFound()
+        {
+            // Arrange & Act
+            var result = controller.Details(999);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
+
+        [TestMethod]
+        public void DeleteConfirmedTest_ComIdValido_RemoveERedirecionaParaIndex()
+        {
+            // Arrange & Act
+            var result = controller.DeleteConfirmed(1);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            var redirectResult = (RedirectToActionResult)result;
+            Assert.AreEqual("Index", redirectResult.ActionName);
+        }
+
         private static AreaDeLazerViewModel ToViewModel(AreaDeLazer src) => new() { Id = src.Id, Nome = src.Nome, Descricao = src.Descricao, Disponibilidade = src.Disponibilidade, CondominioId = src.CondominioId, SindicoId = src.SindicoId };
         private static AreaDeLazer ToModel(AreaDeLazerViewModel src) => new() { Id = src.Id, Nome = src.Nome, Descricao = src.Descricao, Disponibilidade = src.Disponibilidade, CondominioId = src.CondominioId, SindicoId = src.SindicoId };
         private static AreaDeLazer GetTargetAreaDeLazer() => new() { Id = 1, Nome = "Piscina", Descricao = "Piscina aquecida com raias para natacao", Disponibilidade = true, CondominioId = 1, SindicoId = 1, CreatedAt = new DateTime(2024, 1, 15) };
@@ -79,4 +129,3 @@ namespace CondosmartWeb.Controllers.Tests
         private static List<AreaDeLazer> GetTestAreasDeLazer() => new() { GetTargetAreaDeLazer(), new AreaDeLazer { Id = 2, Nome = "Sauna", Descricao = "Sauna seca", Disponibilidade = false, CondominioId = 1, SindicoId = 1 } };
     }
 }
-
