@@ -4,8 +4,16 @@ using CondosmartWeb.Models;
 using CondosmartWeb.Services;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Security.Claims;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CondosmartWeb.Controllers.Tests
 {
@@ -21,22 +29,32 @@ namespace CondosmartWeb.Controllers.Tests
             var mockContextService = new Mock<ICondominioContextService>();
             var mockNotificacaoService = new Mock<INotificacaoService>();
             var mapper = new Mock<IMapper>();
+
             mockService.Setup(s => s.GetAll()).Returns(GetTestSindicos());
             mockService.Setup(s => s.GetById(1)).Returns(GetTargetSindico());
             mockService.Setup(s => s.Create(It.IsAny<Sindico>())).Returns(10);
             mockService.Setup(s => s.Edit(It.IsAny<Sindico>()));
             mockService.Setup(s => s.Delete(It.IsAny<int>()));
             mockContextService.Setup(s => s.GetCondominioAtualId()).Returns(1);
+
             mapper.Setup(m => m.Map<List<SindicoViewModel>>(It.IsAny<List<Sindico>>())).Returns((List<Sindico> src) => src.Select(ToViewModel).ToList());
             mapper.Setup(m => m.Map<SindicoViewModel>(It.IsAny<Sindico>())).Returns((Sindico src) => ToViewModel(src));
             mapper.Setup(m => m.Map<Sindico>(It.IsAny<SindicoViewModel>())).Returns((SindicoViewModel src) => ToModel(src));
-            
+
+            controller = new SindicoController(
+                mockService.Object,
+                mockContextService.Object,
+                mockNotificacaoService.Object,
+                mapper.Object
+            );
+
             var httpContext = new DefaultHttpContext();
-            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "teste@condo.com") }, "TestAuth"));
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+
             var url = new Mock<IUrlHelper>();
-            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns("/teste");
             controller.Url = url.Object;
         }
 
@@ -54,4 +72,3 @@ namespace CondosmartWeb.Controllers.Tests
         private static List<Sindico> GetTestSindicos() => new() { GetTargetSindico() };
     }
 }
-
