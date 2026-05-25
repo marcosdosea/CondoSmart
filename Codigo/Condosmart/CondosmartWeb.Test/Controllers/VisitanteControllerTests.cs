@@ -4,7 +4,11 @@ using CondosmartWeb.Models;
 using CondosmartWeb.Services;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Security.Claims;
 using Moq;
 
 namespace CondosmartWeb.Controllers.Tests
@@ -35,11 +39,11 @@ namespace CondosmartWeb.Controllers.Tests
             mapper.Setup(m => m.Map<Visitantes>(It.IsAny<VisitanteViewModel>())).Returns((VisitanteViewModel src) => ToModel(src));
             
             var httpContext = new DefaultHttpContext();
-            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "teste@condo.com") }, "TestAuth"));
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             var url = new Mock<IUrlHelper>();
-            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns("/teste");
             controller.Url = url.Object;
         }
 

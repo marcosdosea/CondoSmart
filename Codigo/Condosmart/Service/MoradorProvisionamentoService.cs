@@ -221,11 +221,13 @@ namespace Service
 
         private static string GerarSenhaTemporaria()
         {
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+            const string digits = "23456789";
             var random = Random.Shared;
             var builder = new StringBuilder("Condo@");
 
-            for (var i = 0; i < 6; i++)
+            builder.Append(digits[random.Next(digits.Length)]);
+            for (var i = 0; i < 5; i++)
                 builder.Append(chars[random.Next(chars.Length)]);
 
             return builder.ToString();

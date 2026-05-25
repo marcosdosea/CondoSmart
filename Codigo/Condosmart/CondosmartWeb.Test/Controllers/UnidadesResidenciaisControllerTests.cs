@@ -4,7 +4,11 @@ using CondosmartWeb.Models;
 using CondosmartWeb.Services;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Security.Claims;
 using Moq;
 
 namespace CondosmartWeb.Controllers.Tests
@@ -19,7 +23,6 @@ namespace CondosmartWeb.Controllers.Tests
         {
             var mockService = new Mock<IUnidadesResidenciaisService>();
             var mockCondominioService = new Mock<ICondominioService>();
-            var mockCepService = new Mock<ICepService>();
             var mockContextService = new Mock<ICondominioContextService>();
             var mockNotificacaoService = new Mock<INotificacaoService>();
             var mapper = new Mock<IMapper>();
@@ -29,25 +32,26 @@ namespace CondosmartWeb.Controllers.Tests
             mockService.Setup(s => s.Edit(It.IsAny<UnidadesResidenciais>()));
             mockService.Setup(s => s.Delete(It.IsAny<int>()));
             mockCondominioService.Setup(s => s.GetAll()).Returns(GetTestCondominios());
-            mockCepService.Setup(s => s.IsValidAsync(It.IsAny<string?>())).ReturnsAsync(true);
             mockContextService.Setup(s => s.GetCondominioAtualId()).Returns(1);
             mapper.Setup(m => m.Map<List<UnidadeResidencialViewModel>>(It.IsAny<List<UnidadesResidenciais>>())).Returns((List<UnidadesResidenciais> src) => src.Select(ToViewModel).ToList());
             mapper.Setup(m => m.Map<UnidadeResidencialViewModel>(It.IsAny<UnidadesResidenciais>())).Returns((UnidadesResidenciais src) => ToViewModel(src));
             mapper.Setup(m => m.Map<UnidadesResidenciais>(It.IsAny<UnidadeResidencialViewModel>())).Returns((UnidadeResidencialViewModel src) => ToModel(src));
             
+            controller = new UnidadesResidenciaisController(mockService.Object, mockCondominioService.Object, mockContextService.Object, mockNotificacaoService.Object, mapper.Object);
+
             var httpContext = new DefaultHttpContext();
-            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "teste@condo.com") }, "TestAuth"));
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             var url = new Mock<IUrlHelper>();
-            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns("/teste");
             controller.Url = url.Object;
         }
 
         [TestMethod]
-        public async Task CreateTest_Post_Valid()
+        public void CreateTest_Post_Valid()
         {
-            var result = await controller.Create(GetNewUnidadeModel());
+            var result = controller.Create(GetNewUnidadeModel());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
         }
 

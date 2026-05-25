@@ -15,7 +15,6 @@ namespace CondosmartWeb.Controllers
     {
         private readonly IUnidadesResidenciaisService _service;
         private readonly ICondominioService _condominioService;
-        private readonly ICepService _cepService;
         private readonly ICondominioContextService _condominioContextService;
         private readonly INotificacaoService _notificacaoService;
         private readonly IMapper _mapper;
@@ -23,14 +22,12 @@ namespace CondosmartWeb.Controllers
         public UnidadesResidenciaisController(
             IUnidadesResidenciaisService service,
             ICondominioService condominioService,
-            ICepService cepService,
             ICondominioContextService condominioContextService,
             INotificacaoService notificacaoService,
             IMapper mapper)
         {
             _service = service;
             _condominioService = condominioService;
-            _cepService = cepService;
             _condominioContextService = condominioContextService;
             _notificacaoService = notificacaoService;
             _mapper = mapper;
@@ -69,17 +66,10 @@ namespace CondosmartWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UnidadeResidencialViewModel vm)
+        public IActionResult Create(UnidadeResidencialViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                PopularDropdowns();
-                return View(vm);
-            }
-
-            if (!await _cepService.IsValidAsync(vm.Cep))
-            {
-                ModelState.AddModelError(nameof(vm.Cep), "O CEP informado e invalido ou nao pode ser consultado agora.");
                 PopularDropdowns();
                 return View(vm);
             }
@@ -117,17 +107,10 @@ namespace CondosmartWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UnidadeResidencialViewModel vm)
+        public IActionResult Edit(UnidadeResidencialViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                PopularDropdowns();
-                return View(vm);
-            }
-
-            if (!await _cepService.IsValidAsync(vm.Cep))
-            {
-                ModelState.AddModelError(nameof(vm.Cep), "O CEP informado e invalido ou nao pode ser consultado agora.");
                 PopularDropdowns();
                 return View(vm);
             }

@@ -66,7 +66,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll("input[name='Cep']").forEach(function (input) {
+        document.querySelectorAll("input[name='Cep']:not([data-no-cep-lookup])").forEach(function (input) {
             input.addEventListener('blur', handleCepBlur);
         });
     });

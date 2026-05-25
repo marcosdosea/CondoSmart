@@ -100,6 +100,9 @@ namespace Condosmart
             if (TryHandleAdminSeedCommand(args, app))
                 return;
 
+            if (TryHandleResetPasswordCommand(args, app))
+                return;
+
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -147,6 +150,69 @@ namespace Condosmart
                 ? $"Admin criado com sucesso para {email}."
                 : $"Nao foi possivel criar o admin para {email}. Verifique se ele ja existe ou se a senha atende aos requisitos.");
 
+            return true;
+        }
+
+        private static bool TryHandleResetPasswordCommand(string[] args, WebApplication app)
+        {
+            if (!args.Contains("--reset-password", StringComparer.OrdinalIgnoreCase))
+                return false;
+
+            var email = GetArgumentValue(args, "--email");
+            var novaSenha = GetArgumentValue(args, "--password");
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(novaSenha))
+            {
+                Console.WriteLine("Uso: dotnet run --project CondosmartWeb.csproj -- --reset-password --email admin@dominio.com --password \"NovaSenha123\"");
+                return true;
+            }
+
+            using var scope = app.Services.CreateScope();
+
+            var userManager = scope.ServiceProvider
+                .GetRequiredService<UserManager<UsuarioSistema>>();
+
+            var usuario = userManager.FindByEmailAsync(email)
+                .GetAwaiter()
+                .GetResult();
+
+            if (usuario == null)
+            {
+                Console.WriteLine($"Usuário {email} não encontrado.");
+                return true;
+            }
+
+            // Remove senha atual
+            var removeResult = userManager.RemovePasswordAsync(usuario)
+                .GetAwaiter()
+                .GetResult();
+
+            if (!removeResult.Succeeded)
+            {
+                Console.WriteLine("Erro ao remover senha atual:");
+
+                foreach (var erro in removeResult.Errors)
+                    Console.WriteLine($"- {erro.Description}");
+
+                return true;
+            }
+
+            // Define nova senha
+            var addResult = userManager.AddPasswordAsync(usuario, novaSenha)
+                .GetAwaiter()
+                .GetResult();
+
+            if (!addResult.Succeeded)
+            {
+                Console.WriteLine("Erro ao definir nova senha:");
+
+                foreach (var erro in addResult.Errors)
+                    Console.WriteLine($"- {erro.Description}");
+
+                return true;
+            }
+
+            Console.WriteLine($"Senha redefinida com sucesso para {email}.");
             return true;
         }
 

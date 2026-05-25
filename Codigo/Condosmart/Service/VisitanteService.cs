@@ -46,7 +46,7 @@ namespace Service
 
         public List<Visitantes> GetAll()
         {
-            return _context.Visitantes.AsNoTracking().ToList();
+            return _context.Visitantes.Include(v => v.Morador).AsNoTracking().ToList();
         }
 
         public IEnumerable<Visitantes> GetByNome(string nome)

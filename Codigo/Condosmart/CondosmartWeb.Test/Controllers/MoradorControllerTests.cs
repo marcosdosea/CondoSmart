@@ -5,8 +5,11 @@ using CondosmartWeb.Services;
 using Core.DTO;
 using Core.Models;
 using Core.Service;
-using Microsoft.AspNetCore.Http;`r`nusing Microsoft.AspNetCore.Mvc;`r`nusing Microsoft.AspNetCore.Mvc.Routing;`r`nusing Microsoft.AspNetCore.Mvc.ViewFeatures;`r`nusing System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Security.Claims;
 using Moq;
 
 namespace CondosmartWeb.Controllers.Tests
@@ -43,11 +46,11 @@ namespace CondosmartWeb.Controllers.Tests
             mapper.Setup(m => m.Map<Morador>(It.IsAny<MoradorViewModel>())).Returns((MoradorViewModel src) => ToModel(src));
             
             var httpContext = new DefaultHttpContext();
-            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, 'teste@condo.com') }, 'TestAuth'));
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "teste@condo.com") }, "TestAuth"));
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
             var url = new Mock<IUrlHelper>();
-            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns('/teste');
+            url.Setup(u => u.Action(It.IsAny<UrlActionContext>())).Returns("/teste");
             controller.Url = url.Object;
         }
 
@@ -55,7 +58,7 @@ namespace CondosmartWeb.Controllers.Tests
         public async Task CreateTest_Post_Valid()
         {
             var urlMock = new Mock<IUrlHelper>();
-            urlMock.Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>())).Returns("https://localhost/login");`r`n            urlMock.Setup(u => u.Page(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns("https://localhost/login");
+            urlMock.Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>())).Returns("https://localhost/login");urlMock.Setup(u => u.Page(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns("https://localhost/login");
             controller.Url = urlMock.Object;
             var result = await controller.Create(GetNewMoradorModel());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
