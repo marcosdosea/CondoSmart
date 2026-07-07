@@ -87,7 +87,7 @@ namespace CondosmartWeb.Tests.Service
 
             int quantidadeNoBanco = _context.Pagamentos.Count();
             
-            // Valida se o banco salvou e agora tem pelo menos 2 registros
+            // Valida se o banco salvou e agora tem pelo menos 2 registross
             Assert.IsTrue(quantidadeNoBanco >= 2);
         }
     }
