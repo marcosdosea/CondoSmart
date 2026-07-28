@@ -75,7 +75,7 @@ Com uma arquitetura desenvolvida em .NET (ASP.NET Core / Razor Pages) e frontend
          style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
   </a>
   <br><br>
-  <a href="https://www.youtube.com/shorts/302Cg21CG_A" target="_blank">
+  <a href="https://www.youtube.com/shorts/zZUlNLuhH_c?feature=share" target="_blank">
     <img src="https://img.shields.io/badge/▶%20Assistir%20Vídeo-FF0000?style=for-the-badge&logo=youtube&logoColor=white">
   </a>
 </p>
