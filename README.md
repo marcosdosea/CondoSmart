@@ -51,7 +51,7 @@ Com uma arquitetura desenvolvida em .NET (ASP.NET Core / Razor Pages) e frontend
 <p align="left">
 
   <!-- BOTÃO MANUAL -->
-  <a href="https://docs.google.com/presentation/d/1FKyfga7mJVyifUOovO7IRHXGza3Pwrf5/edit?slide=id.p1#slide=id.p1" target="_blank">
+  <a href="https://docs.google.com/presentation/d/1_O_KQoR4Om_i41cJD2KngU37DdImLt6un5eWx3aL1aw/edit?usp=sharing" target="_blank">
     <img src="https://img.shields.io/badge/📘%20Manual%20do%20Usuário-Acessar-blue?style=for-the-badge">
   </a>
   <br>
