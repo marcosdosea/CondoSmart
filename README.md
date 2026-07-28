@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="requisitos/logos/logo.png" alt="CondoSmart" width="100%">
+  <img src="Requisitos/Logos/logo.png" alt="CondoSmart" width="100%">
 </p>
 
 ## Sumário
@@ -69,7 +69,7 @@ Com uma arquitetura desenvolvida em .NET (ASP.NET Core / Razor Pages) e frontend
   ## 5. Apresentação CondoSmart
  <p align="left">
   <a href="https://youtube.com/shorts/zZUlNLuhH_c?feature=share " target="_blank">
-    <img src="requisitos/logos/image thumb condosmart.png" 
+    <img src="Requisitos/Logos/image%20thumb%20condosmart.png" 
          alt="Vídeo de Apresentação" 
          width="400" 
          style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
